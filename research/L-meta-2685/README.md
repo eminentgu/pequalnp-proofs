@@ -10,9 +10,19 @@ For a bipartite graph with edge set E, the incidence function accepts an input w
 
 The open question in the recursion concerns a nonempty graph with no 4-cycle that does not have a common endpoint for all its edges. Can one remove a nonempty star, leave a nonempty edge set F, and construct a circuit D for F with size(D) + |E ∖ F| + 1 ≤ size(C)?
 
-Check this file from the `lean` directory of the upstream checkout.
+`Peeling.lean` proves that the answer to that question implies the full two-level normal form. It applies the reduction to the proof of the terminal star bound and the two merged circuit construction theorems L-meta-3243 and L-meta-3245.
+
+Check both files from the `lean` directory of this branch.
 
 ```sh
-lake build PEqualNP.Outside.L_meta_1660
-lake env lean ../research/L-meta-2685/StarForestCharge.lean
+lake build PEqualNP.Outside.L_meta_1660 PEqualNP.Outside.L_meta_3243 \
+  PEqualNP.Outside.L_meta_3245 PEqualNP.Outside.R_meta_2685_73
+lake env sh -c '
+  set -eu
+  output=$(mktemp -d)
+  export LEAN_PATH="$output:$LEAN_PATH"
+  cd ../research/L-meta-2685
+  lean -j1 -R . -o "$output/StarForestCharge.olean" StarForestCharge.lean
+  lean -j1 Peeling.lean
+'
 ```
