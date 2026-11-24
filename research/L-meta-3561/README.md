@@ -27,3 +27,11 @@ lake env bash -c '
   lean -j1 --run CheckRoots.lean
 '
 ```
+
+## Structural lower bounds
+
+`CofactorPrune.lean` proves that an encoded circuit needs at least 13 gates, using the merged L-meta-2913 checker. It also rules out 26 unordered first-AND operand pairs in the sampled live computation. Build the prerequisite with `lake build PEqualNP.Outside.L_meta_2913`.
+
+`CubicObstruction.lean` proves that every correct monotone extension has a restriction to three independent wires equal to their AND. Consequently a disjunction of terms of degree at most two cannot compute that extension. It also checks a 13-gate witness for the restricted eight-input graph in which input wires 0 and 1 are both reused.
+
+`ReadOnceKW.lean` develops a rectangle obstruction for saturated monotone traces. `SignedReadOnceKW.lean` proves `no_four_nots`, excluding the 13-gate case with four retained negations. These three modules and the cofactor proof all import `EncodedBank`. Check them using the same temporary output directory and `LEAN_PATH` as above.
