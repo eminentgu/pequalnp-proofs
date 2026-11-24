@@ -47,3 +47,9 @@ for module in EncodedBank SearchCore SignedReadOnceKW VerifiedCore Memo2Data Che
   lean -j1 -R . -o "$output/$module.olean" "$module.lean" || exit 1
 done
 ```
+
+## Checking several rectangle obstructions at once
+
+`BulkKW.lean` proves `BulkKW.excludes_sound`. A saturated trace must assign a distinguishing wire to each positive–negative sample pair. All pairs assigned to one wire form a rectangle. Four pairs can force two different wire labels onto the same intersection. The checker tests many such configurations at once by putting their differences in bit masks and accumulating the masks over the wires.
+
+After compiling `VerifiedCore` as above, run `lean -j1 -R . BulkKW.lean` from the research directory with that output directory in `LEAN_PATH`.
