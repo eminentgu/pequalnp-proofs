@@ -1,0 +1,10 @@
+Sensitivity, 128-row cofactor, 11-gate upper bound, and automorphisms agree.
+binary gates 10, possible False, states 107828, by remaining budget [(4, 86), (5, 2016), (6, 45389), (7, 53178), (8, 7074), (9, 84), (10, 1)], seconds 18.95
+aux None, budget 13, possible False, states 323565, by budget [(7, 512), (8, 27270), (9, 187216), (10, 103665), (11, 4829), (12, 72), (13, 1)], seconds 3.76
+aux 1, budget 13, possible False, states 80544, by budget [(8, 1359), (9, 30214), (10, 42280), (11, 6594), (12, 96), (13, 1)], seconds 0.93
+aux 2, budget 13, possible False, states 120801, by budget [(7, 104), (8, 5727), (9, 54442), (10, 53452), (11, 6976), (12, 99), (13, 1)], seconds 1.36
+aux 3, budget 13, possible False, states 75154, by budget [(8, 818), (9, 27167), (10, 40520), (11, 6552), (12, 96), (13, 1)], seconds 0.85
+aux 5, budget 13, possible False, states 80544, by budget [(8, 1359), (9, 30214), (10, 42280), (11, 6594), (12, 96), (13, 1)], seconds 0.90
+aux 6, budget 13, possible False, states 98105, by budget [(7, 8), (8, 2724), (9, 40351), (10, 48099), (11, 6824), (12, 98), (13, 1)], seconds 1.05
+aux 7, budget 13, possible False, states 98105, by budget [(7, 8), (8, 2724), (9, 40351), (10, 48099), (11, 6824), (12, 98), (13, 1)], seconds 1.09
+aux 8, budget 13, possible False, states 120801, by budget [(7, 104), (8, 5727), (9, 54442), (10, 53452), (11, 6976), (12, 99), (13, 1)], seconds 1.30
