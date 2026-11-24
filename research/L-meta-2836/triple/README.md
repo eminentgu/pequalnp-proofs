@@ -18,6 +18,8 @@ What remains has at most ten binary AND gates, free complements, and seven raw v
 (x5 AND x7) OR (x8 AND (x3 OR x6 OR x5))
 ```
 
+The parent reduction also describes the residual function on nine input positions, with positions 0 and 4 ignored. Fixing these two dummy inputs to false turns any such circuit into a seven-input circuit. Constant propagation adds no binary gates. Conversely, the eleven-gate expression above can use the other seven positions directly. `ThetaCircuit.lean` gives the explicit eleven gates in the project’s circuit datatype and proves their output on every nine-position input. From the project’s `lean/` directory, run `lake env lean /absolute/path/to/ThetaCircuit.lean`.
+
 ## The remaining monotone circuits
 
 For a monotone circuit it suffices to check the 12 assignments consisting of one edge and the 12 maximal independent sets. Every positive assignment extends an edge and every negative assignment is contained in a maximal independent set. All nine raw wires are necessary even with the OR helper. For each omitted raw wire the script finds an edge row whose values on all remaining inputs are componentwise at most those of a maximal independent set. No monotone circuit on those inputs can separate the rows. The helper itself is optional, so a separate search checks the nine-wire initial state.
