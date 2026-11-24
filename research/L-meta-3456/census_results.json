@@ -1,0 +1,521 @@
+{
+  "controls": "All 16 labelled 2x2 graphs at budgets 0..3; C4 optimum 3.",
+  "sides": {
+    "1": {
+      "labelled": 2,
+      "classes": 2,
+      "cases": [
+        {
+          "key": 0,
+          "labelled_matrices": 1,
+          "exact_monotone_size": 0,
+          "searched_states": 0
+        },
+        {
+          "key": 1,
+          "labelled_matrices": 1,
+          "exact_monotone_size": 1,
+          "searched_states": 1
+        }
+      ]
+    },
+    "2": {
+      "labelled": 15,
+      "classes": 5,
+      "cases": [
+        {
+          "key": 0,
+          "labelled_matrices": 1,
+          "exact_monotone_size": 0,
+          "searched_states": 0
+        },
+        {
+          "key": 1,
+          "labelled_matrices": 4,
+          "exact_monotone_size": 1,
+          "searched_states": 1
+        },
+        {
+          "key": 3,
+          "labelled_matrices": 4,
+          "exact_monotone_size": 2,
+          "searched_states": 1
+        },
+        {
+          "key": 6,
+          "labelled_matrices": 2,
+          "exact_monotone_size": 3,
+          "searched_states": 1
+        },
+        {
+          "key": 7,
+          "labelled_matrices": 4,
+          "exact_monotone_size": 4,
+          "searched_states": 13
+        }
+      ]
+    },
+    "3": {
+      "labelled": 334,
+      "classes": 16,
+      "cases": [
+        {
+          "key": 0,
+          "labelled_matrices": 1,
+          "exact_monotone_size": 0,
+          "searched_states": 0
+        },
+        {
+          "key": 1,
+          "labelled_matrices": 9,
+          "exact_monotone_size": 1,
+          "searched_states": 1
+        },
+        {
+          "key": 3,
+          "labelled_matrices": 18,
+          "exact_monotone_size": 2,
+          "searched_states": 1
+        },
+        {
+          "key": 7,
+          "labelled_matrices": 6,
+          "exact_monotone_size": 3,
+          "searched_states": 1
+        },
+        {
+          "key": 10,
+          "labelled_matrices": 18,
+          "exact_monotone_size": 3,
+          "searched_states": 1
+        },
+        {
+          "key": 11,
+          "labelled_matrices": 36,
+          "exact_monotone_size": 4,
+          "searched_states": 13
+        },
+        {
+          "key": 14,
+          "labelled_matrices": 36,
+          "exact_monotone_size": 4,
+          "searched_states": 1
+        },
+        {
+          "key": 15,
+          "labelled_matrices": 36,
+          "exact_monotone_size": 5,
+          "searched_states": 33
+        },
+        {
+          "key": 29,
+          "labelled_matrices": 36,
+          "exact_monotone_size": 5,
+          "searched_states": 21
+        },
+        {
+          "key": 78,
+          "labelled_matrices": 9,
+          "exact_monotone_size": 5,
+          "searched_states": 1
+        },
+        {
+          "key": 79,
+          "labelled_matrices": 9,
+          "exact_monotone_size": 6,
+          "searched_states": 82
+        },
+        {
+          "key": 84,
+          "labelled_matrices": 6,
+          "exact_monotone_size": 5,
+          "searched_states": 1
+        },
+        {
+          "key": 85,
+          "labelled_matrices": 36,
+          "exact_monotone_size": 6,
+          "searched_states": 47
+        },
+        {
+          "key": 87,
+          "labelled_matrices": 36,
+          "exact_monotone_size": 7,
+          "searched_states": 430
+        },
+        {
+          "key": 94,
+          "labelled_matrices": 36,
+          "exact_monotone_size": 7,
+          "searched_states": 266
+        },
+        {
+          "key": 238,
+          "labelled_matrices": 6,
+          "exact_monotone_size": 8,
+          "searched_states": 1734
+        }
+      ]
+    },
+    "4": {
+      "labelled": 18521,
+      "classes": 59,
+      "cases": [
+        {
+          "key": 0,
+          "labelled_matrices": 1,
+          "exact_monotone_size": 0,
+          "searched_states": 0
+        },
+        {
+          "key": 1,
+          "labelled_matrices": 16,
+          "exact_monotone_size": 1,
+          "searched_states": 1
+        },
+        {
+          "key": 3,
+          "labelled_matrices": 48,
+          "exact_monotone_size": 2,
+          "searched_states": 1
+        },
+        {
+          "key": 7,
+          "labelled_matrices": 32,
+          "exact_monotone_size": 3,
+          "searched_states": 1
+        },
+        {
+          "key": 15,
+          "labelled_matrices": 8,
+          "exact_monotone_size": 4,
+          "searched_states": 1
+        },
+        {
+          "key": 18,
+          "labelled_matrices": 72,
+          "exact_monotone_size": 3,
+          "searched_states": 1
+        },
+        {
+          "key": 19,
+          "labelled_matrices": 144,
+          "exact_monotone_size": 4,
+          "searched_states": 13
+        },
+        {
+          "key": 22,
+          "labelled_matrices": 288,
+          "exact_monotone_size": 4,
+          "searched_states": 1
+        },
+        {
+          "key": 23,
+          "labelled_matrices": 288,
+          "exact_monotone_size": 5,
+          "searched_states": 33
+        },
+        {
+          "key": 30,
+          "labelled_matrices": 96,
+          "exact_monotone_size": 5,
+          "searched_states": 1
+        },
+        {
+          "key": 31,
+          "labelled_matrices": 96,
+          "exact_monotone_size": 6,
+          "searched_states": 99
+        },
+        {
+          "key": 53,
+          "labelled_matrices": 288,
+          "exact_monotone_size": 5,
+          "searched_states": 21
+        },
+        {
+          "key": 60,
+          "labelled_matrices": 72,
+          "exact_monotone_size": 5,
+          "searched_states": 1
+        },
+        {
+          "key": 61,
+          "labelled_matrices": 288,
+          "exact_monotone_size": 6,
+          "searched_states": 51
+        },
+        {
+          "key": 278,
+          "labelled_matrices": 144,
+          "exact_monotone_size": 5,
+          "searched_states": 1
+        },
+        {
+          "key": 279,
+          "labelled_matrices": 144,
+          "exact_monotone_size": 6,
+          "searched_states": 82
+        },
+        {
+          "key": 286,
+          "labelled_matrices": 96,
+          "exact_monotone_size": 6,
+          "searched_states": 1
+        },
+        {
+          "key": 287,
+          "labelled_matrices": 96,
+          "exact_monotone_size": 7,
+          "searched_states": 243
+        },
+        {
+          "key": 292,
+          "labelled_matrices": 96,
+          "exact_monotone_size": 5,
+          "searched_states": 1
+        },
+        {
+          "key": 293,
+          "labelled_matrices": 576,
+          "exact_monotone_size": 6,
+          "searched_states": 47
+        },
+        {
+          "key": 295,
+          "labelled_matrices": 576,
+          "exact_monotone_size": 7,
+          "searched_states": 430
+        },
+        {
+          "key": 300,
+          "labelled_matrices": 288,
+          "exact_monotone_size": 6,
+          "searched_states": 1
+        },
+        {
+          "key": 301,
+          "labelled_matrices": 576,
+          "exact_monotone_size": 7,
+          "searched_states": 113
+        },
+        {
+          "key": 303,
+          "labelled_matrices": 288,
+          "exact_monotone_size": 8,
+          "searched_states": 1366
+        },
+        {
+          "key": 310,
+          "labelled_matrices": 576,
+          "exact_monotone_size": 7,
+          "searched_states": 266
+        },
+        {
+          "key": 316,
+          "labelled_matrices": 576,
+          "exact_monotone_size": 7,
+          "searched_states": 89
+        },
+        {
+          "key": 317,
+          "labelled_matrices": 576,
+          "exact_monotone_size": 8,
+          "searched_states": 1163
+        },
+        {
+          "key": 318,
+          "labelled_matrices": 576,
+          "exact_monotone_size": 8,
+          "searched_states": 803
+        },
+        {
+          "key": 362,
+          "labelled_matrices": 576,
+          "exact_monotone_size": 7,
+          "searched_states": 68
+        },
+        {
+          "key": 363,
+          "labelled_matrices": 1152,
+          "exact_monotone_size": 8,
+          "searched_states": 639
+        },
+        {
+          "key": 854,
+          "labelled_matrices": 96,
+          "exact_monotone_size": 8,
+          "searched_states": 1734
+        },
+        {
+          "key": 857,
+          "labelled_matrices": 192,
+          "exact_monotone_size": 8,
+          "searched_states": 506
+        },
+        {
+          "key": 858,
+          "labelled_matrices": 576,
+          "exact_monotone_size": 8,
+          "searched_states": 386
+        },
+        {
+          "key": 862,
+          "labelled_matrices": 576,
+          "exact_monotone_size": 9,
+          "searched_states": 4997
+        },
+        {
+          "key": 4382,
+          "labelled_matrices": 16,
+          "exact_monotone_size": 7,
+          "searched_states": 1
+        },
+        {
+          "key": 4383,
+          "labelled_matrices": 16,
+          "exact_monotone_size": 8,
+          "searched_states": 715
+        },
+        {
+          "key": 4396,
+          "labelled_matrices": 144,
+          "exact_monotone_size": 7,
+          "searched_states": 1
+        },
+        {
+          "key": 4397,
+          "labelled_matrices": 144,
+          "exact_monotone_size": 8,
+          "searched_states": 268
+        },
+        {
+          "key": 4398,
+          "labelled_matrices": 288,
+          "exact_monotone_size": 8,
+          "searched_states": 210
+        },
+        {
+          "key": 4399,
+          "labelled_matrices": 288,
+          "exact_monotone_size": 9,
+          "searched_states": 3445
+        },
+        {
+          "key": 4414,
+          "labelled_matrices": 144,
+          "exact_monotone_size": 9,
+          "searched_states": 2239
+        },
+        {
+          "key": 4458,
+          "labelled_matrices": 288,
+          "exact_monotone_size": 8,
+          "searched_states": 124
+        },
+        {
+          "key": 4459,
+          "labelled_matrices": 576,
+          "exact_monotone_size": 9,
+          "searched_states": 1663
+        },
+        {
+          "key": 4680,
+          "labelled_matrices": 24,
+          "exact_monotone_size": 7,
+          "searched_states": 1
+        },
+        {
+          "key": 4681,
+          "labelled_matrices": 288,
+          "exact_monotone_size": 8,
+          "searched_states": 165
+        },
+        {
+          "key": 4683,
+          "labelled_matrices": 576,
+          "exact_monotone_size": 9,
+          "searched_states": 1938
+        },
+        {
+          "key": 4687,
+          "labelled_matrices": 192,
+          "exact_monotone_size": 10,
+          "searched_states": 25051
+        },
+        {
+          "key": 4698,
+          "labelled_matrices": 288,
+          "exact_monotone_size": 9,
+          "searched_states": 1243
+        },
+        {
+          "key": 4699,
+          "labelled_matrices": 576,
+          "exact_monotone_size": 10,
+          "searched_states": 22447
+        },
+        {
+          "key": 4700,
+          "labelled_matrices": 576,
+          "exact_monotone_size": 9,
+          "searched_states": 1331
+        },
+        {
+          "key": 4702,
+          "labelled_matrices": 1152,
+          "exact_monotone_size": 10,
+          "searched_states": 16257
+        },
+        {
+          "key": 4732,
+          "labelled_matrices": 576,
+          "exact_monotone_size": 10,
+          "searched_states": 14878
+        },
+        {
+          "key": 4958,
+          "labelled_matrices": 288,
+          "exact_monotone_size": 11,
+          "searched_states": 160488
+        },
+        {
+          "key": 4972,
+          "labelled_matrices": 576,
+          "exact_monotone_size": 10,
+          "searched_states": 11471
+        },
+        {
+          "key": 4973,
+          "labelled_matrices": 576,
+          "exact_monotone_size": 11,
+          "searched_states": 155284
+        },
+        {
+          "key": 5804,
+          "labelled_matrices": 96,
+          "exact_monotone_size": 10,
+          "searched_states": 13613
+        },
+        {
+          "key": 5805,
+          "labelled_matrices": 576,
+          "exact_monotone_size": 11,
+          "searched_states": 100503
+        },
+        {
+          "key": 13726,
+          "labelled_matrices": 96,
+          "exact_monotone_size": 12,
+          "searched_states": 1293300
+        },
+        {
+          "key": 13740,
+          "labelled_matrices": 72,
+          "exact_monotone_size": 11,
+          "searched_states": 68106
+        }
+      ]
+    }
+  }
+}
