@@ -1,5 +1,11 @@
 # Petersen edge function with two OR inputs
 
+## Complete proof
+
+Lean 4.36 verifies the posted L-meta-3561 statement for the second input encoding of L-meta-2836. The proof restores one OR gate in the monotone case and removes two non-NOT gates in the signed case. It uses the already merged bounds L-meta-1922 and L-meta-2960. Both final theorems use only propext, Classical.choice and Quot.sound. [Exact Lean conclusions](https://github.com/eminentgu/pequalnp-proofs/blob/01e7820/research/L-meta-2836/parent/ResearchConclusions.lean) · [Full replay with the pinned upstream sources](https://github.com/eminentgu/pequalnp-proofs/blob/01e7820/research/L-meta-2836/parent/README.md).
+
+## Finite search
+
 L-meta-3561 gives a circuit eleven input positions. Position four is fixed to zero. The two added positions contain x₀ ∨ x₄ and x₄ ∨ x₁. The target is the edge function of the nine-vertex Petersen graph with one vertex removed.
 
 `EncodedBank.lean` proves that any fan-in-two AND/OR/NOT circuit computing the target induces a normalized computation that uses all ten nonconstant signals. For a normalized computation with k gates and t negations, k is at least 9 + t. A circuit with at most thirteen gates therefore leaves only five negation counts to check, from zero through four. The result concerns negations retained in the normalized computation.
