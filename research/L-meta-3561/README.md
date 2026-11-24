@@ -35,3 +35,15 @@ lake env bash -c '
 `CubicObstruction.lean` proves that every correct monotone extension has a restriction to three independent wires equal to their AND. Consequently a disjunction of terms of degree at most two cannot compute that extension. It also checks a 13-gate witness for the restricted eight-input graph in which input wires 0 and 1 are both reused.
 
 `ReadOnceKW.lean` develops a rectangle obstruction for saturated monotone traces. `SignedReadOnceKW.lean` proves `no_four_nots`, excluding the 13-gate case with four retained negations. These three modules and the cofactor proof all import `EncodedBank`. Check them using the same temporary output directory and `LEAN_PATH` as above.
+
+## Kernel certificates for two, three and four negations
+
+The theorems `Memo2.root`, `Memo3.root` and `kw_impossible_four` exclude normalized computations with exactly two, three and four retained negations. The two-negation certificate checks 428 search states and the three-negation certificate checks 106. Each finite check runs with `decide +kernel`. The four-negation proof uses the rectangle obstruction directly. The remaining cases have zero and one retained negations.
+
+To check these certificates, use the temporary output directory in the command above and run the following loop from the research directory with the same `LEAN_PATH`.
+
+```sh
+for module in EncodedBank SearchCore SignedReadOnceKW VerifiedCore Memo2Data CheckedTwo CheckedThree Root4; do
+  lean -j1 -R . -o "$output/$module.olean" "$module.lean" || exit 1
+done
+```
