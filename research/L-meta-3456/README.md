@@ -37,6 +37,6 @@ The driver independently compares its decision routine against forward circuit e
 ## Lean results
 
 - `FormulaCircuit.lean` proves that if a binary monotone formula computes the same function using at most as many gates as the given circuit, the required singleton-clean project circuit exists. It compiles the normalized formula to the project's circuit representation with the same gate count. The final theorem specializes the result to incidence functions.
-- `OrPathNormalForm.lean` characterizes singleton-clean AND gates by the absence of a common input reaching all operands through OR gates. It proves the incidence conclusion when each violating AND has an operand equal to that AND on every assignment.
+- `OrPathNormalForm.lean` characterizes singleton-clean AND gates by the absence of a common input reaching all operands through OR gates. It proves the incidence conclusion when each violating AND has an operand equal to that AND on every assignment. It also propagates constants and proves a second rewrite when the uses of the AND force the discarded operand. The final theorem describes the surviving obstruction: all four operand patterns occur, and for either choice of discarded operand there is a downstream use where the rewrite cannot apply.
 
 Run either file from the project's `lean` directory using `lake env lean ../research/L-meta-3456/FormulaCircuit.lean` or `lake env lean ../research/L-meta-3456/OrPathNormalForm.lean`. The question for arbitrary circuits that reuse intermediate gates remains open in this branch.
