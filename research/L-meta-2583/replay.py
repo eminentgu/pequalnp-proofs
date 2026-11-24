@@ -6,11 +6,12 @@ import tempfile
 
 HERE = Path(__file__).resolve().parent
 
-UPSTREAM = ("L_meta_1955", "L_meta_2237", "L_meta_2988", "L_meta_1483", "L_meta_1983", "L_meta_1892", "L_meta_1716")
+UPSTREAM = ("L_meta_1955", "L_meta_2237", "L_meta_2988", "L_meta_1483", "L_meta_1983", "L_meta_1892", "L_meta_1716",
+            "L_meta_1491", "L_meta_1490", "L_meta_1501", "L_meta_1505")
 SOURCES = (
     "IncidenceReadPairs", "LineStarUpper", "lower/PlaneReadOne", "Threshold",
     "lower/UnrestrictedRange", "lower/CleanAnd", "NoNestedGraph", "NoNestedPlane",
-    "Counterexample", "OrPromotion", "BoundaryRows",
+    "Counterexample", "OrPromotion", "lower/UncoveredEdges", "lower/FewUncovered", "BoundaryRows",
     "fano/Fano27", "fano/FanoBounds", "fano/FanoReadOne", "fano/FanoBoundary",
 )
 
