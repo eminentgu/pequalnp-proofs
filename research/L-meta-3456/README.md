@@ -57,3 +57,24 @@ lake env bash -c '
   done
 '
 ```
+
+## All bipartite forests
+
+For every bipartite forest, including disconnected graphs and graphs with isolated vertices, `ForestClean.normalize` constructs a monotone circuit within the gate budget of any fan-in-two circuit computing its edge function. Every AND gate in the result is false on every input with exactly one active vertex. The reference circuit may contain NOT gates. The two sides may have different sizes. `normalize_equal_sides` gives the two singleton conditions in the form requested by L-meta-3456.
+
+The forest lower bound L104 pays for the edges and a smallest vertex cover. The merged L-meta-2874 compiles the cover into stars. On a singleton input, a true wire in the point-side OR network must originate on the point side, and analogously for the line side. An AND combining the two sides therefore has a false operand. This argument gives `normalize_at_cover_cost` for every graph whose reference circuit meets that same budget.
+
+From the `lean` directory of this branch run
+
+```sh
+lake build PEqualNP.MetaComplexity.L104 PEqualNP.Outside.L_meta_2874
+lake env sh -c '
+  set -eu
+  output=$(mktemp -d)
+  export LEAN_PATH="$output:$LEAN_PATH"
+  cd ../research/L-meta-3456
+  for module in OrPathNormalForm PureStarInputs CoverNormalization ForestCoverBudget ForestClean; do
+    lean -j1 -R . -o "$output/$module.olean" "$module.lean"
+  done
+'
+```

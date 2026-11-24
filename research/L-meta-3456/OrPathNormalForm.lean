@@ -75,14 +75,14 @@ private theorem gateRule (gs : List Gate) (w : List Bool) (j : ℕ) (valid : j <
       have eqidx : w.length + (j+1) = (step w g).length + j := by simp [step]; omega
       simpa only [List.foldl_cons, List.getD_cons_succ, eqidx] using r
 
-private theorem inputRule {n : ℕ} (C : Circuit) (k i : Fin n) :
+theorem inputRule {n : ℕ} (C : Circuit) (k i : Fin n) :
     singleWire C k i.val = decide (i = k) := by
   let w := List.ofFn (fun q : Fin n => decide (q = k))
   change (C.gates.foldl step w).getD i.val false = _
   rw [oldRead _ _ _ (by simp [w])]
   simp [w,List.getD_eq_getElem?_getD]
 
-private theorem outRule {n : ℕ} (C : Circuit) (back : ReadsBack n C) (k : Fin n) (j : ℕ)
+theorem outRule {n : ℕ} (C : Circuit) (back : ReadsBack n C) (k : Fin n) (j : ℕ)
     (hj : j < C.gates.length) :
     singleWire C k (n+j) = (gateAt C j).op.eval ((gateAt C j).inputs.map (singleWire C k)) := by
   let w := List.ofFn (fun q : Fin n => decide (q = k))
