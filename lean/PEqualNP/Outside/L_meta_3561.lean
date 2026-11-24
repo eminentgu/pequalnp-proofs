@@ -4878,196 +4878,71 @@ private theorem span_join {p : Nat → Bool} {a i b : Nat}
     exact ⟨ha.1,ih ha.2 (by rw [show i+1+a=i+(a+1) by omega]; exact hb)⟩
 set_option maxRecDepth 20000 in
 set_option maxHeartbeats 0 in
-theorem c0 : span (Hybrid.node table rulesAt) 32 0 = true := by decide +kernel
-set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-theorem c32 : span (Hybrid.node table rulesAt) 32 32 = true := by decide +kernel
-set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-theorem c64 : span (Hybrid.node table rulesAt) 32 64 = true := by decide +kernel
-set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-theorem c96 : span (Hybrid.node table rulesAt) 32 96 = true := by decide +kernel
-set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-theorem c128 : span (Hybrid.node table rulesAt) 32 128 = true := by decide +kernel
-set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-theorem c160 : span (Hybrid.node table rulesAt) 32 160 = true := by decide +kernel
-set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-theorem c192 : span (Hybrid.node table rulesAt) 32 192 = true := by decide +kernel
-set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-theorem c224 : span (Hybrid.node table rulesAt) 32 224 = true := by decide +kernel
-set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-theorem c256 : span (Hybrid.node table rulesAt) 32 256 = true := by decide +kernel
-set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-theorem c288 : span (Hybrid.node table rulesAt) 32 288 = true := by decide +kernel
-set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-theorem c320 : span (Hybrid.node table rulesAt) 32 320 = true := by decide +kernel
-set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-theorem c352 : span (Hybrid.node table rulesAt) 32 352 = true := by decide +kernel
-set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-theorem c384 : span (Hybrid.node table rulesAt) 32 384 = true := by decide +kernel
-set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-theorem c416 : span (Hybrid.node table rulesAt) 32 416 = true := by decide +kernel
-set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-theorem c448 : span (Hybrid.node table rulesAt) 32 448 = true := by decide +kernel
-set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-theorem c480 : span (Hybrid.node table rulesAt) 32 480 = true := by decide +kernel
-set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-theorem c512 : span (Hybrid.node table rulesAt) 32 512 = true := by decide +kernel
-set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-theorem c544 : span (Hybrid.node table rulesAt) 32 544 = true := by decide +kernel
-set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-theorem c576 : span (Hybrid.node table rulesAt) 32 576 = true := by decide +kernel
-set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-theorem c608 : span (Hybrid.node table rulesAt) 32 608 = true := by decide +kernel
-set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-theorem c640 : span (Hybrid.node table rulesAt) 32 640 = true := by decide +kernel
-set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-theorem c672 : span (Hybrid.node table rulesAt) 32 672 = true := by decide +kernel
-set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-theorem c704 : span (Hybrid.node table rulesAt) 32 704 = true := by decide +kernel
-set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-theorem c736 : span (Hybrid.node table rulesAt) 32 736 = true := by decide +kernel
-set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-theorem c768 : span (Hybrid.node table rulesAt) 32 768 = true := by decide +kernel
-set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-theorem c800 : span (Hybrid.node table rulesAt) 32 800 = true := by decide +kernel
-set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-theorem c832 : span (Hybrid.node table rulesAt) 32 832 = true := by decide +kernel
-set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-theorem c864 : span (Hybrid.node table rulesAt) 32 864 = true := by decide +kernel
-set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-theorem c896 : span (Hybrid.node table rulesAt) 32 896 = true := by decide +kernel
-set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-theorem c928 : span (Hybrid.node table rulesAt) 32 928 = true := by decide +kernel
-set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-theorem c960 : span (Hybrid.node table rulesAt) 32 960 = true := by decide +kernel
-set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-theorem c992 : span (Hybrid.node table rulesAt) 32 992 = true := by decide +kernel
-set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-theorem c1024 : span (Hybrid.node table rulesAt) 32 1024 = true := by decide +kernel
-set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-theorem c1056 : span (Hybrid.node table rulesAt) 32 1056 = true := by decide +kernel
-set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-theorem c1088 : span (Hybrid.node table rulesAt) 32 1088 = true := by decide +kernel
-set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-theorem c1120 : span (Hybrid.node table rulesAt) 32 1120 = true := by decide +kernel
-set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-theorem c1152 : span (Hybrid.node table rulesAt) 32 1152 = true := by decide +kernel
-set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-theorem c1184 : span (Hybrid.node table rulesAt) 32 1184 = true := by decide +kernel
-set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-theorem c1216 : span (Hybrid.node table rulesAt) 32 1216 = true := by decide +kernel
-set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-theorem c1248 : span (Hybrid.node table rulesAt) 32 1248 = true := by decide +kernel
-set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-theorem c1280 : span (Hybrid.node table rulesAt) 32 1280 = true := by decide +kernel
-set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-theorem c1312 : span (Hybrid.node table rulesAt) 32 1312 = true := by decide +kernel
-set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-theorem c1344 : span (Hybrid.node table rulesAt) 32 1344 = true := by decide +kernel
-set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-theorem c1376 : span (Hybrid.node table rulesAt) 32 1376 = true := by decide +kernel
-set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-theorem c1408 : span (Hybrid.node table rulesAt) 32 1408 = true := by decide +kernel
-set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-theorem c1440 : span (Hybrid.node table rulesAt) 32 1440 = true := by decide +kernel
-set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-theorem c1472 : span (Hybrid.node table rulesAt) 32 1472 = true := by decide +kernel
-set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-theorem c1504 : span (Hybrid.node table rulesAt) 32 1504 = true := by decide +kernel
-set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-theorem c1536 : span (Hybrid.node table rulesAt) 32 1536 = true := by decide +kernel
-set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-theorem c1568 : span (Hybrid.node table rulesAt) 32 1568 = true := by decide +kernel
-set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-theorem c1600 : span (Hybrid.node table rulesAt) 32 1600 = true := by decide +kernel
-set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-theorem c1632 : span (Hybrid.node table rulesAt) 32 1632 = true := by decide +kernel
-set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-theorem c1664 : span (Hybrid.node table rulesAt) 32 1664 = true := by decide +kernel
-set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-theorem c1696 : span (Hybrid.node table rulesAt) 32 1696 = true := by decide +kernel
-set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-theorem c1728 : span (Hybrid.node table rulesAt) 32 1728 = true := by decide +kernel
-set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-theorem c1760 : span (Hybrid.node table rulesAt) 32 1760 = true := by decide +kernel
-set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-theorem c1792 : span (Hybrid.node table rulesAt) 32 1792 = true := by decide +kernel
-set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-theorem c1824 : span (Hybrid.node table rulesAt) 32 1824 = true := by decide +kernel
-set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-theorem c1856 : span (Hybrid.node table rulesAt) 32 1856 = true := by decide +kernel
-set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-theorem c1888 : span (Hybrid.node table rulesAt) 32 1888 = true := by decide +kernel
-set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-theorem c1920 : span (Hybrid.node table rulesAt) 32 1920 = true := by decide +kernel
-set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-theorem c1952 : span (Hybrid.node table rulesAt) 32 1952 = true := by decide +kernel
-set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-theorem c1984 : span (Hybrid.node table rulesAt) 18 1984 = true := by decide +kernel
-set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-private theorem cover : span (Hybrid.node table rulesAt) 2002 0 = true := (span_join (span_join (span_join (span_join (span_join (span_join c0 c32) (span_join c64 c96)) (span_join (span_join c128 c160) (span_join c192 c224))) (span_join (span_join (span_join c256 c288) (span_join c320 c352)) (span_join (span_join c384 c416) (span_join c448 c480)))) (span_join (span_join (span_join (span_join c512 c544) (span_join c576 c608)) (span_join (span_join c640 c672) (span_join c704 c736))) (span_join (span_join (span_join c768 c800) (span_join c832 c864)) (span_join (span_join c896 c928) (span_join c960 c992))))) (span_join (span_join (span_join (span_join (span_join c1024 c1056) (span_join c1088 c1120)) (span_join (span_join c1152 c1184) (span_join c1216 c1248))) (span_join (span_join (span_join c1280 c1312) (span_join c1344 c1376)) (span_join (span_join c1408 c1440) (span_join c1472 c1504)))) (span_join (span_join (span_join (span_join c1536 c1568) (span_join c1600 c1632)) (span_join (span_join c1664 c1696) (span_join c1728 c1760))) (span_join (span_join (span_join c1792 c1824) (span_join c1856 c1888)) (span_join (span_join c1920 c1952) c1984)))))
+private theorem cover : span (Hybrid.node table rulesAt) 2002 0 = true := by
+  have c0 : span (Hybrid.node table rulesAt) 32 0 = true := by decide +kernel
+  have c32 : span (Hybrid.node table rulesAt) 32 32 = true := by decide +kernel
+  have c64 : span (Hybrid.node table rulesAt) 32 64 = true := by decide +kernel
+  have c96 : span (Hybrid.node table rulesAt) 32 96 = true := by decide +kernel
+  have c128 : span (Hybrid.node table rulesAt) 32 128 = true := by decide +kernel
+  have c160 : span (Hybrid.node table rulesAt) 32 160 = true := by decide +kernel
+  have c192 : span (Hybrid.node table rulesAt) 32 192 = true := by decide +kernel
+  have c224 : span (Hybrid.node table rulesAt) 32 224 = true := by decide +kernel
+  have c256 : span (Hybrid.node table rulesAt) 32 256 = true := by decide +kernel
+  have c288 : span (Hybrid.node table rulesAt) 32 288 = true := by decide +kernel
+  have c320 : span (Hybrid.node table rulesAt) 32 320 = true := by decide +kernel
+  have c352 : span (Hybrid.node table rulesAt) 32 352 = true := by decide +kernel
+  have c384 : span (Hybrid.node table rulesAt) 32 384 = true := by decide +kernel
+  have c416 : span (Hybrid.node table rulesAt) 32 416 = true := by decide +kernel
+  have c448 : span (Hybrid.node table rulesAt) 32 448 = true := by decide +kernel
+  have c480 : span (Hybrid.node table rulesAt) 32 480 = true := by decide +kernel
+  have c512 : span (Hybrid.node table rulesAt) 32 512 = true := by decide +kernel
+  have c544 : span (Hybrid.node table rulesAt) 32 544 = true := by decide +kernel
+  have c576 : span (Hybrid.node table rulesAt) 32 576 = true := by decide +kernel
+  have c608 : span (Hybrid.node table rulesAt) 32 608 = true := by decide +kernel
+  have c640 : span (Hybrid.node table rulesAt) 32 640 = true := by decide +kernel
+  have c672 : span (Hybrid.node table rulesAt) 32 672 = true := by decide +kernel
+  have c704 : span (Hybrid.node table rulesAt) 32 704 = true := by decide +kernel
+  have c736 : span (Hybrid.node table rulesAt) 32 736 = true := by decide +kernel
+  have c768 : span (Hybrid.node table rulesAt) 32 768 = true := by decide +kernel
+  have c800 : span (Hybrid.node table rulesAt) 32 800 = true := by decide +kernel
+  have c832 : span (Hybrid.node table rulesAt) 32 832 = true := by decide +kernel
+  have c864 : span (Hybrid.node table rulesAt) 32 864 = true := by decide +kernel
+  have c896 : span (Hybrid.node table rulesAt) 32 896 = true := by decide +kernel
+  have c928 : span (Hybrid.node table rulesAt) 32 928 = true := by decide +kernel
+  have c960 : span (Hybrid.node table rulesAt) 32 960 = true := by decide +kernel
+  have c992 : span (Hybrid.node table rulesAt) 32 992 = true := by decide +kernel
+  have c1024 : span (Hybrid.node table rulesAt) 32 1024 = true := by decide +kernel
+  have c1056 : span (Hybrid.node table rulesAt) 32 1056 = true := by decide +kernel
+  have c1088 : span (Hybrid.node table rulesAt) 32 1088 = true := by decide +kernel
+  have c1120 : span (Hybrid.node table rulesAt) 32 1120 = true := by decide +kernel
+  have c1152 : span (Hybrid.node table rulesAt) 32 1152 = true := by decide +kernel
+  have c1184 : span (Hybrid.node table rulesAt) 32 1184 = true := by decide +kernel
+  have c1216 : span (Hybrid.node table rulesAt) 32 1216 = true := by decide +kernel
+  have c1248 : span (Hybrid.node table rulesAt) 32 1248 = true := by decide +kernel
+  have c1280 : span (Hybrid.node table rulesAt) 32 1280 = true := by decide +kernel
+  have c1312 : span (Hybrid.node table rulesAt) 32 1312 = true := by decide +kernel
+  have c1344 : span (Hybrid.node table rulesAt) 32 1344 = true := by decide +kernel
+  have c1376 : span (Hybrid.node table rulesAt) 32 1376 = true := by decide +kernel
+  have c1408 : span (Hybrid.node table rulesAt) 32 1408 = true := by decide +kernel
+  have c1440 : span (Hybrid.node table rulesAt) 32 1440 = true := by decide +kernel
+  have c1472 : span (Hybrid.node table rulesAt) 32 1472 = true := by decide +kernel
+  have c1504 : span (Hybrid.node table rulesAt) 32 1504 = true := by decide +kernel
+  have c1536 : span (Hybrid.node table rulesAt) 32 1536 = true := by decide +kernel
+  have c1568 : span (Hybrid.node table rulesAt) 32 1568 = true := by decide +kernel
+  have c1600 : span (Hybrid.node table rulesAt) 32 1600 = true := by decide +kernel
+  have c1632 : span (Hybrid.node table rulesAt) 32 1632 = true := by decide +kernel
+  have c1664 : span (Hybrid.node table rulesAt) 32 1664 = true := by decide +kernel
+  have c1696 : span (Hybrid.node table rulesAt) 32 1696 = true := by decide +kernel
+  have c1728 : span (Hybrid.node table rulesAt) 32 1728 = true := by decide +kernel
+  have c1760 : span (Hybrid.node table rulesAt) 32 1760 = true := by decide +kernel
+  have c1792 : span (Hybrid.node table rulesAt) 32 1792 = true := by decide +kernel
+  have c1824 : span (Hybrid.node table rulesAt) 32 1824 = true := by decide +kernel
+  have c1856 : span (Hybrid.node table rulesAt) 32 1856 = true := by decide +kernel
+  have c1888 : span (Hybrid.node table rulesAt) 32 1888 = true := by decide +kernel
+  have c1920 : span (Hybrid.node table rulesAt) 32 1920 = true := by decide +kernel
+  have c1952 : span (Hybrid.node table rulesAt) 32 1952 = true := by decide +kernel
+  have c1984 : span (Hybrid.node table rulesAt) 18 1984 = true := by decide +kernel
+  exact (span_join (a := 1024) (i := 0) (b := 978) (span_join (a := 512) (i := 0) (b := 512) (span_join (a := 256) (i := 0) (b := 256) (span_join (a := 128) (i := 0) (b := 128) (span_join (a := 64) (i := 0) (b := 64) (span_join (a := 32) (i := 0) (b := 32) c0 c32) (span_join (a := 32) (i := 64) (b := 32) c64 c96)) (span_join (a := 64) (i := 128) (b := 64) (span_join (a := 32) (i := 128) (b := 32) c128 c160) (span_join (a := 32) (i := 192) (b := 32) c192 c224))) (span_join (a := 128) (i := 256) (b := 128) (span_join (a := 64) (i := 256) (b := 64) (span_join (a := 32) (i := 256) (b := 32) c256 c288) (span_join (a := 32) (i := 320) (b := 32) c320 c352)) (span_join (a := 64) (i := 384) (b := 64) (span_join (a := 32) (i := 384) (b := 32) c384 c416) (span_join (a := 32) (i := 448) (b := 32) c448 c480)))) (span_join (a := 256) (i := 512) (b := 256) (span_join (a := 128) (i := 512) (b := 128) (span_join (a := 64) (i := 512) (b := 64) (span_join (a := 32) (i := 512) (b := 32) c512 c544) (span_join (a := 32) (i := 576) (b := 32) c576 c608)) (span_join (a := 64) (i := 640) (b := 64) (span_join (a := 32) (i := 640) (b := 32) c640 c672) (span_join (a := 32) (i := 704) (b := 32) c704 c736))) (span_join (a := 128) (i := 768) (b := 128) (span_join (a := 64) (i := 768) (b := 64) (span_join (a := 32) (i := 768) (b := 32) c768 c800) (span_join (a := 32) (i := 832) (b := 32) c832 c864)) (span_join (a := 64) (i := 896) (b := 64) (span_join (a := 32) (i := 896) (b := 32) c896 c928) (span_join (a := 32) (i := 960) (b := 32) c960 c992))))) (span_join (a := 512) (i := 1024) (b := 466) (span_join (a := 256) (i := 1024) (b := 256) (span_join (a := 128) (i := 1024) (b := 128) (span_join (a := 64) (i := 1024) (b := 64) (span_join (a := 32) (i := 1024) (b := 32) c1024 c1056) (span_join (a := 32) (i := 1088) (b := 32) c1088 c1120)) (span_join (a := 64) (i := 1152) (b := 64) (span_join (a := 32) (i := 1152) (b := 32) c1152 c1184) (span_join (a := 32) (i := 1216) (b := 32) c1216 c1248))) (span_join (a := 128) (i := 1280) (b := 128) (span_join (a := 64) (i := 1280) (b := 64) (span_join (a := 32) (i := 1280) (b := 32) c1280 c1312) (span_join (a := 32) (i := 1344) (b := 32) c1344 c1376)) (span_join (a := 64) (i := 1408) (b := 64) (span_join (a := 32) (i := 1408) (b := 32) c1408 c1440) (span_join (a := 32) (i := 1472) (b := 32) c1472 c1504)))) (span_join (a := 256) (i := 1536) (b := 210) (span_join (a := 128) (i := 1536) (b := 128) (span_join (a := 64) (i := 1536) (b := 64) (span_join (a := 32) (i := 1536) (b := 32) c1536 c1568) (span_join (a := 32) (i := 1600) (b := 32) c1600 c1632)) (span_join (a := 64) (i := 1664) (b := 64) (span_join (a := 32) (i := 1664) (b := 32) c1664 c1696) (span_join (a := 32) (i := 1728) (b := 32) c1728 c1760))) (span_join (a := 128) (i := 1792) (b := 82) (span_join (a := 64) (i := 1792) (b := 64) (span_join (a := 32) (i := 1792) (b := 32) c1792 c1824) (span_join (a := 32) (i := 1856) (b := 32) c1856 c1888)) (span_join (a := 64) (i := 1920) (b := 18) (span_join (a := 32) (i := 1920) (b := 32) c1920 c1952) c1984)))))
 set_option maxRecDepth 20000 in
 set_option maxHeartbeats 0 in
 theorem allOK (i : Nat) (hi : i < 2002) : Hybrid.node table rulesAt i = true := span_ok cover i (Nat.zero_le _) hi
