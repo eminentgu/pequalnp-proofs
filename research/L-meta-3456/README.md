@@ -39,4 +39,21 @@ The driver independently compares its decision routine against forward circuit e
 - `FormulaCircuit.lean` proves that if a binary monotone formula computes the same function using at most as many gates as the given circuit, the required singleton-clean project circuit exists. It compiles the normalized formula to the project's circuit representation with the same gate count. The final theorem specializes the result to incidence functions.
 - `OrPathNormalForm.lean` characterizes singleton-clean AND gates by the absence of a common input reaching all operands through OR gates. It proves the incidence conclusion when each violating AND has an operand equal to that AND on every assignment. It also propagates constants and proves a second rewrite when the uses of the AND force the discarded operand. The final theorem describes the surviving obstruction: all four operand patterns occur, and for either choice of discarded operand there is a downstream use where the rewrite cannot apply.
 
-Run either file from the project's `lean` directory using `lake env lean ../research/L-meta-3456/FormulaCircuit.lean` or `lake env lean ../research/L-meta-3456/OrPathNormalForm.lean`. The question for arbitrary circuits that reuse intermediate gates remains open in this branch.
+- `FormulaCone.lean` allows the formula to read intermediate wires of a shared clean prefix. Its sufficient condition requires each original singleton to activate at most one exposed port. `PathObstruction.lean` gives a five-vertex example in which two ports activate together and a separate five-gate clean circuit still exists.
+- `StarForest.lean` proves the incidence conclusion for every vertex-disjoint union of stars, including the empty graph, regardless of the size or sharing in the input circuit. `DegreeOne.lean` covers every relation where each right vertex has at most one neighbor. `Support.lean` and `ReadOnce.lean` supply the optimality argument, using the project's checked L-meta-1660.
+
+The following commands reproduce the Lean checks from the checkout's `lean` directory. They put generated modules in a temporary directory. The general C4-free case with shared gates remains open here.
+
+```sh
+lake build PEqualNP.Outside.L_meta_1660
+lake env bash -c '
+  set -eu
+  sources=$(cd ../research/L-meta-3456 && pwd)
+  output=$(mktemp -d)
+  export LEAN_PATH="$output:$LEAN_PATH"
+  cd "$sources"
+  for module in FormulaCircuit FormulaCone PathObstruction OrPathNormalForm Support ReadOnce StarForest DegreeOne; do
+    lean -j1 -R . -o "$output/$module.olean" "$module.lean"
+  done
+'
+```
