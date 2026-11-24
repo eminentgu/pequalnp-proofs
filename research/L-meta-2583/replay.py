@@ -11,7 +11,7 @@ UPSTREAM = ("L_meta_1955", "L_meta_2237", "L_meta_2988", "L_meta_1483", "L_meta_
 SOURCES = (
     "IncidenceReadPairs", "LineStarUpper", "lower/PlaneReadOne", "Threshold",
     "lower/UnrestrictedRange", "lower/CleanAnd", "NoNestedGraph", "NoNestedPlane",
-    "Counterexample", "OrPromotion", "lower/UncoveredEdges", "lower/FewUncovered", "BoundaryRows",
+    "Counterexample", "OrPromotion", "lower/UncoveredEdges", "lower/FewUncovered", "lower/DirtyPath", "BoundaryRows",
     "fano/Fano27", "fano/FanoBounds", "fano/FanoReadOne", "fano/FanoBoundary",
 )
 

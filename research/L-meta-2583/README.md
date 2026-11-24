@@ -17,6 +17,8 @@ For every plane order and labeling, the replacement claim holds when the output 
 
 Every counterexample would also admit a minimum-size circuit in the project’s TopForm normal form with at least three distinct incidence edges missed by all of the top stars. The proof accounts for the edges outside the stars, the remaining vertex cover, and the gates that mix these components. [Quantitative bound](lower/UncoveredEdges.lean), [two-edge case and minimum counterexample](lower/FewUncovered.lean).
 
+For $q\ge3$, a below-threshold minimum TopForm with exactly three missed edges must have one common internal AND and one common OR outside the designated counting set on paths accounting for all three edges. The proof leaves open whether this configuration can occur. [Three-edge case](lower/DirtyPath.lean).
+
 A size-preserving operation from the desk sketch is implemented for an OR gate reading an earlier wire. Reconnecting the other operand and adding the saved wire as a final OR preserves the function exactly when that wire implies the original output on every assignment. [OR promotion](OrPromotion.lean).
 
 The upper bound ORs the $q+1$ points on each line, ANDs that term with the line variable, and ORs the $N$ results. Each incident pair has a joint witness in the compiled circuit. For the sharp lower bound on read-1 circuits, we use the existing C4-free cover theorem L-meta-2237 and the projective-plane counting results L-meta-1955. The separate unrestricted estimate uses L-meta-2988.
