@@ -41,7 +41,7 @@ theorem checkedPinTwo : let f := fun x : Fin 9 → Bool => ([1,11,21,31,36,5,15,
     · apply pin_two_13 k h0 h4 C fan size hasNot
       intro x
       have ordinary : ¬(k = 0 ∨ k = 4) := fun h => h.elim h0 h4
-      simpa only [bank, if_neg ordinary] using normalized x
+      simpa only [bank, ite_eq_right ordinary] using normalized x
   exact ⟨D,fanD,charged,fun x => (computed x).trans (thetaEq x).symm⟩
 
 end Triple2836

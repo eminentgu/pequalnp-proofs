@@ -36,7 +36,7 @@ def main():
         env = environ.copy()
         env["LEAN_NUM_THREADS"] = "1"
         env["LEAN_PATH"] = str(build) + pathsep + env.get("LEAN_PATH", "")
-        for file in (old, HERE.parent / "Restrictions.lean", HERE / "PinOne.lean", HERE / "PinTwo.lean", HERE / "PairPins.lean", HERE / "CheckedPinTwo.lean"):
+        for file in (old, HERE.parent / "Restrictions.lean", HERE / "PinOne.lean", HERE / "PinTwo.lean", HERE / "PairPins.lean", HERE / "CheckedPinTwo.lean", HERE / "CheckedPinTwoCtor.lean"):
             if file == old:
                 directory = build
                 relative = UPSTREAM
