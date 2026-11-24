@@ -40,7 +40,7 @@ def swap(value, distance, mask):
 
 
 def solve(positive, negative, budget=10, rectangles=True, symmetry=True, cap=0, quiet=False,
-          swap_masks=None, on_expand=None):
+          swap_masks=None, on_expand=None, coverage_only=False):
     assert set(positive) <= set(theta.POS) and set(negative) <= set(theta.NEG)
     assert all(any((row ^ (1 << i)) in negative for row in positive) for i in range(7))
     domain = positive + negative
@@ -149,7 +149,7 @@ def solve(positive, negative, budget=10, rectangles=True, symmetry=True, cap=0, 
             union |= cells
         if union != full_grid:
             return False
-        if not slack and tight_conflict(coverage,one):
+        if not slack and not coverage_only and tight_conflict(coverage,one):
             tight += 1
             return False
         expanded[remaining] += 1
@@ -196,6 +196,8 @@ if __name__ == "__main__":
     cli.add_argument("--budget",type=int,default=10)
     cli.add_argument("--no-crossings",action="store_true")
     cli.add_argument("--no-symmetry",action="store_true")
+    cli.add_argument("--coverage-only",action="store_true")
     args = cli.parse_args()
     for name in args.banks:
-        solve(*rows(name),args.budget,not args.no_crossings,not args.no_symmetry)
+        solve(*rows(name),args.budget,not args.no_crossings,not args.no_symmetry,
+              coverage_only=args.coverage_only)
