@@ -8,6 +8,8 @@ Run the following command from this directory with Python 3.10 or newer. The fol
 python3 replay.py
 ```
 
+The additional command `python3 certificate/check.py` checks the supplied finite closure table by inspecting each listed state and every successor. It independently rejects the ten-gate budget. The table format and induction argument are in `certificate/README.md`.
+
 The replay regenerates the JSON bank, verifies that all seven input variables are essential on the selected rows, checks all bit permutations, runs the exhaustive search, and verifies the eleven-gate upper bound. It visits 23,484 distinct states. Of these, 1,616 need expansion and 21,868 are excluded immediately at a tight gate budget. The counts of expanded states at remaining budgets 5 through 10 are 4, 189, 836, 558, 28 and 1. This certificate is checked by Python. The Lean pinning theorems in the adjacent directory address the reduction to this graph.
 
 ## Reading the bank

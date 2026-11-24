@@ -40,7 +40,7 @@ def swap(value, distance, mask):
 
 
 def solve(positive, negative, budget=10, rectangles=True, symmetry=True, cap=0, quiet=False,
-          swap_masks=None):
+          swap_masks=None, on_expand=None):
     assert set(positive) <= set(theta.POS) and set(negative) <= set(theta.NEG)
     assert all(any((row ^ (1 << i)) in negative for row in positive) for i in range(7))
     domain = positive + negative
@@ -153,6 +153,8 @@ def solve(positive, negative, budget=10, rectangles=True, symmetry=True, cap=0, 
             tight += 1
             return False
         expanded[remaining] += 1
+        if on_expand is not None:
+            on_expand(remaining,state)
         for i,j in combinations(range(len(state)),2):
             a,b = state[i],state[j]
             left,right = coverage[i][0],coverage[j][0]
