@@ -38,3 +38,10 @@ uv run --no-project --with python-sat==1.9.dev25 python research/L-meta-2583/fan
 ```
 
 The 27-gate positive control passed exhaustive evaluation and the one-gate negative control was UNSAT. All six first-gate classes returned UNKNOWN with a budget of 100,000 solver conflicts per class at 26 gates. The 20–26 gate interval remains open.
+
+For a separate local search, we deleted one gate of the explicit 27-gate point-star circuit, redirected it to any earlier wire, and replaced one other gate by an arbitrary legal AND or OR of any two surviving earlier wires (which may coincide). Trying all 14,878,890 parameter choices gave no match on the 58 boundary rows. This exhausts that neighborhood of the specified circuit. [Enumeration source](fano/star_neighborhood.cpp).
+
+```sh
+c++ -std=c++17 -O3 research/L-meta-2583/fano/star_neighborhood.cpp -o /tmp/fano-star-neighborhood
+/tmp/fano-star-neighborhood
+```
