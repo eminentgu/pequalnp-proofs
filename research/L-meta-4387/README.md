@@ -12,3 +12,7 @@ lake env lean ../research/L-meta-4387/Normalize.lean
 ```
 
 Lean reports only `propext`, `Classical.choice`, and `Quot.sound` for `PEqualNP.Research4387.normalizeChain`. The finite lower bound is open here.
+
+The packed-column compiler also constructs an actual 14-input circuit whose first gate is OR of inputs 0 and 1. Any successful 25-operation chain yields a circuit of at most 26 gates computing the Heawood incidence function on all 16,384 inputs. It contains nested AND gates, and at least one AND accepts a two-vertex assignment the output rejects. See [PhysicalHeawood.lean](PhysicalHeawood.lean) and the [four supporting files from the plane investigation](https://github.com/eminentgu/pequalnp-proofs/tree/c8b745f/research/L-meta-2583). The prerequisites are included in this branch.
+
+The finite [SAT search](search.py) uses the desk's 15 nonconstant masks directly and rechecks each returned trace using integer bit operations. A 26-operation line-star circuit gives a positive control. The normalizer justifies omitting the two constant seeds. A shorter trace can be padded at its output by AND or OR with itself.
