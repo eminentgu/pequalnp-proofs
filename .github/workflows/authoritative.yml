@@ -136,7 +136,7 @@ jobs:
           set -eu
           exec > >(tee -a "$RUNNER_TEMP/steps.log") 2>&1   # kept for the verdict step
           # The statement comes from the desk's public list, never from the pull request.
-          curl -sSf --proto '=https' --max-redirs 0 --max-filesize 5000000 -o "$W/in/gaps.json" "$GAPS_URL"
+          curl -sSf --proto '=https' --max-redirs 0 --max-filesize 20000000 -o "$W/in/gaps.json" "$GAPS_URL"
           # The run's kind goes to the guard, which refuses it unless the desk's row agrees: check or
           # refute as the desk posts the step; reduce only for an R_<gap>_<n> file of a step posted to be
           # proved whose row carries reductions: true (DARK: absent, every reduction run is refused).
