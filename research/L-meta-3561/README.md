@@ -7,3 +7,23 @@ L-meta-3561 gives a circuit eleven input positions. Position four is fixed to ze
 The proof reuses the live-signal extraction and paired assignments from the project's public Petersen certificates. The `necessarySignals` lemma checks, for each input signal, that a positive and a negative example become indistinguishable when the signal is omitted. `bankTarget` verifies the encoding against the original circuit semantics. The final result is `extractedBank`.
 
 Run `lake env lean ../research/L-meta-3561/EncodedBank.lean` from the project's `lean` directory to check the proof.
+
+## Checking the five cases
+
+`SearchCore.lean` proves that exclusion of all five roots implies the required circuit lower bound. Its search and soundness proof are adapted from the public Petersen checker. `CheckRoots.lean` executes the search using Lean's interpreter. A computational result from this command still needs a kernel certificate for the upstream submission.
+
+From the checkout's `lean` directory run
+
+```sh
+lake env bash -c '
+  set -eu
+  sources=$(cd ../research/L-meta-3561 && pwd)
+  output=$(mktemp -d)
+  export LEAN_PATH="$output:$LEAN_PATH"
+  cd "$sources"
+  for module in EncodedBank SearchCore; do
+    lean -j1 -R . -o "$output/$module.olean" "$module.lean"
+  done
+  lean -j1 --run CheckRoots.lean
+'
+```
