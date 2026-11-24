@@ -31,7 +31,7 @@ private theorem cross_ne (p l : Fin N) : Fin.castAdd N p ≠ Fin.natAdd N l := b
   change p.val = N + l.val at eq
   omega
 
-private theorem noFour
+theorem noFour
     (unique : ∀ p p' : Fin N, p ≠ p' → ∃! l, I p l ∧ I p' l) : NoFourCycle (graph I) := by
   have line (a b u v : Fin N) (ne : a ≠ b) (hu : I a u ∧ I b u) (hv : I a v ∧ I b v) :
       u = v := (unique a b ne).unique hu hv
@@ -53,7 +53,7 @@ private theorem noFour
     | exact line _ _ _ _ (fun h => hab (congrArg _ h)) ⟨hu₁,hu₂⟩ ⟨hv₁,hv₂⟩
     | exact point _ _ _ _ (fun h => hab (congrArg _ h)) ⟨hu₁,hu₂⟩ ⟨hv₁,hv₂⟩
 
-private theorem graph_eval (z : Fin (N+N) → Bool) :
+theorem graph_eval (z : Fin (N+N) → Bool) :
     (∃ u v, (graph I).Adj u v ∧ z u = true ∧ z v = true) ↔
     ∃ p l, I p l ∧ z (Fin.castAdd N p) = true ∧ z (Fin.natAdd N l) = true := by
   constructor
@@ -75,7 +75,7 @@ private theorem encode_inj : Function.Injective (@encode N) := by
     congr
   · exact (cross_ne _ _ h.1).elim
 
-private theorem edges [DecidableRel I] (q : ℕ)
+theorem edges [DecidableRel I] (q : ℕ)
     (degree : ∀ l, (Finset.univ.filter fun p => I p l).card = q+1) :
     N*(q+1) ≤ (graph I).edgeFinset.card := by
   classical
@@ -94,7 +94,7 @@ private theorem edges [DecidableRel I] (q : ℕ)
   rw [← count, ← Finset.card_image_of_injective pairs encode_inj]
   exact Finset.card_le_card sub
 
-private theorem cover (q : ℕ) [DecidableRel I]
+theorem cover (q : ℕ) [DecidableRel I]
     (lines : ∀ l, (Finset.univ.filter fun p => I p l).card = q+1)
     (points : ∀ p, (Finset.univ.filter fun l => I p l).card = q+1)
     (T : Finset (Fin (N+N))) (hits : ∀ u v, (graph I).Adj u v → u ∈ T ∨ v ∈ T) :
@@ -130,6 +130,23 @@ private theorem cover (q : ℕ) [DecidableRel I]
     Finset.card_image_of_injective _ natInj] at size
   omega
 
+/-- Supply the edge-cover inequality from a circuit argument, and the exact
+    plane count completes the lower bound. -/
+theorem ofCoverBound (q : ℕ) [DecidableRel I] (C : Circuit) (hq : 2 ≤ q)
+    (order : N = q^2+q+1)
+    (lines : ∀ l, (Finset.univ.filter fun p => I p l).card = q+1)
+    (unique : ∀ p p' : Fin N, p ≠ p' → ∃! l, I p l ∧ I p' l)
+    (bound : ∃ T : Finset (Fin (N+N)),
+      (∀ u v, (graph I).Adj u v → u ∈ T ∨ v ∈ T) ∧
+      (graph I).edgeFinset.card + T.card ≤ C.size+1) : N*(q+2) ≤ C.size+1 := by
+  obtain ⟨T,hits,lim⟩ := bound
+  have points := PEqualNP.Outside.L_meta_1955.lines_through q N I hq order lines unique
+  have hT := cover I q lines points T hits
+  have hE := edges I q lines
+  calc
+    N*(q+2) = N*(q+1)+N := by ring
+    _ ≤ _ := by omega
+
 /-- In the plane axioms used by L-meta-2583, any read-1 realization already
     needs one gate per incidence plus one per point, except for the output offset. -/
 theorem sharp (q : ℕ) [DecidableRel I] (C : Circuit) (hq : 2 ≤ q)
@@ -140,16 +157,11 @@ theorem sharp (q : ℕ) [DecidableRel I] (C : Circuit) (hq : 2 ≤ q)
     (evaluates : ∀ z : Fin (N+N) → Bool, circuitFun (N+N) C z =
       decide (∃ p l, I p l ∧ z (Fin.castAdd N p) = true ∧ z (Fin.natAdd N l) = true))
     (reads : IsReadK (N+N) C 1) : N*(q+2) ≤ C.size+1 := by
-  classical
-  have points := PEqualNP.Outside.L_meta_1955.lines_through q N I hq order lines unique
-  have L := PEqualNP.Outside.L_meta_2237 (N+N) (graph I) C (noFour I unique) ao
-    (fun z => by rw [evaluates]; exact decide_eq_decide.mpr (graph_eval I z).symm) reads
-  obtain ⟨T,hits,bound⟩ := L
-  have hT := cover I q lines points T hits
-  have hE := edges I q lines
-  calc
-    N*(q+2) = N*(q+1)+N := by ring
-    _ ≤ _ := by omega
+  apply ofCoverBound I q C hq order lines unique
+  apply PEqualNP.Outside.L_meta_2237 (N+N) (graph I) C (noFour I unique) ao _ reads
+  intro z
+  rw [evaluates]
+  exact decide_eq_decide.mpr (graph_eval I z).symm
 
 /-- For a fixed input circuit, any size-preserving replacement forces the
     exact star threshold. The original circuit can have arbitrary reads. -/
