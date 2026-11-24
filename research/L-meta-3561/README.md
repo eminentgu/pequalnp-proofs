@@ -53,3 +53,11 @@ done
 `BulkKW.lean` proves `BulkKW.excludes_sound`. A saturated trace must assign a distinguishing wire to each positive–negative sample pair. All pairs assigned to one wire form a rectangle. Four pairs can force two different wire labels onto the same intersection. The checker tests many such configurations at once by putting their differences in bit masks and accumulating the masks over the wires.
 
 After compiling `VerifiedCore` as above, run `lean -j1 -R . BulkKW.lean` from the research directory with that output directory in `LEAN_PATH`.
+
+## Restricting the fourth-index input to zero
+
+`MacroDominance.lean` proves a substitution rule for a monotone suffix. A replacement signal may cover every required positive success and introduce no failure on the selected negative assignments. `ExtremalFirst.lean` uses the merged L-meta-2913 lower bound to exclude 27 different first AND gates. The list includes 18 pairs of raw inputs and 9 pairs that use one of the two encoded OR inputs. The theorem permits any subset of the old signals to be discarded.
+
+`PortableMacro.lean` proves a related rule on the original input bank. If a monotone prefix can be shortened while preserving the needed positive and negative assignments, it suffices to exclude a circuit on the original bank with at most 12 gates.
+
+To check the first two files, build PEqualNP.Outside.L_meta_2913, then compile `MacroDominance` and `ExtremalFirst` in that order. `PortableMacro` uses `EncodedBank`.
