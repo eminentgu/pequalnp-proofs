@@ -27,9 +27,9 @@ private theorem initial : Real raw base [firstGate] := by
       ((63038587666488 : Col).getLsbD k || false)] = row k raw ++ [(95274182876594239 : Col).getLsbD k]
   rw [key,BitVec.getLsbD_or,Bool.or_false]
 
-private theorem isPhysical {xs : List Col} (length : xs.length ≤ 25)
+theorem isPhysicalWithSize {xs : List Col}
     (chain : Chain seeds xs) (hit : target ∈ seeds++xs) :
-    ∃ C : Circuit, IsAO2 14 C ∧ C.gates.head? = some firstGate ∧ C.size ≤ 26 ∧
+    ∃ C : Circuit, IsAO2 14 C ∧ C.gates.head? = some firstGate ∧ C.size ≤ xs.length + 1 ∧
       ∀ k : ℕ, C.eval (row k raw) = target.getLsbD k := by
   obtain ⟨ys,budget,last,normal⟩ := PEqualNP.Research4387.normalizeChain base xs target
     chain hit (by decide) (by decide) (by decide)
@@ -42,7 +42,7 @@ private theorem isPhysical {xs : List Col} (length : xs.length ≤ 25)
     have hr : raw.length = 14 := rfl
     have hb : base.length = 15 := rfl
     rw [hr,List.length_append,hb] at h
-    change gs.length ≤ 26
+    change gs.length ≤ xs.length + 1
     omega
   · intro k
     change ((Circuit.mk gs 0).wires (row k raw)).getD idx.val false = _
@@ -81,7 +81,8 @@ theorem physicalCounterexample (xs : List Col) (length : xs.length ≤ 25)
       ∃ k, k < C.size ∧ (gateAt C k).op = .and ∧
         ∃ u v : Fin 14, gateVal 14 C k (pairInput u v) = true ∧
           C.eval (List.ofFn (pairInput u v)) = false := by
-  obtain ⟨C,ao,first,size,table⟩ := isPhysical length chain hit
+  obtain ⟨C,ao,first,limit,table⟩ := isPhysicalWithSize chain hit
+  have size : C.size ≤ 26 := by omega
   have computes := isComputing ao table
   have nested : Fano.Nested C := by
     by_contra h
@@ -91,6 +92,15 @@ theorem physicalCounterexample (xs : List Col) (length : xs.length ≤ 25)
     Fano.plane_axioms.1 Fano.plane_axioms.2 ao computes (by omega)
   obtain ⟨k,hk,op,u,v,_,gate,output⟩ := dirty
   exact ⟨C,ao,first,size,computes,nested,k,hk,op,u,v,gate,output⟩
+
+/-- A target-reaching program needs at least 19 operations in addition to the supplied OR. -/
+theorem atLeastNineteen (xs : List Col) (chain : Chain seeds xs) (hit : target ∈ seeds++xs) :
+    19 ≤ xs.length := by
+  obtain ⟨C,ao,_,size,table⟩ := isPhysicalWithSize chain hit
+  have lower := Fano.twenty ao (isComputing ao table)
+  omega
+
+#print axioms atLeastNineteen
 
 end Packed4387
 
