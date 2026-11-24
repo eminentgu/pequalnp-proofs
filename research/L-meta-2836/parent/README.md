@@ -12,18 +12,18 @@
 
 ## Replay with the upstream libraries
 
-From a directory where you want a fresh checkout, run the commands below. They put the three previously proved upstream dependencies and this research proof at their recorded revisions. The project uses Lean 4.36.0 via elan.
+The following checkout contains all three upstream dependencies and the research proof. It uses Lean 4.36.0 via elan. From a directory for the new checkout, run
 
 ```sh
 git clone --branch research/L-meta-2836 --single-branch https://github.com/eminentgu/pequalnp-proofs.git pnp-replay
 cd pnp-replay
-git fetch https://github.com/open-goat/pequalnp-proofs.git df1e5f845e1fb7a44b69914f39b6dba3c3f07fa3
-git switch --detach FETCH_HEAD
-git restore --source=01e7820cd7013cd0ecd3a678cb5abf57bd2fb670 --worktree -- research/L-meta-2836
+git switch --detach db5478068992f2720f930714dab72ca3b2069848
 cd lean
 lake exe cache get
 python3 ../research/L-meta-2836/parent/replay.py
 ```
+
+The pinned commit includes upstream revision `df1e5f845e1fb7a44b69914f39b6dba3c3f07fa3`.
 
 The script asks Lake to build the two upstream lower bounds and the rewiring library, then compiles the research modules in a temporary directory. It also checks `Triple2836.signedSeven`, the constructive signed B premise used by the separate 3561 reduction. A first run may spend most of its time on the two upstream numerical certificates. Lake reuses verified build artifacts on later runs.
 
