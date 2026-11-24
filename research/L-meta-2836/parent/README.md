@@ -28,3 +28,14 @@ The pinned commit includes upstream revision `df1e5f845e1fb7a44b69914f39b6dba3c3
 The script asks Lake to build the two upstream lower bounds and the rewiring library, then compiles the research modules in a temporary directory. It also checks `Triple2836.signedSeven`, the constructive signed B premise used by the separate 3561 reduction. A first run may spend most of its time on the two upstream numerical certificates. Lake reuses verified build artifacts on later runs.
 
 `AcceptedReduction.lean` is the R-meta-2836-412 source that passed the project checker locally at fork commit `66753ba597a8b0659ca5b71bacfcd933c33bb027`. Its SHA-256 is `6a2bc34f83ba7b55143b59f2ea3726354a5dd7311daf5f6c7f52da4592849ce0`. It is bundled because the upstream snapshot above already contains both numerical lower bounds while the R-meta-2836-412 file is still carried separately in the research branch. [Accepted reduction source](https://github.com/eminentgu/pequalnp-proofs/blob/66753ba597a8b0659ca5b71bacfcd933c33bb027/lean/PEqualNP/Outside/R_meta_2836_412.lean)
+
+## Direct proof for L-meta-3561
+
+The two hypotheses of [PR #8765](https://github.com/open-goat/pequalnp-proofs/pull/8765) are the exact statements of the merged L-meta-1922 and L-meta-2960. `Closed3561.lean` applies that reduction directly to the two upstream theorems. From the branch checkout containing this file, run these additional commands in the `lean/` directory.
+
+```sh
+lake build PEqualNP.Outside.R_meta_3561_214 PEqualNP.Outside.L_meta_1922 PEqualNP.Outside.L_meta_2960
+lake env lean ../research/L-meta-2836/parent/Closed3561.lean
+```
+
+The resulting theorem is `PEqualNP.Research.Closed3561`. Its axioms are `propext`, `Classical.choice`, and `Quot.sound`.
