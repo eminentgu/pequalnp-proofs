@@ -476,13 +476,13 @@ lemma q10 {α inv meet join y s t a r} (h : @Run α inv meet join y s (a::r))
   | base=>exact h
   | succ _ _ ih=>exact Run.one false false ih
 def q36 : Nat->Nat
-  | 0=>0xf4d849641ddb12bd3612590776c4aa3c0228ae44945e8f008a2b91251724386c0009da09c90e1b0002768270350420a044145c0d410828110517
-  | 1=>0xa3c0228ae44945e8f008a2b912517f4d849641ddb12bd3612590776c4a0350420a044145c0d41082811051724386c0009da09c90e1b000276827
-  | 2=>0x911898c4c8749724462631321d25c911898c4c8749724462631321d25c808390c5d024922020e4317409248808390c5d024922020e4317409248
-  | 3=>0x6f20c0b39707a20109d54109a92380850a05d229a2000a9c790c46d3e3004002ba9605a20001c441a981418000dbd45209a0000282330446c2e0
-  | 4=>0x850a05d229a2000a9c790c46d3e36f20c0b39707a20109d54109a9238000dbd45209a0000282330446c2e0004002ba9605a20001c441a981418
-  | 5=>0x427550426a48e1bc8302ce5c1e8802a71e4311b4f8c214281748a688000071106a60506001000aea58168800a08cc111b0b800036f514826800
-  | 6=>0x2a71e4311b4f8c214281748a68800427550426a48e1bc8302ce5c1e8800a08cc111b0b800036f51482680000071106a60506001000aea581688
+  | 0=>xs517[0]!
+  | 1=>xs517[1]!
+  | 2=>xs517[2]!
+  | 3=>xs517[3]!
+  | 4=>xs517[4]!
+  | 5=>xs517[5]!
+  | 6=>xs517[6]!
   | 7=>0
   | 8=>q7
   | 9=>0x6f27d5b39727ae1b49f56d29a9e3808d7be5d22ba78c2bdef96c46fbe3004202ba9605a60011c4cfa98141800adbd4521ba18002a2b30446eae0
@@ -613,29 +613,24 @@ lemma q0k {cap : Nat}
     exact ih q hq (by omega) j hj h
 set_option maxHeartbeats 0 in
 lemma q3h :
+    qh 0 0=true/\qh 1 0=true/\qh 2 0=true ∧
+    qh 3 0=true/\qh 4 0=true/\qh 5 0=true:= by decide +kernel
 set_option maxHeartbeats 0 in
 lemma z6 : span (qh 6) 19 0=true:= by decide +kernel
 set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-lemma q3s : span (qh 7) 100 0=true:= by decide +kernel
+set_option maxHeartbeats 0 in lemma q3s : span (qh 7) 100 0=true:= by decide +kernel
 set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-lemma q3r : span (qh 7) 100 100=true:= by decide +kernel
+set_option maxHeartbeats 0 in lemma q3r : span (qh 7) 100 100=true:= by decide +kernel
 set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-lemma q3q : span (qh 7) 92 200=true:= by decide +kernel
+set_option maxHeartbeats 0 in lemma q3q : span (qh 7) 92 200=true:= by decide +kernel
 set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-lemma q3p : span (qh 8) 100 0=true:= by decide +kernel
+set_option maxHeartbeats 0 in lemma q3p : span (qh 8) 100 0=true:= by decide +kernel
 set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-lemma q3o : span (qh 8) 100 100=true:= by decide +kernel
+set_option maxHeartbeats 0 in lemma q3o : span (qh 8) 100 100=true:= by decide +kernel
 set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-lemma q3n : span (qh 8) 100 200=true:= by decide +kernel
+set_option maxHeartbeats 0 in lemma q3n : span (qh 8) 100 200=true:= by decide +kernel
 set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-lemma q3m : span (qh 8) 65 300=true:= by decide +kernel
+set_option maxHeartbeats 0 in lemma q3m : span (qh 8) 65 300=true:= by decide +kernel
 set_option maxHeartbeats 0 in
 lemma z9 : span (qh 9) 26 0=true:= by decide +kernel
 set_option maxHeartbeats 0 in
@@ -686,15 +681,68 @@ lemma signedThetaProbe_of_run {k : Nat} {ws : List Nat} (h : NatRun q7 qe k ws) 
     · simp [eq, q1n hy eq]
     · simp [eq]
 
+def thetaCodes (p : Nat) : List Nat :=
+  if p = 0 then [16, 424, 488, 432, 496, 440, 504, 17, 9, 25, 18, 10, 26, 426, 490, 19, 11, 27, 427, 491, 435, 499, 20, 12, 28, 420, 484, 428, 492, 436, 500, 444, 508, 21, 13, 29, 421, 485, 429, 493, 437, 501, 445, 509, 453, 517, 22, 14, 30, 422, 486, 430, 494, 438, 502, 446, 510, 454, 518, 462, 526] else
+  if p = 2 then [16, 8, 24, 17, 9, 25, 417, 481, 18, 418, 482, 426, 490, 442, 506, 19, 11, 27, 419, 483, 427, 491, 20, 12, 28, 420, 484, 428, 492, 436, 500, 444, 508, 21, 13, 29, 421, 485, 429, 493, 437, 501, 445, 509, 453, 517, 22, 14, 30, 422, 486, 430, 494, 438, 502, 446, 510, 454, 518, 462, 526] else
+  [16, 8, 24, 17, 9, 25, 417, 481, 18, 10, 26, 418, 482, 426, 490, 19, 419, 483, 427, 491, 435, 499, 20, 12, 28, 420, 484, 428, 492, 436, 500, 444, 508, 21, 13, 29, 421, 485, 429, 493, 437, 501, 445, 509, 453, 517, 22, 14, 30, 422, 486, 430, 494, 438, 502, 446, 510, 454, 518, 462, 526]
+def decodeTheta (p c : Nat) : List Nat :=
+  let ws := signedThetaWords p
+  if c < 32 then
+    let a := ws[c % 8]!
+    (if c.testBit 3 then a ^^^ q7 else a) :: kept (c.testBit 4) a (ws.erase a)
+  else
+    let n := c-32
+    let a := ws[n % 8]!
+    let b := ws[(n/8)%8]!
+    (if n.testBit 6 then a &&& b else a ||| b) ::
+      kept (n.testBit 7) a (kept (n.testBit 8) b ((ws.erase a).erase b))
+
+def knownStart (ws : List Nat) : Bool := ws.isPerm xs517 ||
+  xs517.any (fun a => [false,true].any (fun keep =>
+    ws.isPerm ((a ^^^ q7) :: kept keep a (xs517.erase a))))
+
+lemma knownStart_false {ws : List Nat} (h : NatRun q7 qe 9 ws) : knownStart ws = false := by
+  apply Bool.eq_false_iff.mpr
+  intro hit
+  simp only [knownStart, Bool.or_eq_true] at hit
+  rcases hit with base | step
+  · exact noRunFull 9 (by decide) (by rw [← vb, ← vc]; exact Run.perm (List.isPerm_iff.mp base) h)
+  · obtain ⟨a,ha,chosen⟩ := List.any_eq_true.mp step
+    obtain ⟨b,hb,hit'⟩ := List.any_eq_true.mp chosen
+    have ht := Run.perm (List.isPerm_iff.mp hit') h
+    have start := Run.one (s:=9) (inv := fun x : Nat => x ^^^ q7) (meet := Nat.land)
+      (join := Nat.lor) (y := qe) (a:=a) (rest:=xs517.erase a) true b ht
+    exact noRunFull 10 (by decide) (by rw [← vb, ← vc]; exact Run.perm (List.perm_cons_erase ha).symm start)
+
+def missingTheta (p : Nat) (ws : List Nat) : Bool :=
+  !(knownStart ws) && !((thetaCodes p).any fun c => ws.isPerm (decodeTheta p c))
+
 set_option maxRecDepth 20000 in
 set_option maxHeartbeats 0 in
-lemma signedThetaNo0 : signedThetaProbe 10 (signedThetaWords 0) = false := by decide +kernel
+lemma firstCovered (p : Nat) (hp : p = 0 ∨ p = 2 ∨ p = 3) :
+    vy 9 (signedThetaWords p) (fun _ ws => missingTheta p ws) = false := by
+  rcases hp with rfl | rfl | rfl <;> decide +kernel
+
 set_option maxRecDepth 20000 in
 set_option maxHeartbeats 0 in
-lemma signedThetaNo2 : signedThetaProbe 10 (signedThetaWords 2) = false := by decide +kernel
-set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-lemma signedThetaNo3 : signedThetaProbe 10 (signedThetaWords 3) = false := by decide +kernel
+lemma smallThetaChecked (p c : Nat) (hp : p = 0 ∨ p = 2 ∨ p = 3) (hc : c ∈ thetaCodes p) :
+    signedThetaProbe 9 (decodeTheta p c) = false := by
+  rcases hp with rfl | rfl | rfl <;> simp [thetaCodes] at hc <;>
+    rcases hc with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl
+  all_goals decide +kernel
+
+lemma noSignedRoot (p : Nat) (hp : p = 0 ∨ p = 2 ∨ p = 3) :
+    ¬ NatRun q7 qe 10 (signedThetaWords p) := by
+  intro h
+  have next := y0 h 9 rfl _ (List.Perm.refl _) (fun _ ys => missingTheta p ys)
+  apply Bool.noConfusion ((firstCovered p hp).symm.trans (next ?_))
+  intro ys hy
+  simp only [missingTheta, knownStart_false hy, Bool.not_false, Bool.true_and, Bool.not_eq_true']
+  apply Bool.eq_false_iff.mpr
+  intro found
+  obtain ⟨c, hc, hp'⟩ := List.any_eq_true.mp found
+  have ok := signedThetaProbe_of_run (Run.perm (List.isPerm_iff.mp hp') hy)
+  exact Bool.noConfusion ((smallThetaChecked p c hp hc).symm.trans ok)
 
 lemma signedThetaNoRun (i : Nat) (hi : i = 0 ∨ i = 2 ∨ i = 3)
     {s : Nat} {ws : List Nat} (hs : s ≤ 10) (hsub : ws.Sublist (signedThetaWords i))
@@ -702,13 +750,8 @@ lemma signedThetaNoRun (i : Nat) (hi : i = 0 ∨ i = 2 ∨ i = 3)
   rw [← vb, ← vc] at h
   by_cases eq : ws = signedThetaWords i
   · subst ws
-    have hn : signedThetaProbe 10 (signedThetaWords i) = false := by
-      rcases hi with rfl | rfl | rfl
-      · exact signedThetaNo0
-      · exact signedThetaNo2
-      · exact signedThetaNo3
-    rcases hi with rfl | rfl | rfl <;>
-      exact Bool.noConfusion (hn.symm.trans (signedThetaProbe_of_run (q10 h hs)))
+    apply noSignedRoot i hi
+    rcases hi with rfl | rfl | rfl <;> exact q10 h hs
   · have miss : ∀ ys ∈ (signedThetaWords i).sublists, ys ≠ signedThetaWords i → (s9 ys &&& se) ≠ se := by
       rcases hi with rfl | rfl | rfl <;> decide +kernel
     exact miss ws (List.mem_sublists.mpr hsub) eq (vl h)
@@ -726,14 +769,15 @@ def qn (isOr : Bool) (a b : q0) : q0 :=
 def qr (x : Nat) : Prop:=∀ j,252 ≤ j->x.testBit j=false
 def qb (a : q0) : Prop:=qr a.1/\qr a.2
 def qd (a : q0) : Prop:=qb a/\a ≠ rv/\a ≠ v5
-def x3 : q0:=(0x988c662c60004200118004e25321040016c0030d9e4a00039fffd8007000fff,0x988c622c6d1042d111b44462532105c212dc21048e4ae20089c49b883710712)
-def q1d : q0:=(0x2130860080010c00060007c01c3e180027000332607ffff2640020007ffffff,0x2130840090850d0886422180040e1a2125221210201110d226222444488a88c)
-def q1c : q0:=(0xf88f000070001800070463c0200039fffcc3878c001c78003fff9fff000,0x288f043070431810c6040140208600486843828c4604588c09191234230)
-def yv : q0:=(0xc03f0130000180001ffff8387c07c0003e0000fc07f0001f80003fffe000000,0xc015013001c5801c828730387c07c0693e0690bc0570389b807230e661c81c8)
-def q1b : q0:=(0x1c001c00001ffffe000003f8007ffffc00000fff800001fffffc0000000000,0x1c000659406c001a00c8002680d8000d0fb70000c9f741b00340068068)
-def yu : q0:=(0xfe0001fffffe00000000003ffff80000000000ffffffffe0000000000000000,0xca0001f5217800170005c03ffbf0004e0004e0efdfee2f00005c00b80170170)
-def yt : q0:=(0xfffffe00000000000000003fffffffffffffff0000000000000000000000000,0xffffd60019800198006600337ebd97703fb703000001b000036006c00d80d80)
-def q1a : q0:=(0xffffffffffffffffffffffc0000000000000000000000000000000000000000,0x35eafe0ade006be01d7807c000000380003800000001c000038007000e00e00)
+def y7 (a : Sig) : q0:=(a.1.toNat,a.2.toNat)
+def x3 : q0:=y7 raw0
+def q1d : q0:=y7 raw1
+def q1c : q0:=y7 raw2
+def yv : q0:=y7 raw3
+def q1b : q0:=y7 raw4
+def yu : q0:=y7 raw5
+def yt : q0:=y7 raw6
+def q1a : q0:=y7 raw7
 def rj : List q0:=[x3,q1d,q1c,yv,q1b,yu,yt,q1a]
 lemma y6 : rx=2 ^ 252 - 1:= by
   have h1 : rx=2 ^ 126*2 ^ 126 - 1:= by decide
@@ -803,7 +847,6 @@ lemma v6 : qx rv=v5/\qx v5=rv:= by
   constructor
   · simp [qx,rv,v5,rm]
   · simp [qx,rv,v5,rm]
-def y7 (a : Sig) : q0:=(a.1.toNat,a.2.toNat)
 lemma xb (x : B) : qr x.toNat:=fun j hj=>by
   exact Nat.testBit_lt_two_pow (lt_of_lt_of_le x.isLt (Nat.pow_le_pow_right (by omega) hj))
 lemma q1h (a : Sig) : qb (y7 a):=⟨xb a.1,xb a.2⟩
@@ -2703,34 +2746,25 @@ lemma sk {k t i : Nat} (ht : t ≤ 5)
   · intro w hw; exact rk (hp (t - 1) (by omega)) (by simpa using hw)
   · intro w hw; exact rk (hp t ht) (by simpa using hw)
 set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-lemma q3c : Theta.span (rb 8 0) 250 0=true:= by decide +kernel
+set_option maxHeartbeats 0 in lemma q3c : Theta.span (rb 8 0) 250 0=true:= by decide +kernel
 set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-lemma q2v : Theta.span (rb 8 0) 250 250=true:= by decide +kernel
+set_option maxHeartbeats 0 in lemma q2v : Theta.span (rb 8 0) 250 250=true:= by decide +kernel
 set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-lemma q2u : Theta.span (rb 8 0) 250 500=true:= by decide +kernel
+set_option maxHeartbeats 0 in lemma q2u : Theta.span (rb 8 0) 250 500=true:= by decide +kernel
 set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-lemma q2t : Theta.span (rb 8 0) 250 750=true:= by decide +kernel
+set_option maxHeartbeats 0 in lemma q2t : Theta.span (rb 8 0) 250 750=true:= by decide +kernel
 set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-lemma q1q : Theta.span (rb 8 0) 250 1000=true:= by decide +kernel
+set_option maxHeartbeats 0 in lemma q1q : Theta.span (rb 8 0) 250 1000=true:= by decide +kernel
 set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-lemma q1p : Theta.span (rb 8 0) 93 1250=true:= by decide +kernel
+set_option maxHeartbeats 0 in lemma q1p : Theta.span (rb 8 0) 93 1250=true:= by decide +kernel
 lemma q2r : Theta.span (rb 8 0) 1343 0=true:=(@Theta.span_join (rb 8 0) 750 0 593 (@Theta.span_join (rb 8 0) 250 0 500 q3c (@Theta.span_join (rb 8 0) 250 250 250 q2v q2u)) (@Theta.span_join (rb 8 0) 250 750 343 q2t (@Theta.span_join (rb 8 0) 250 1000 93 q1q q1p)))
 set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-lemma q3b : Theta.span (rb 8 1) 250 0=true:= by decide +kernel
+set_option maxHeartbeats 0 in lemma q3b : Theta.span (rb 8 1) 250 0=true:= by decide +kernel
 set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-lemma q2s : Theta.span (rb 8 1) 99 250=true:= by decide +kernel
+set_option maxHeartbeats 0 in lemma q2s : Theta.span (rb 8 1) 99 250=true:= by decide +kernel
 lemma q2q : Theta.span (rb 8 1) 349 0=true:=(@Theta.span_join (rb 8 1) 250 0 99 q3b q2s)
 set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-lemma q2p : Theta.span (rb 8 2) 6 0=true:= by decide +kernel
+set_option maxHeartbeats 0 in lemma q2p : Theta.span (rb 8 2) 6 0=true:= by decide +kernel
 lemma q2o : Theta.span (rb 8 3) 0 0=true:=rfl
 lemma q2n : Theta.span (rb 8 4) 0 0=true:=rfl
 lemma q2m : Theta.span (rb 8 5) 0 0=true:=rfl
@@ -2745,25 +2779,19 @@ lemma q1r (t : Nat) (ht : t ≤ 5) (i : Nat) (hi : i<qk 8 t) : rb 8 t i=true:= b
 lemma zt (t : Nat) (ht : t ≤ 5) (i : Nat) (hi : i<qk 8 t) : qs 8 t (q8 8 t i) :=
   ya (q1r t ht i hi)
 set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-lemma q3a : Theta.span (q4 8 0) 250 0=true:= by decide +kernel
+set_option maxHeartbeats 0 in lemma q3a : Theta.span (q4 8 0) 250 0=true:= by decide +kernel
 set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-lemma q2l : Theta.span (q4 8 0) 250 250=true:= by decide +kernel
+set_option maxHeartbeats 0 in lemma q2l : Theta.span (q4 8 0) 250 250=true:= by decide +kernel
 set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-lemma q2k : Theta.span (q4 8 0) 102 500=true:= by decide +kernel
+set_option maxHeartbeats 0 in lemma q2k : Theta.span (q4 8 0) 102 500=true:= by decide +kernel
 lemma q2i : Theta.span (q4 8 0) 602 0=true:=(@Theta.span_join (q4 8 0) 250 0 352 q3a (@Theta.span_join (q4 8 0) 250 250 102 q2l q2k))
 set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-lemma q39 : Theta.span (q4 8 1) 250 0=true:= by decide +kernel
+set_option maxHeartbeats 0 in lemma q39 : Theta.span (q4 8 1) 250 0=true:= by decide +kernel
 set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-lemma q2j : Theta.span (q4 8 1) 128 250=true:= by decide +kernel
+set_option maxHeartbeats 0 in lemma q2j : Theta.span (q4 8 1) 128 250=true:= by decide +kernel
 lemma q2h : Theta.span (q4 8 1) 378 0=true:=(@Theta.span_join (q4 8 1) 250 0 128 q39 q2j)
 set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-lemma q2g : Theta.span (q4 8 2) 41 0=true:= by decide +kernel
+set_option maxHeartbeats 0 in lemma q2g : Theta.span (q4 8 2) 41 0=true:= by decide +kernel
 lemma q2f : Theta.span (q4 8 3) 0 0=true:=rfl
 lemma q2e : Theta.span (q4 8 4) 0 0=true:=rfl
 lemma q2d : Theta.span (q4 8 5) 0 0=true:=rfl
@@ -2778,17 +2806,13 @@ lemma q1o (t : Nat) (ht : t ≤ 5) (i : Nat) (hi : i<qk 9 t) : q4 8 t i=true:= b
 lemma zr (t : Nat) (ht : t ≤ 5) (i : Nat) (hi : i<qk 9 t) : qs 9 t (q8 9 t i) :=
   sk ht zt (q1o t ht i hi)
 set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-lemma q23 : Theta.span (q4 9 0) 64 0=true:= by decide +kernel
+set_option maxHeartbeats 0 in lemma q23 : Theta.span (q4 9 0) 64 0=true:= by decide +kernel
 set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-lemma q22 : Theta.span (q4 9 1) 84 0=true:= by decide +kernel
+set_option maxHeartbeats 0 in lemma q22 : Theta.span (q4 9 1) 84 0=true:= by decide +kernel
 set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-lemma q21 : Theta.span (q4 9 2) 43 0=true:= by decide +kernel
+set_option maxHeartbeats 0 in lemma q21 : Theta.span (q4 9 2) 43 0=true:= by decide +kernel
 set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-lemma q20 : Theta.span (q4 9 3) 8 0=true:= by decide +kernel
+set_option maxHeartbeats 0 in lemma q20 : Theta.span (q4 9 3) 8 0=true:= by decide +kernel
 lemma q1z : Theta.span (q4 9 4) 0 0=true:=rfl
 lemma q1y : Theta.span (q4 9 5) 0 0=true:=rfl
 lemma q0z (t : Nat) (ht : t ≤ 5) (i : Nat) (hi : i<qk 10 t) : q4 9 t i=true:= by
@@ -2802,20 +2826,15 @@ lemma q0z (t : Nat) (ht : t ≤ 5) (i : Nat) (hi : i<qk 10 t) : q4 9 t i=true:= 
 lemma zb (t : Nat) (ht : t ≤ 5) (i : Nat) (hi : i<qk 10 t) : qs 10 t (q8 10 t i) :=
   sk ht zr (q0z t ht i hi)
 set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-lemma q1x : Theta.span (q4 10 0) 5 0=true:= by decide +kernel
+set_option maxHeartbeats 0 in lemma q1x : Theta.span (q4 10 0) 5 0=true:= by decide +kernel
 set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-lemma q1w : Theta.span (q4 10 1) 6 0=true:= by decide +kernel
+set_option maxHeartbeats 0 in lemma q1w : Theta.span (q4 10 1) 6 0=true:= by decide +kernel
 set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-lemma q1v : Theta.span (q4 10 2) 6 0=true:= by decide +kernel
+set_option maxHeartbeats 0 in lemma q1v : Theta.span (q4 10 2) 6 0=true:= by decide +kernel
 set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-lemma q1u : Theta.span (q4 10 3) 6 0=true:= by decide +kernel
+set_option maxHeartbeats 0 in lemma q1u : Theta.span (q4 10 3) 6 0=true:= by decide +kernel
 set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-lemma q1t : Theta.span (q4 10 4) 1 0=true:= by decide +kernel
+set_option maxHeartbeats 0 in lemma q1t : Theta.span (q4 10 4) 1 0=true:= by decide +kernel
 lemma q1s : Theta.span (q4 10 5) 0 0=true:=rfl
 lemma q0y (t : Nat) (ht : t ≤ 5) (i : Nat) (hi : i<qk 11 t) : q4 10 t i=true:= by
   interval_cases t
@@ -2828,8 +2847,7 @@ lemma q0y (t : Nat) (ht : t ≤ 5) (i : Nat) (hi : i<qk 11 t) : q4 10 t i=true:=
 lemma x7 (t : Nat) (ht : t ≤ 5) (i : Nat) (hi : i<qk 11 t) : qs 11 t (q8 11 t i) :=
   sk ht zb (q0y t ht i hi)
 set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
-lemma v3 : vk 0=true/\vk 1=true/\vk 2=true/\vk 3=true/\vk 4=true/\vk 5=true:= by decide +kernel
+set_option maxHeartbeats 0 in lemma v3 : vk 0=true/\vk 1=true/\vk 2=true/\vk 3=true/\vk 4=true/\vk 5=true:= by decide +kernel
 lemma q02 (t : Nat) (ht : t ≤ 5) : vk t=true:= by
   interval_cases t
   · exact v3.1
@@ -3487,15 +3505,11 @@ def frontierData : Nat → Nat → Nat
   | 11, 2 => 0x5412078402d0021702206809a05412078402d1300182206809a1803c0481e035300182206809a0541207a08038020182206809a054120780e009d00182206809a054120780e00a640182206809a0e0160481e101300142206809a0e0160481e4b0020142206809a0e1280481e100020142206809a700160481e038020142206809a0581207a60038020142206809a0581207a5c038020142206809a058120780e6c0020142206809a054120780e008066b02206809a250160481e100020182106809a660160481e038020182106809a0581207a20038020182106809a182580481e034020182106809a0f2580481e034020182106809a002580481e0340201821068099058120780e950020182106809a058120780d610020182106809a058120780d00a500182106809a058120780e005740182106809a054125901e100020142106809a0e0160481e460020142106809a000160481e46002014210680990581207840460020142106809a000151201e0380201421068099520160481e038020142106809a0544807840038020142106809a0541207840038020142106809a058120795c038020142106809a9303c0481e034020142106809a0f0160481e034020142106809a058120780e480020142106809a440380481e038010142106809a0e0160481e038010142106809aa0c120780d2e0020182106a7baa0c12078b4038010182106a7ba0481e034d0008740182106a7baa0c1207840038020142106a7ba0481e03638008050881a02a7ba0481e034b8340060841a02a7ba0481e034a0008060841a02a7ba0481e8f0b4004060841a02a7ba0481e2400e004060841a02a7ba04a6f07a3c038050841a02a7ba0481e1000e340050841a02a7ba0481e9f00e008050841a02a7ba04a6b078d0008050841a02a7ba04a6f0780d170060881a0267ba04a6f07a44038050881a0267ba0481e1000e4c0050881a0267ba0481e4b00e008050881a0267ba04a6b07930008050881a0267ba000129ce6f0780d0841a0267b904a7307840038020841a0267ba000129ce6b078010841a0267b904a6f078b4038060841a0267ba0481e100b4008060841a0267ba0481e4200e008060841a0267ba04a6b078b8008060841a0267ba000129be6b078050841a0267b9058129cc1e034020841a02648a180120780d008060841a02648a058129ac1e008050841a02648a930120780d008050841a02648a05a770481e038010141a0250ca4a0120780e004050881a0250ca058129cc1e038010841a0250ca058129bc1e038050841a0250ca0581207840008050841a0250ca440120780e004050841a0250ca058120780e004050881a02640a058120780e004060841a024fca058129ac1e004050841a028d4a0e0120780e004050841a028d4a058123700d004050841a028d4a390120780d004050841a028d4a058120780d004060841a02870a
   | 11, 3 => 0x960120780d008060841a0264160481e4600201421068099054480780e008050841a0264129ce6f0780d0841a0267b904a739ac1e00421068099ee4129be6b078050841a0267b9
   | 12, 0 => 0x150481e9100e2e0020182206809b05412078b403930008060881a026c150481e1000e0085c0182206809b4a0160481e1000e008050881a026c3c0581207a44038020142206809b0e0160481e03930008050881a026c600581207840038020182106809b000600f0120780d008060841a026800290160481e034020182106809a29060058120780d008060841a026c38058120780e2e0020182106809b290160481e034b8008060841a026c00250160481e038010182106809a250160481e2d00e004060841a026c000e0160481e100020142106809a00114058120780e008050841a0269140e0160481e038020142106809b4503c058120780e008050841a026d140581207840038020142106809b0f0160481e034020142106809922c00058120780d008050841a02648a0e0160481e038010142106809432c00058120780e004050841a0250ca1b0160481e03401014210680a352c00058120780d004050841a028d4a
-  | 12, 1 => 0x541207a44038b8008060881a026c150481e2d00e4c0020182206809b054120784003802170060881a026d280581207840038020142206809b0f0160481e9100e008050881a026c38058120780e4c0020142206809b180160481e1000e008060841a026c001803c0481e034020182106809a000a4058120780d008060841a0268a4180160481e034020182106809b0e0160481e038b8008060841a026ca4058120780d2e0020182106809b00094058120780e004060841a02689405812078b4038010182106809b000380581207840008050841a026800450160481e038020142106809a45038058120780e008050841a026d140f0160481e038020142106809b450160481e1000e008050841a026c00002830481e034010142106a7b9000120780d34002014210680a9ee8000481e8f00e004050841a02a7ba000120780d4c00201422068099ee8000481e034b8008060841a0267ba00012078b40380101821068099ee800000129bc1e034050841a0267b900012078400380201421068099ee800000129ac1e004050841a0267b90f0160481e034020142106809922c00058120780d008050841a02648a0e0160481e038010142106809432c00058120780e004050841a0250ca1b0160481e03401014210680a352c00058120780d004050841a028d4a
-  | 12, 2 => 0x541207a44038b8008060881a026c150481e2d00e4c0020182206809b054120784003802170060881a026d280581207840038020142206809b0f0160481e9100e008050881a026c38058120780e4c0020142206809b180160481e1000e008060841a026c001803c0481e034020182106809a000a4058120780d008060841a0268a4180160481e034020182106809b0e0160481e038b8008060841a026ca4058120780d2e0020182106809b00094058120780e004060841a02689405812078b4038010182106809b000380581207840008050841a026800450160481e038020142106809a45038058120780e008050841a026d140f0160481e038020142106809b450160481e1000e008050841a026c00002830481e034010142106a7b9000120780d34002014210680a9ee8000481e8f00e004050841a02a7ba000120780d4c00201422068099ee8000481e034b8008060841a0267ba00012078b40380101821068099ee800000129bc1e034050841a0267b900012078400380201421068099ee800000129ac1e004050841a0267b90f0160481e034020142106809922c00058120780d008050841a02648a0e0160481e038010142106809432c00058120780e004050841a0250ca1b0160481e03401014210680a352c00058120780d004050841a028d4a
+  | 12, 1 | 12, 2 => 0x541207a44038b8008060881a026c150481e2d00e4c0020182206809b054120784003802170060881a026d280581207840038020142206809b0f0160481e9100e008050881a026c38058120780e4c0020142206809b180160481e1000e008060841a026c001803c0481e034020182106809a000a4058120780d008060841a0268a4180160481e034020182106809b0e0160481e038b8008060841a026ca4058120780d2e0020182106809b00094058120780e004060841a02689405812078b4038010182106809b000380581207840008050841a026800450160481e038020142106809a45038058120780e008050841a026d140f0160481e038020142106809b450160481e1000e008050841a026c00002830481e034010142106a7b9000120780d34002014210680a9ee8000481e8f00e004050841a02a7ba000120780d4c00201422068099ee8000481e034b8008060841a0267ba00012078b40380101821068099ee800000129bc1e034050841a0267b900012078400380201421068099ee800000129ac1e004050841a0267b90f0160481e034020142106809922c00058120780d008050841a02648a0e0160481e038010142106809432c00058120780e004050841a0250ca1b0160481e03401014210680a352c00058120780d004050841a028d4a
   | 12, 3 => 0x1803c0481e034020182106809a290160481e034020182106809a250160481e038010182106809a0e0160481e100020142106809a450160481e038020142106809a002830481e034010142106a7b90481e034d0008050841a02a7ba0481e8f00e004050841a02a7ba0481e03530008050881a0267ba0481e034b8008060841a0267ba0481e2d00e004060841a0267ba000129bc1e034050841a0267b90481e1000e008050841a0267ba000129ac1e004050841a0267b9058120780d008050841a02648a058120780e004050841a0250ca058120780d004050841a028d4a
   | 12, 4 => 0x2830481e034010142106a7b904a6f0780d01421068099ee4129ac1e004050841a0267b9
   | 13, 0 => 0x541207840038020142106809a0f0160481e034020142106809a0e0160481e038010142106809a
-  | 13, 1 => 0x541207840038020142106809a0f0160481e034020142106809a0e0160481e038010142106809a000120780d004050841a0267b9
-  | 13, 2 => 0x541207840038020142106809a0f0160481e034020142106809a0e0160481e038010142106809a000120780d004050841a0267b9
-  | 13, 3 => 0x541207840038020142106809a0f0160481e034020142106809a0e0160481e038010142106809a000120780d004050841a0267b9
-  | 13, 4 => 0x541207840038020142106809a0f0160481e034020142106809a0e0160481e038010142106809a000120780d004050841a0267b9
+  | 13, 1 | 13, 2 | 13, 3 | 13, 4 => 0x541207840038020142106809a0f0160481e034020142106809a0e0160481e038010142106809a000120780d004050841a0267b9
   | 13, 5 => 0x120780d004050841a0267b9
   | _, _ => 0
 def tableData : Nat → Nat → Nat
@@ -3507,15 +3521,11 @@ def tableData : Nat → Nat → Nat
   | 11, 2 => 0x34c000000000000003b52d400001ed000000037700000918000000028800000000000000000000000000000000d60d1814005d400000000000000000003610036d003ad00000000000005b7554200000000006340037d4f6f473000001c83d19f3d0c6b96ce6a001d7002510000000000003210000000000af8000002b000006ac00308000000072c0000000c7ce0398000cdba72534000000000000000000000000000000000000000000000001c1d2400001369d521a9ecd000002a40000000000000000000000bd40097400c0400f059900000ede8900000001028d40000000003b60000031add000000000000180000000000000000000ee00000000004a779000000000000000000008e906001ef000d2238000000000000000000000000000b44000000000000000000000d4e40067c00000000000047485001ea0000000000064000016100000000e500241dae177e4d4ea400246a5000009aead6d4000000000000000005588b00374000370000000000155510f2e90039e3c80000000251cd00000000000000000000c94ba000000000000000000006b800c4c0000000000000000000000000000000000000000500003a00000000000000000000000005a4000000000000c5400784000000f60400000003c4000030d0c18c003914b425000cdd6800f08000014550d554067d3f400000000000000000000000000000000000000000000000304000240000202495b1003850021ddaa69000d91ebc318509d5400000000039d002290000078c0000000538000b800cc4001b4000000000000a5400002234cc005755a003192bc0000000000009b00000000000000000009c000000073000454ae0009d000000000000000000003ea111e40069400
   | 11, 3 => 0xe0000100140003a00031420000800a4c80000068000f40000c00000
   | 12, 0 => 0x728000000578000000001dc00785680000000000122d960a84006e001fc00aa4300000008000000cd00065e27962b24f400002104a0000001ac4954b497a001e841c60000001ec000000000000000214d591458000018c25d20000000a85a2980000002a8000000003f49400000000083003840000391b40000003f80000000000873001840000000000000000013c67
-  | 12, 1 => 0xa8800007a8da14000071a6800e48c8000000a2bf65a910043400da758000116790000000b6002727d0cd766ae54e4c5cc00781584a004bad6851594cf800101e9e69e00000000162000000000370028376c7608a031ba956aa004e97d80bf630014c60608000000005a56c0077800006da6b7800892f3655000005a9040032aa408df5133400000000000612480214d3
-  | 12, 2 => 0xa8800007a8da14000071a6800e48c8000000a2bf65a910043400da758000116790000000b6002727d0cd766ae54e4c5cc00781584a004bad6851594cf800101e9e69e00000000162000000000370028376c7608a031ba956aa004e97d80bf630014c60608000000005a56c0077800006da6b7800892f3655000005a9040032aa408df5133400000000000612480214d3
+  | 12, 1 | 12, 2 => 0xa8800007a8da14000071a6800e48c8000000a2bf65a910043400da758000116790000000b6002727d0cd766ae54e4c5cc00781584a004bad6851594cf800101e9e69e00000000162000000000370028376c7608a031ba956aa004e97d80bf630014c60608000000005a56c0077800006da6b7800892f3655000005a9040032aa408df5133400000000000612480214d3
   | 12, 3 => 0xc63c000000009d0000250000000000009600970049bd84552c7e0000000000000000a30000000076000000000000410078005e009b00823200000000a80000009e0000000031006d91c1793b4aca00a70d9200007300000000b500003a00000000616556853d000000000400009c0000000000c900a900001959b9000000
   | 12, 4 => 0x19000211341
   | 13, 0 => 0x800c001b0402000000046400003c04dd18000001500d391
-  | 13, 1 => 0x7403e70803405000004250c0a4405b7c748002114001939a
-  | 13, 2 => 0x7403e70803405000004250c0a4405b7c748002114001939a
-  | 13, 3 => 0x7403e70803405000004250c0a4405b7c748002114001939a
-  | 13, 4 => 0x7403e70803405000004250c0a4405b7c748002114001939a
+  | 13, 1 | 13, 2 | 13, 3 | 13, 4 => 0x7403e70803405000004250c0a4405b7c748002114001939a
   | 13, 5 => 0x24103750
   | _, _ => 0
 def tableDisplacements : Nat → Nat → Nat
@@ -3527,15 +3537,11 @@ def tableDisplacements : Nat → Nat → Nat
   | 11, 2 => 0x40000000000001000000000000000001000000003000000000000000200010000000000000000000000000010000000000040003010040000000000200000000000000000000000000000000000000000000000000000000000000000000040800008000000008000000000000204000000600000000000000000001000000000008000001000000002000000200000000000000000002000000000000000000000000000000000000000040000000000000000040000008000000000040000000000000000000000000000000000000000018000200000000000010000000000000000000000000000000000008000000008000000000000000000000000000000000000000000000000000000000000008000000000040000000000000
   | 11, 3 => 0x0
   | 12, 0 => 0x8000000000004100020000100001000000000020000200000000000000000008002000000000002000008000000000000000
-  | 12, 1 => 0x40000608080000000006001000800082020c1810000000000000300000000000000000418000000000004002000008100001020000000
-  | 12, 2 => 0x40000608080000000006001000800082020c1810000000000000300000000000000000418000000000004002000008100001020000000
+  | 12, 1 | 12, 2 => 0x40000608080000000006001000800082020c1810000000000000300000000000000000418000000000004002000008100001020000000
   | 12, 3 => 0xc000040000002000000200000040000300000000000000000000002000000000000000000000000000000000000000000000000000000
   | 12, 4 => 0x8
   | 13, 0 => 0x8402000000000000000
-  | 13, 1 => 0x801014010000010000
-  | 13, 2 => 0x801014010000010000
-  | 13, 3 => 0x801014010000010000
-  | 13, 4 => 0x801014010000010000
+  | 13, 1 | 13, 2 | 13, 3 | 13, 4 => 0x801014010000010000
   | 13, 5 => 0x880
   | _, _ => 0
 def tableBuckets : Nat → Nat → Nat
