@@ -100,9 +100,11 @@ private theorem appendAO {gs : List Gate} (old : IsAO2 n ⟨gs,0⟩) (a b : ℕ)
     · rw [List.mem_singleton.mp e]; rfl
 
 open Classical in
-theorem compile_prefix (C : Circuit) (hC : IsAO2 n C) (r : Restr n) (raw : ∀ i : Fin n, Const (val C r i.val) ∨ val C r i.val = fun x => x i) (k : ℕ)
+theorem compile_prefix_counted (C : Circuit) (hC : IsAO2 n C) (r : Restr n) (raw : ∀ i : Fin n, Const (val C r i.val) ∨ val C r i.val = fun x => x i) (k : ℕ)
     (hk : k ≤ C.size) :
     ∃ gs : List Gate, IsAO2 n ⟨gs,0⟩ ∧ gs.length ≤ ((Finset.range k).filter (New C r)).card ∧
+      (gs.filter (fun g => decide (g.op = .and))).length =
+        ((Finset.range k).filter (fun i => New C r i ∧ isAnd C i)).card ∧
       ∀ w < n+k, Rep gs (val C r w) := by
   classical
   induction k with
@@ -115,7 +117,7 @@ theorem compile_prefix (C : Circuit) (hC : IsAO2 n C) (r : Restr n) (raw : ∀ i
         exact (Nat.not_lt_zero _ hj).elim
       · intro g hg
         exact (List.not_mem_nil hg).elim
-    refine ⟨[],empty,by simp,?_⟩
+    refine ⟨[],empty,by simp,by simp,?_⟩
     intro w hw
     let i : Fin n := ⟨w,by omega⟩
     rcases raw i with e | e
@@ -123,7 +125,7 @@ theorem compile_prefix (C : Circuit) (hC : IsAO2 n C) (r : Restr n) (raw : ∀ i
     · refine Or.inr ⟨w,by simp; omega,e.trans ?_⟩
       exact funext fun x => (wval_in (⟨[],0⟩ : Circuit) x i).symm
   | succ k ih =>
-    obtain ⟨gs,hgs,hs,rep⟩ := ih (by omega)
+    obtain ⟨gs,hgs,hs,count,rep⟩ := ih (by omega)
     have hk' : k < C.gates.length := by exact Nat.lt_of_succ_le hk
     by_cases hm : New C r k
     · obtain ⟨a,b,hab,ha,hb,ho⟩ := two n C hC k hk'
@@ -132,8 +134,13 @@ theorem compile_prefix (C : Circuit) (hC : IsAO2 n C) (r : Restr n) (raw : ∀ i
       obtain ⟨u,hu,eu⟩ := (rep a ha).resolve_left (dep a (by simp [hab]))
       obtain ⟨v,hv,ev⟩ := (rep b hb).resolve_left (dep b (by simp [hab]))
       let g : Gate := ⟨C.gates[k].op,[u,v]⟩
-      refine ⟨gs ++ [g],appendAO hgs u v hu hv _ ho,?_,?_⟩
+      refine ⟨gs ++ [g],appendAO hgs u v hu hv _ ho,?_,?_,?_⟩
       · simpa [Finset.range_add_one, Finset.filter_insert, hm] using hs
+      · by_cases is : C.gates[k].op = .and
+        · have active : isAnd C k := ⟨hk',by rwa [ZeroFold.gateAt_eq C k hk']⟩
+          simp [g,is,List.filter_append,Finset.range_add_one,Finset.filter_insert,hm,active,count]
+        · have off : ¬ isAnd C k := fun h => is (by simpa [ZeroFold.gateAt_eq C k hk'] using h.2)
+          simp [g,is,List.filter_append,Finset.range_add_one,Finset.filter_insert,hm,off,count]
       · intro w hw
         by_cases e : w < n+k
         · exact (rep w e).snoc g
@@ -149,8 +156,9 @@ theorem compile_prefix (C : Circuit) (hC : IsAO2 n C) (r : Restr n) (raw : ∀ i
             List.getElem_cons_zero]
           change C.gates[k].op.eval [val C r a x,val C r b x] = C.gates[k].op.eval [_,_]
           rw [eu,ev,old_val gs g x u hu,old_val gs g x v hv]
-    · refine ⟨gs,hgs,?_,?_⟩
+    · refine ⟨gs,hgs,?_,?_,?_⟩
       · simpa [Finset.range_add_one,Finset.filter_insert,hm] using hs
+      · simpa [Finset.range_add_one,Finset.filter_insert,hm] using count
       · intro w hw
         by_cases e : w < n+k
         · exact rep w e
@@ -164,6 +172,14 @@ theorem compile_prefix (C : Circuit) (hC : IsAO2 n C) (r : Restr n) (raw : ∀ i
             obtain ⟨a,ha,ea⟩ := dup
             rw [ea]
             exact rep _ ha
+
+open Classical in
+theorem compile_prefix (C : Circuit) (hC : IsAO2 n C) (r : Restr n) (raw : ∀ i : Fin n, Const (val C r i.val) ∨ val C r i.val = fun x => x i) (k : ℕ)
+    (hk : k ≤ C.size) :
+    ∃ gs : List Gate, IsAO2 n ⟨gs,0⟩ ∧ gs.length ≤ ((Finset.range k).filter (New C r)).card ∧
+      ∀ w < n+k, Rep gs (val C r w) := by
+  obtain ⟨gs,legal,size,_,wires⟩ := compile_prefix_counted C hC r raw k hk
+  exact ⟨gs,legal,size,wires⟩
 
 open Classical in
 theorem compile (C : Circuit) (hC : IsAO2 n C) (r : Restr n)
