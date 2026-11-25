@@ -7,3 +7,5 @@ L-meta-2990 concerns circuits with no bound on repeated reads. They must accept 
 The general gate lower bound remains open here.
 
 For the plane in the desk statement, an omitted line has at least $q+1-|Y|$ points outside all the selected lines. Even when $|Y|=q$, the canonical negative row has at least $q$ active points. These are geometric properties of the rejection tests. [Omitted-line bound](PrivatePoints.lean), [active-point bound](NegativeSize.lean).
+
+[SparsePrimes.lean](SparsePrimes.lean) characterizes the minimal accepting inputs on the promised slice. Each is an incident point–line pair. Any other minimal accepting input is incidence-free and contains at least $q+1$ lines. A monotone example attains this cutoff.
