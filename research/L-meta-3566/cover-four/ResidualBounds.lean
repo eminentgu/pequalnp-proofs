@@ -1,6 +1,8 @@
 import ResidualRuns
 import ResidualThetas
 import ResidualExplicit
+import ResidualFifteen
+import Descent
 
 namespace VertexPeel.CoverFourResidual
 
@@ -8,8 +10,8 @@ open PEqualNP.CircuitLowerBounds PEqualNP.MetaComplexity PEqualNP.MetaComplexity
 set_option maxHeartbeats 0
 set_option maxRecDepth 100000
 
-/-- Each of the sixteen certified labelled graphs has the canonical monotone lower bound. -/
-theorem listedLower (i : Fin 17) (covered : i ≠ 15) : Lower (graph i) ((table i).2.length + 3) := by
+/-- Each of the seventeen labelled graphs has the canonical monotone lower bound. -/
+theorem listedLower (i : Fin 17) : Lower (graph i) ((table i).2.length + 3) := by
   fin_cases i
   · exact lower0
   · exact lower1
@@ -26,7 +28,7 @@ theorem listedLower (i : Fin 17) (covered : i ≠ 15) : Lower (graph i) ((table 
   · exact lower12
   · exact lower13
   · exact lower14
-  · exact (covered rfl).elim
+  · exact lower15
   · exact lower16
 
 private abbrev cover (i : Fin 17) : Finset (Fin (table i).1) :=
@@ -38,7 +40,7 @@ private theorem counts (i : Fin 17) :
   fin_cases i <;> decide +kernel
 
 /-- The upper-bound star circuit attains the lower bound for every certified row. -/
-theorem listedOptimum (i : Fin 17) (covered : i ≠ 15) :
+theorem listedOptimum (i : Fin 17) :
     ∃ C : Circuit, IsAO2 (table i).1 C ∧ circuitFun _ C = graphFun (graph i) ∅ ∧
       C.size = (graph i).edgeFinset.card + 3 := by
   obtain ⟨m,t,_,hc⟩ := counts i
@@ -49,14 +51,24 @@ theorem listedOptimum (i : Fin 17) (covered : i ≠ 15) :
   have mono : Monotone2 C := by
     intro g hg
     obtain h | h := ao.1 g hg <;> simp [h,ao.2.2 g hg]
-  have lower := listedLower i covered C mono cor
+  have lower := listedLower i C mono cor
   exact ⟨C,ao,cor,by omega⟩
 
 /-- On every certified row, this is the full contraction conclusion with one
     vertex working for every legal circuit. -/
-theorem listedExact (i : Fin 17) (covered : i ≠ 15) : Exact (graph i) := by
+theorem listedExact (i : Fin 17) : Exact (graph i) := by
   obtain ⟨m,t,edges,hc⟩ := counts i
-  exact lowerExact (graph i) (cover i) hc (by omega) edges (listedLower i covered)
+  exact lowerExact (graph i) (cover i) hc (by omega) edges (listedLower i)
+
+/-- The exact ownership-descent conclusion of L-meta-1774 for each listed graph. -/
+theorem listedOwnership (i : Fin 17) : PEqualNP.Outside.L_meta_1774.StepAt (graph i) := by
+  intro C minimum correct _ positive
+  obtain ⟨m,t,_,hc⟩ := counts i
+  have lower := listedLower i C minimum.1 correct
+  apply PEqualNP.Outside.L_meta_1774.coveredDescent (graph i) C (cover i) hc _ positive
+  rw [Set.ncard_eq_toFinset_card']
+  change (graph i).edgeFinset.card + (cover i).card - 1 ≤ C.size
+  omega
 
 end VertexPeel.CoverFourResidual
 
@@ -64,3 +76,5 @@ end VertexPeel.CoverFourResidual
 #print axioms VertexPeel.CoverFourResidual.listedExact
 
 #print axioms VertexPeel.CoverFourResidual.listedOptimum
+
+#print axioms VertexPeel.CoverFourResidual.listedOwnership
