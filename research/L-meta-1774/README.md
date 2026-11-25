@@ -55,7 +55,14 @@ A graph edge is *critical for a gate* when the circuit rejects that edge's two-v
 
 [PinTree](gate-pinning/PinTree.lean) checks the edit on a five-vertex tree. Gate 2 owns `{0,1}` and `{2,3}`. Only `{0,1}` disappears from the output when gate 2 is clamped to false. Pinning its first operand to vertex 0 keeps all seven gates, every AND still owns an edge, and no gate owns disjoint edges afterward. An independent five-gate construction shows the example is nonminimal. Run `research/L-meta-1774/gate-pinning/check.sh` to reproduce the proofs and the [axiom audit](gate-pinning/AuditPin.lean).
 
-Completing L-meta-1774 still requires constructing a circuit of at most the initial size with fewer gates owning disjoint edges.
+## Gates with a single critical edge
+
+[CriticalCases](gate-pinning/CriticalCases.lean) proves that every gate of a globally minimum monotone circuit computing a graph edge function has a critical edge. If clamping the gate to false retained every edge, the clamped circuit would still reject every independent set and the gate could be deleted. When a defective AND has just one unordered critical edge, replacing both of its operands by the two primary endpoints preserves the output. The replacement gate owns that edge even if another gate owned it in the original circuit. Every other productive gate stays productive and earlier gates keep their ownership.
+
+The conditional theorem `exact_of_remaining_critical_cases` reduces the posted statement of 1774 to circuits whose earliest defective gate has at least two distinct unordered critical edges and admits no certified one-operand star pin. The two critical edges may share an endpoint. The proof of an exchange for this remaining case is open.
+
+[CriticalTree](gate-pinning/CriticalTree.lean) checks a seven-vertex tree and a 14-gate circuit. Gate 5 owns the disjoint edges {0,1} and {2,3}. Its sole critical edge is {4,5}, originally owned by gate 1 and unowned by gate 5. Pinning gate 5 to inputs 4 and 5 makes it own that edge, preserves the graph function and productivity, and leaves every gate free of disjoint owners. A separate eight-gate circuit computes the same function, so the example does not satisfy global minimality.
+
 
 From the repository's `lean/` directory, run the following commands.
 
