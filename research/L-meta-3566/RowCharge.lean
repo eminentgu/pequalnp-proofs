@@ -26,17 +26,20 @@ private theorem operands {j : ℕ} (hj : j < C.gates.length) {a b : ℕ}
     (hab : C.gates[j].inputs = [a,b]) : in0 C j = a ∧ in1 C j = b := by
   simp [in0, in1, gateAt_eq C j hj, hab]
 
-private theorem children (hc : IsAO2 n C) (j : ℕ) (hj : j < C.gates.length) :
-    ∃ K : Finset ℕ, (∀ k ∈ K, k < n+j) ∧
+private theorem children (hc : IsAO2 n C) (j : ℕ) (hj : j < C.gates.length)
+    (R : ℕ → Prop) (inputs : ∀ w ∈ C.gates[j].inputs, R w) :
+    ∃ K : Finset ℕ, (∀ k ∈ K, k < n+j ∧ R k) ∧
       hits C x p S (n+j) ⊆ K.biUnion (hits C x p S) ∧
       K.card ≤ 1 + (if j ∈ charged C x p S (j+1) then 1 else 0) := by
   classical
   obtain ⟨a,b,hab,ha,hb,hop⟩ := two n C hc j hj
+  have ra := inputs a (by simp [hab])
+  have rb := inputs b (by simp [hab])
   let H := hits C x p S
-  have one (k : ℕ) (hk : k < n+j) (h : H (n+j) ⊆ H k) :
-      ∃ K : Finset ℕ, (∀ w ∈ K, w < n+j) ∧ H (n+j) ⊆ K.biUnion H ∧
+  have one (k : ℕ) (hk : k < n+j) (rk : R k) (h : H (n+j) ⊆ H k) :
+      ∃ K : Finset ℕ, (∀ w ∈ K, w < n+j ∧ R w) ∧ H (n+j) ⊆ K.biUnion H ∧
         K.card ≤ 1 + (if j ∈ charged C x p S (j+1) then 1 else 0) :=
-    ⟨{k}, by simpa, by simpa using h, by simp⟩
+    ⟨{k}, by simpa using And.intro hk rk, by simpa using h, by simp⟩
   by_cases base : wval C x (n+j) = false
   · rcases hop with hand|hor
     · have e := wval_and C x j a b hj hab ha hb hand
@@ -46,12 +49,12 @@ private theorem children (hc : IsAO2 n C) (j : ℕ) (hj : j < C.gates.length) :
         obtain ⟨hs,_,hp⟩ := Finset.mem_filter.mp hv
         exact Finset.mem_filter.mpr ⟨hs,hk,pos v hp⟩
       cases hax : wval C x a with
-      | false => exact one a ha (drop a hax (fun v hv => by
+      | false => exact one a ha ra (drop a hax (fun v hv => by
                    rw [wval_and C (p v) j a b hj hab ha hb hand, Bool.and_eq_true] at hv
                    exact hv.1))
       | true =>
         have hbx : wval C x b = false := by simpa [hax,base] using e.symm
-        exact one b hb (drop b hbx (fun v hv => by
+        exact one b hb rb (drop b hbx (fun v hv => by
           rw [wval_and C (p v) j a b hj hab ha hb hand, Bool.and_eq_true] at hv
           exact hv.2))
     · have e := wval_or C x j a b hj hab ha hb hor
@@ -64,24 +67,27 @@ private theorem children (hc : IsAO2 n C) (j : ℕ) (hj : j < C.gates.length) :
         exact hp.elim (fun h => Finset.mem_union_left _ (Finset.mem_filter.mpr ⟨hs,zeros.1,h⟩))
           (fun h => Finset.mem_union_right _ (Finset.mem_filter.mpr ⟨hs,zeros.2,h⟩))
       by_cases ab : H a ⊆ H b
-      · exact one b hb (cover.trans (Finset.union_subset ab (fun _ h => h)))
+      · exact one b hb rb (cover.trans (Finset.union_subset ab (fun _ h => h)))
       by_cases ba : H b ⊆ H a
-      · exact one a ha (cover.trans (Finset.union_subset (fun _ h => h) ba))
+      · exact one a ha ra (cover.trans (Finset.union_subset (fun _ h => h) ba))
       obtain ⟨h0,h1⟩ := operands C hj hab
       have mem : j ∈ charged C x p S (j+1) := by
         apply Finset.mem_filter.mpr
         exact ⟨by simp, ⟨⟨hj,by simpa [gateAt_eq C j hj] using hor⟩,base,h0 ▸ h1 ▸ ab,h0 ▸ h1 ▸ ba⟩⟩
-      exact ⟨{a,b}, by simpa using And.intro ha hb, by simpa using cover,
+      exact ⟨{a,b}, by simpa using And.intro (And.intro ha ra) (And.intro hb rb), by simpa using cover,
         by simpa [mem] using Finset.card_insert_le a {b}⟩
-  · apply one a ha
+  · apply one a ha ra
     intro v hv
     exact (base (Finset.mem_filter.mp hv).2.1).elim
 
-/-- Amortized over an arbitrary set of wires, so shared subcircuits count just once. -/
-theorem union_bound (hc : IsAO2 n C)
+open Classical in
+/-- Localized charging. The allowed wires must be closed under reading operands.
+Only splitting OR positions among the allowed wires contribute to the bound. -/
+theorem union_within (hc : IsAO2 n C)
     (raw : ∀ i v, v ∈ S → x i = false → p v i = true → i = v)
-    (t : ℕ) (ht : t ≤ C.gates.length) (W : Finset ℕ) (hw : ∀ w ∈ W, w < n+t) :
-    (W.biUnion (hits C x p S)).card ≤ (charged C x p S t).card + W.card := by
+    (R : ℕ → Prop) (closed : ∀ j (hj : j<C.size), R (n+j) → ∀ w ∈ C.gates[j].inputs, R w)
+    (t : ℕ) (ht : t ≤ C.gates.length) (W : Finset ℕ) (hw : ∀ w ∈ W, w < n+t) (inside : ∀ w ∈ W, R w) :
+    (W.biUnion (hits C x p S)).card ≤ ((charged C x p S t).filter (fun j => R (n+j))).card + W.card := by
   classical
   induction t generalizing W with
   | zero =>
@@ -97,12 +103,16 @@ theorem union_bound (hc : IsAO2 n C)
     simpa [charged] using Finset.sum_le_sum small
   | succ t ih =>
     have ht' : t < C.gates.length := by omega
-    have grow : charged C x p S (t+1) =
-        if t ∈ charged C x p S (t+1) then insert t (charged C x p S t) else charged C x p S t := by
-      by_cases h : splits C x p S t <;> simp [charged,Finset.range_add_one,Finset.filter_insert,h]
-    have fresh : t ∉ charged C x p S t := by simp [charged]
+    let charge (s : ℕ) := (charged C x p S s).filter fun j => R (n+j)
+    have grow : charge (t+1) = if t ∈ charge (t+1) then insert t (charge t) else charge t := by
+      by_cases sp : splits C x p S t <;> by_cases rt : R (n+t) <;>
+        simp [charge,charged,Finset.range_add_one,Finset.filter_insert,sp,rt]
+    have fresh : t ∉ charge t := by simp [charge,charged]
+    change _ ≤ (charge (t+1)).card + W.card
     by_cases used : n+t ∈ W
-    · obtain ⟨K,prior,covers,arity⟩ := children C x p S hc t ht'
+    · obtain ⟨K,prior,covers,arity⟩ := children C x p S hc t ht' R (closed t ht' (inside _ used))
+      have same : t ∈ charge (t+1) ↔ t ∈ charged C x p S (t+1) := by simp [charge,inside _ used]
+      simp only [←same] at arity
       let rest := W.erase (n+t)
       have hrest : ∀ w ∈ rest, w < n+t := by
         intro w h
@@ -118,7 +128,9 @@ theorem union_bound (hc : IsAO2 n C)
           exact Finset.mem_biUnion.mpr ⟨u,Finset.mem_union_right _ hu,hv⟩
         · exact Finset.mem_biUnion.mpr ⟨w,Finset.mem_union_left _ (Finset.mem_erase.mpr ⟨eq,hin⟩),hv⟩
       have old := ih (Nat.le_of_lt ht') (rest ∪ K) (fun w hw' =>
-        (Finset.mem_union.mp hw').elim (hrest w) (prior w))
+        (Finset.mem_union.mp hw').elim (hrest w) (fun h => (prior w h).1)) (fun w hw' =>
+        (Finset.mem_union.mp hw').elim (fun h => inside _ (Finset.mem_erase.mp h).2) (fun h => (prior w h).2))
+      change _ ≤ (charge t).card + (rest ∪ K).card at old
       have u := Finset.card_union_le rest K
       have sz : rest.card + 1 = W.card := Finset.card_erase_add_one used
       have small := Finset.card_le_card sub
@@ -127,9 +139,18 @@ theorem union_bound (hc : IsAO2 n C)
     · have old := ih (Nat.le_of_lt ht') W (fun w hin => by
         have := hw w hin
         have hne : w ≠ n+t := fun eq => used (eq ▸ hin)
-        omega)
+        omega) inside
+      change _ ≤ (charge t).card + W.card at old
       rw [grow]
       split_ifs <;> simp [fresh] <;> omega
+
+/-- Amortized over an arbitrary set of wires, so shared subcircuits count just once. -/
+theorem union_bound (hc : IsAO2 n C)
+    (raw : ∀ i v, v ∈ S → x i = false → p v i = true → i = v)
+    (t : ℕ) (ht : t ≤ C.gates.length) (W : Finset ℕ) (hw : ∀ w ∈ W, w < n+t) :
+    (W.biUnion (hits C x p S)).card ≤ (charged C x p S t).card + W.card := by
+  have bound := union_within C x p S hc raw (fun _ => True) (by simp) t ht W hw (by simp)
+  simpa using bound
 
 /-- A single negative test and k distinct positive probes require at least k−1 splitting ORs. -/
 theorem output_bound (hc : IsAO2 n C)
