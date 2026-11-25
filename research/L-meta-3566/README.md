@@ -59,6 +59,26 @@ done
 
 The axiom audit for `peel_pendant_path`, `cut_joint` and `MixedFold.compile` reports only `propext`, `Classical.choice` and `Quot.sound`.
 
+## Counting readers at a higher-degree neighbor
+
+[CountReaders.lean](CountReaders.lean) counts the distinct gates that use a raw input. Suppose a leaf `a` has a single such gate, an OR. Its neighbor `b` feeds `q` distinct gates. If an edge survives deletion of `b`, the mixed cofactor `a=1, b=0` saves at least `q+2` gates. All `q` readers fold, and the unique OR reading `a` becomes constant. A change in `a` that distinguishes two original outputs must reach another gate outside these. The proof follows this change across the cut formed by `a`, its OR, and the readers of `b` that became constant.
+
+[PendantObstruction.lean](PendantObstruction.lean) uses a minimum circuit to obtain a graph-level conclusion. Suppose `b` has another neighbor and deleting `b` leaves an edge. If neither `a` nor `b` satisfies both vertex-deletion inequalities for every implementation of the original graph, **every** minimum circuit reads `a` at a single OR gate, that gate does not read `b`, and at most `degree(b) − 2` gates read `b`. A degree-three neighbor must therefore have exactly one reader in every such circuit.
+
+[pendant_share.py](pendant_share.py) checks what can happen in a fixed, nonminimum implementation. Start with an eight-cycle and add a vertex adjacent to vertices 0 and 4 and to one new leaf. The resulting bipartite graph has no four-cycle, has a cover of size five, and either vertex of the pendant edge lowers the minimum cover size to four. A 22-gate implementation reuses the signal `0 OR 4` in a conjunctive normal form for the disjunction of two disjoint cycle edges. Exhaustive truth tables give 21 live gates after setting the leaf to zero. Setting the degree-three neighbor to zero and the leaf to either value leaves 19 live gates. Merging identical signals and pruning dead gates therefore saves one and three respectively in this implementation. The optimal-budget statement for the vertex pair remains a separate question.
+
+After building the modules in the preceding section:
+
+```sh
+for module in CountReaders PendantObstruction
+do
+  lake env sh -c 'export LEAN_PATH="$1:$LEAN_PATH"; exec lean -R "$1" -o "$1/$2.olean" "$1/$2.lean"' sh "$research_dir" "$module" || exit 1
+done
+python3 "$research_dir/pendant_share.py"
+```
+
+The audit for both `CountReaders.cut_joint_readers` and `PendantObstruction.peel_or_few_readers` reports `propext`, `Classical.choice` and `Quot.sound`.
+
 ## Relation to L-meta-1774
 
 [Descent.lean](Descent.lean) proves that the precise descent in L-meta-1774 is equivalent to the ability to replace any minimum circuit meeting the ownership hypothesis by an equal-size minimum with zero disjoint-edge-owning gates. The equivalence uses minimization over the number of such gates. The cover construction proves descent at every size budget reaching the canonical cover circuit.
