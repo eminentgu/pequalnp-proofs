@@ -8,6 +8,12 @@ An error for a child is an independent set on which the child accepts. An error 
 
 [WrongSupportCircuit.lean](WrongSupportCircuit.lean) verifies the witness-width bound and constructs a new circuit for the restricted graph function. If the original output AND has zero-based gate index j and r earlier gates directly read a forced input, the new circuit has at most j − r gates. The theorem leaves open the comparison between the gates saved and the edge and cover counts lost when deleting the chosen vertices.
 
+## A single vertex and the cover term
+
+`singleton_boundary_saving` applies at any AND depth and to any simple graph. Suppose the left child accepts an independent set X. For each neighbor b of X other than a designated vertex z, suppose that child also accepts the singleton {b}. An independent right error must meet the neighborhood of X. It cannot contain an accepted singleton of the left child, because then the AND would accept this independent set. Every right error therefore contains z. The right child computes the graph after deleting the edges at z, saving the output AND and all r earlier gates that directly read z.
+
+`peel_of_singleton_boundary` applies this to one least circuit. The full vertex-deletion conclusion at z, uniformly over all circuits for G, follows when z has positive degree at most r+1. If the minimum cover decreases at z, the sufficient threshold is degree at most r. These conditions can be tested on a least circuit. It remains open whether every graph in L-meta-3566 has a qualifying vertex or another equally strong deletion.
+
 Run from the repository root. The last command prints the axiom audits.
 
 ```sh
