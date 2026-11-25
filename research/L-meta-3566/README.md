@@ -26,6 +26,14 @@ do
 done
 ```
 
+## Critical leaves and finite graph order
+
+[CriticalSupport.lean](CriticalSupport.lean) proves that for minimum cover size `t ≥ 3`, deleting leaves whose removal preserves `t` gives a core on at most `t + choose(t,2)` non-isolated vertices. The result applies to every graph without a four-cycle. For two minimum covers, a vertex outside both has all its neighbors in their intersection. When all minimum covers differ in at most one place, any exterior critical leaf is the only exterior neighbor of its hub. Counting single neighbors and pairs gives the bound. At cover size four the bound is ten.
+
+[FiniteCritical.lean](FiniteCritical.lean) transfers the circuit lower bound to a graph on that many inputs, preserving the edge count, minimum cover size and criticality. The theorem `of_small_order` quantifies over all correct circuits. [RowFold.lean](RowFold.lean) proves that a gate evaluating to zero on any prescribed family of rows and a gate reading its wire can both be removed while preserving the output on those rows.
+
+After the dependencies in the preceding section have been compiled, replay the three modules with the same command loop in the order `CriticalSupport FiniteCritical RowFold`. Each public theorem audited in these files uses `propext`, `Classical.choice` and `Quot.sound`.
+
 ## Pair-sound circuits and peelable graphs
 
 [Normalization.lean](Normalization.lean) combines the cover circuit with the upstream proof of [L-meta-7241](https://github.com/open-goat/pequalnp-proofs/blob/b85b175cfdd07efa25e93e670367d51906eb2b22/lean/PEqualNP/Outside/L_meta_7241.lean). On a graph without four-cycles and for any gate budget, a cover meeting the numerical bound exists exactly when that budget can compute the edge function with a circuit whose AND gates stay off on every nonedge pair. For the whole graph class of L-meta-3566, the stated peel is therefore equivalent to the existence of such a replacement of at most the original circuit size. The existence of a replacement for every circuit is open.
