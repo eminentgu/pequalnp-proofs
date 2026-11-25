@@ -37,6 +37,10 @@ For each subset of the four distinguished vertices that covers every internal ed
 
 The four internal vertices can be inside different minimum covers of isomorphic representative graphs. The `inside_mask` column uses bit positions for the pairs 01, 02, 03, 12, 13, 23. Each outside mask records its set of neighbors in bit positions 0–3. The edge-list file gives a second explicit representation. [Generator](enumerate_four.py) · [Edge lists](critical.txt) · [Full counts](counts.txt)
 
+## Finite tests beyond four
+
+For cover number `t ≥ 5`, it suffices to check critical graphs on at most `t + choose(t,2)` vertices and `t(t−1)` edges, against normalized binary circuits with at most `t²−2` gates. To count edges, assign one edge per outside vertex to that vertex. An internal edge occupies its pair of cover vertices. Charge each other edge of an outside vertex to the pair consisting of its designated cover neighbor and its other endpoint. Triangles and four-cycles exclude competing charges. Checking this family for every `t ≥ 5` would imply both original desk statements. For `t=5` the respective maxima are 15 vertices, 20 edges and 23 gates. This next case remains open here. [Edge count](EdgeBudget.lean) · [Circuit budget and implication](BoundedChecks.lean)
+
 ## Independent enumeration and search replay
 
 Run from this directory with Python 3.10 or later. These commands prepare a fresh temporary checkout of the published source.
