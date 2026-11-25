@@ -83,15 +83,15 @@ private theorem loss_completion {n : Nat} (G : SimpleGraph (Fin n)) [DecidableRe
       change circuitFun n D x = true at on
       simp [on]
 
-private theorem finish {n} (D : Circuit) (dm : Monotone2 D) (g : (Fin n → Bool) → Bool) (s : Nat)
-    (builder : Bld n (fun _ => True) g s) :
+theorem finishWith {n} (D : Circuit) (dm : Monotone2 D) (g : (Fin n → Bool) → Bool) (s : Nat)
+    (op : GateOp) (allowed : op=GateOp.and ∨ op=GateOp.or) (builder : Bld n (fun _ => True) g s) :
     ∃ A : Circuit, Monotone2 A ∧ A.size ≤ D.size+s+1 ∧
-      ∀ x, circuitFun n A x = (circuitFun n D x || g x) := by
+      ∀ x, circuitFun n A x = op.eval [circuitFun n D x, g x] := by
   let m := n + D.gates.length
   obtain ⟨gs,o,legal,budget,earlier,ev,_⟩ := builder m (by simp [m])
   let top := m+gs.length
   let port := if D.output < m then D.output else top+1
-  let gate : Gate := ⟨.or,[port,o]⟩
+  let gate : Gate := ⟨op,[port,o]⟩
   let A : Circuit := ⟨(D.gates++gs)++[gate],top⟩
   refine ⟨A,?_,?_,?_⟩
   · intro h mem
@@ -102,7 +102,7 @@ private theorem finish {n} (D : Circuit) (dm : Monotone2 D) (g : (Fin n → Bool
       · obtain ⟨op,ar⟩ := legal.1 h q
         exact ⟨op,ar.le⟩
     · obtain rfl := List.mem_singleton.mp e
-      simp [gate]
+      exact ⟨allowed,by simp [gate]⟩
   · simp [A,Circuit.size] at budget ⊢
     omega
   · intro x
@@ -126,8 +126,8 @@ private theorem finish {n} (D : Circuit) (dm : Monotone2 D) (g : (Fin n → Bool
     rw [wiresFrom_append,wiresFrom_append]
     change (v ++ [gate.op.eval (gate.inputs.map (fun i => v.getD i false))]).getD top false = _
     rw [← vl,getD_snoc_eq]
-    change (v.getD port false || (v.getD o false || false)) = _
-    rw [dr,gr,Bool.or_false]
+    change op.eval [v.getD port false, v.getD o false] = _
+    rw [dr,gr]
 
 /-- Restoring the genuinely lost edges gives a physical full-input circuit, even when
 the surviving circuit has invalid wire references or uses the removed gates at many readers. -/
@@ -148,7 +148,8 @@ theorem patch {n : Nat} (G : SimpleGraph (Fin n)) [DecidableRel G.Adj] (D : Circ
       · exact ⟨a,aT,Sym2.mem_mk_left ..⟩
       · exact ⟨b,bT,Sym2.mem_mk_right ..⟩
     have builder := bld_edges n (fun _ => True) T F.edgeFinset nonempty coverE (fun _ _ => True.intro)
-    obtain ⟨A,am,size,sem⟩ := finish D dm _ _ builder
+    obtain ⟨A,am,size,sem⟩ := finishWith D dm _ _ .or (Or.inr rfl) builder
+    simp only [GateOp.eval,List.any_cons,id_eq,List.any_nil,Bool.or_false] at sem
     have div (x : Fin n → Bool) : decide (∃ e ∈ F.edgeFinset, ∀ v ∈ e, x v = true) = graphFun F ∅ x := by
       simp only [graphFun,Finset.notMem_empty,false_and,exists_false,decide_false,Bool.false_or]
       apply decide_eq_decide.mpr
