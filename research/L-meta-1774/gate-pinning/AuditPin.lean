@@ -2,6 +2,8 @@ import PinDesk
 import PinTree
 import CriticalTree
 import LocalRigidity
+import PrivateParents
+import MatchingRigidity
 import CriticalPairTree
 import CriticalOrTree
 import GroupedStarTree
@@ -75,3 +77,15 @@ open PEqualNP.Research.GatePinning
 #print axioms CriticalPairTree.critical_matching
 #print axioms CriticalPairTree.clean
 #print axioms CriticalPairTree.not_minimum
+
+
+#print axioms repair_of_private_parents
+#print axioms exact_of_remaining_shared_cases
+#print axioms MatchingRigidity.correct
+#print axioms MatchingRigidity.ready
+#print axioms MatchingRigidity.old_defect
+#print axioms MatchingRigidity.not_minimum
+#print axioms MatchingRigidity.only_gate
+#print axioms MatchingRigidity.critical_edges
+#print axioms MatchingRigidity.no_precomputed_pairs
+#print axioms MatchingRigidity.three_gate_repair

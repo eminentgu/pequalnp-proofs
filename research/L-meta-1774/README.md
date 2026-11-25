@@ -91,7 +91,15 @@ These necessary constraints apply to a defective gate's operands regardless of f
 
 [CriticalOrTree](gate-pinning/CriticalOrTree.lean) checks the 64 inputs of a six-vertex forest. Its two critical spokes are owned by the defective gate and the old one-operand star pin is provably unavailable. [GroupedStarTree](gate-pinning/GroupedStarTree.lean) checks the 256 inputs of an eight-vertex tree. Its defective gate owns neither critical spoke and acquires both after reusing an OR outside its original cone. Both examples certify equal output, productivity, elimination of all defects, and a strictly smaller circuit witnessing that the original example is nonminimal.
 
-Run `research/L-meta-1774/gate-pinning/check.sh` from any directory using the script's full or relative path. It builds the research modules in a fresh temporary directory and runs the [axiom audit](gate-pinning/AuditPin.lean). The remaining open case includes disjoint critical edges for which the two earlier primary ANDs are unavailable.
+Run `research/L-meta-1774/gate-pinning/check.sh` from any directory using the script's full or relative path. It builds the research modules in a fresh temporary directory and runs the [axiom audit](gate-pinning/AuditPin.lean).
+
+## Rebuilding two private parents
+
+[PrivateParents](gate-pinning/PrivateParents.lean) proves an equal-size three-gate repair when all critical edges are two specified unordered pairs. The pairs may be disjoint. The defective AND must read two distinct earlier gates, and each of those wires must be used exclusively by that AND. Replace the two parents by primary-input ANDs computing the respective pairs and replace the bad AND by their OR. Each new parent can activate only when the old defective gate activated. The privacy condition keeps every other gate from seeing either modified parent directly. The proof preserves the graph function, global minimality, productivity of all ANDs, and cleanliness of the entire earlier prefix. The original parents may contain arbitrary subcircuits. The two pair signals do not need to have existed earlier.
+
+[MatchingRigidity](gate-pinning/MatchingRigidity.lean) isolates the role of these parent edits. In a ten-gate circuit on a six-vertex tree, exactly the disjoint edges {0,1} and {2,3} are critical. The only two gates before the defective AND are ORs. Exhausting all arities up to two, both monotone operations and all wire indices shows that the only function-preserving replacement at the defective gate is its original AND, in either input order. Changing both private parents and the gate together preserves the output on all 64 assignments and eliminates every defect. A six-gate circuit computing the same function establishes that this example is nonminimal.
+
+The conditional theorem `exact_of_remaining_shared_cases` connects all the preceding multi-edge repairs to the posted 1774 statement. It still requires an exchange for residual cases, including shared parents with no suitable earlier pair or OR group, and critical families with three or more edges outside the proved cases.
 
 From the repository's `lean/` directory, run the following commands.
 
