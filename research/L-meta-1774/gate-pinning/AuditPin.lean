@@ -2,6 +2,9 @@ import PinDesk
 import PinTree
 import CriticalTree
 import LocalRigidity
+import CriticalPairTree
+import CriticalOrTree
+import GroupedStarTree
 
 open PEqualNP.Research.GatePinning
 #print axioms other_owners_survive
@@ -34,3 +37,41 @@ open PEqualNP.Research.GatePinning
 #print axioms LocalRigidity.only_gate
 #print axioms LocalRigidity.critical_edges
 #print axioms LocalRigidity.forbidden_rows
+
+
+#print axioms owned_operand_forces
+#print axioms repair_of_two_forcing_vertices
+#print axioms repair_of_two_owned_spokes
+#print axioms exact_of_remaining_beyond_two_spokes
+#print axioms masked_owners_survive
+#print axioms repair_of_masked_or
+#print axioms repair_of_precomputed_pairs
+#print axioms repair_of_grouped_star
+#print axioms repair_of_precomputed_spokes
+
+#print axioms CriticalOrTree.correct
+#print axioms CriticalOrTree.ready
+#print axioms CriticalOrTree.old_defect
+#print axioms CriticalOrTree.owns_spokes
+#print axioms CriticalOrTree.critical_spokes
+#print axioms CriticalOrTree.no_star_pin
+#print axioms CriticalOrTree.new_clean
+#print axioms CriticalOrTree.not_minimum
+
+#print axioms GroupedStarTree.correct
+#print axioms GroupedStarTree.ready
+#print axioms GroupedStarTree.old_defect
+#print axioms GroupedStarTree.grouped_wire_outside
+#print axioms GroupedStarTree.critical_spokes
+#print axioms GroupedStarTree.both_unowned
+#print axioms GroupedStarTree.clean
+#print axioms GroupedStarTree.not_minimum
+
+
+#print axioms CriticalPairTree.correct
+#print axioms CriticalPairTree.ready
+#print axioms CriticalPairTree.old_defect
+#print axioms CriticalPairTree.both_outside
+#print axioms CriticalPairTree.critical_matching
+#print axioms CriticalPairTree.clean
+#print axioms CriticalPairTree.not_minimum

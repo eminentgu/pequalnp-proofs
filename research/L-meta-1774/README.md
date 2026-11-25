@@ -81,6 +81,18 @@ In a globally minimum circuit, every wire available before the gate must fail on
 
 These necessary constraints apply to a defective gate's operands regardless of fanout. Producing a successful equal-size exchange in every remaining case of L-meta-1774 is open.
 
+## Equal-size repairs with several critical edges
+
+[CriticalOr](gate-pinning/CriticalOr.lean) proves two repairs of a productive AND in a minimum circuit. If every critical edge meets one of two vertices that individually activate the gate, replace it by the OR of those primary inputs. If every critical edge lies in a two-edge star and the gate owns both spokes, the repair always exists. Ownership makes each active operand depend on one endpoint of an owned pair. Either the centre alone forces a parent, or each leaf forces both parents. The second case uses the new OR. The conditional theorem `exact_of_remaining_beyond_two_spokes` removes both cases from the general proof obligation.
+
+[CriticalPairOr](gate-pinning/CriticalPairOr.lean) covers two critical edges already computed by earlier ANDs of their respective primary endpoints. Replacing the bad gate by the OR of those two wires works even when the edges are disjoint and the wires lie outside the old fan-in cone. A newly introduced AND ancestor can activate only on a pair that already activated the bad gate. Every downstream gate with the bad gate in its cone was already unable to own that pair. [CriticalPairTree](gate-pinning/CriticalPairTree.lean) checks this exchange on all 64 inputs of a six-vertex tree. Exactly two disjoint edges are critical, both primary ANDs enter the cone for the first time, and a six-gate circuit certifies nonminimality of the 12-gate example.
+
+[GroupedStar](gate-pinning/GroupedStar.lean) handles any number of critical edges with a common endpoint. The prefix must provide a wire with exclusively OR ancestry that accepts every critical pair. Intersecting this wire with the centre must imply the old gate. The new AND then owns a critical edge and retains productivity throughout the circuit. In particular, two critical spokes only need an earlier OR of their leaves. The old gate may own neither spoke, and the earlier OR can lie outside its original cone.
+
+[CriticalOrTree](gate-pinning/CriticalOrTree.lean) checks the 64 inputs of a six-vertex forest. Its two critical spokes are owned by the defective gate and the old one-operand star pin is provably unavailable. [GroupedStarTree](gate-pinning/GroupedStarTree.lean) checks the 256 inputs of an eight-vertex tree. Its defective gate owns neither critical spoke and acquires both after reusing an OR outside its original cone. Both examples certify equal output, productivity, elimination of all defects, and a strictly smaller circuit witnessing that the original example is nonminimal.
+
+Run `research/L-meta-1774/gate-pinning/check.sh` from any directory using the script's full or relative path. It builds the research modules in a fresh temporary directory and runs the [axiom audit](gate-pinning/AuditPin.lean). The remaining open case includes disjoint critical edges for which the two earlier primary ANDs are unavailable.
+
 From the repository's `lean/` directory, run the following commands.
 
 ```sh

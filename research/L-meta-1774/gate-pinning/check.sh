@@ -14,6 +14,6 @@ lean_bin=$(elan which lean)
 for module in Guarded Shannon Opposite Omit; do
   "$lean_bin" -j1 -R "$readers_dir" -o "$build_dir/$module.olean" "$readers_dir/$module.lean"
 done
-for module in Pin StarPin PinDescent PinDesk PinTree CriticalCases CriticalTree Sensitive LocalRigidity AuditPin; do
+for module in Pin StarPin PinDescent PinDesk PinTree CriticalCases CriticalTree Sensitive LocalRigidity CriticalOr CriticalPairOr CriticalPairTree GroupedStar CriticalOrTree GroupedStarTree AuditPin; do
   "$lean_bin" -j1 -R "$src_dir" -o "$build_dir/$module.olean" "$src_dir/$module.lean"
 done
