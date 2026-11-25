@@ -45,6 +45,16 @@ If each reader misses one of these kinds, it can receive the left operand, the r
 
 Run `research/L-meta-1774/shared-readers/check.sh` from the checkout to replay the examples and the [axiom audit](shared-readers/AuditGuarded.lean). The audit prints only `propext`, `Classical.choice`, and `Quot.sound`; the rowwise cofactor equivalence uses only `propext`.
 
+## Pinning a gate in an arbitrary circuit
+
+A graph edge is *critical for a gate* when the circuit rejects that edge's two-vertex input after the gate is clamped to false. This test includes every wire that reads the gate, however far downstream. [Pin](gate-pinning/Pin.lean) proves that narrowing one AND gate pointwise and retaining only primary inputs or original operands preserves all the old owned edges at every other AND gate. If the changed gate lies in the cone of an owner, ownership requires the changed gate to be false on that particular edge already. Gates earlier than the changed site keep precisely their former ownership. The proof accommodates forward references and out-of-range references under the public model's default-false semantics.
+
+[StarPin](gate-pinning/StarPin.lean) gives an equal-size edit for either operand of an AND gate. Suppose the primary input at vertex `v` implies that operand and every critical edge contains `v`. Replace that operand with `v`. The new circuit computes the same graph function. Its edited gate owns only edges containing `v`, and it retains each of its formerly owned edges that contains `v`. The other operand may be any earlier wire. When at least one owned edge meets `v`, every formerly productive gate remains productive.
+
+[PinDescent](gate-pinning/PinDescent.lean) permits a repair to introduce defects at later gates. At each step it fixes the first defective gate and preserves the earlier clean prefix. After at most the original number of gates the entire circuit is clean. [PinDesk](gate-pinning/PinDesk.lean) applies this induction to the posted statement of 1774. Its remaining premise asks for a suitable vertex, operand and retained edge at the earliest disjoint owner of every eligible minimum circuit. This premise remains open.
+
+[PinTree](gate-pinning/PinTree.lean) checks the edit on a five-vertex tree. Gate 2 owns `{0,1}` and `{2,3}`. Only `{0,1}` disappears from the output when gate 2 is clamped to false. Pinning its first operand to vertex 0 keeps all seven gates, every AND still owns an edge, and no gate owns disjoint edges afterward. An independent five-gate construction shows the example is nonminimal. Run `research/L-meta-1774/gate-pinning/check.sh` to reproduce the proofs and the [axiom audit](gate-pinning/AuditPin.lean).
+
 Completing L-meta-1774 still requires constructing a circuit of at most the initial size with fewer gates owning disjoint edges.
 
 From the repository's `lean/` directory, run the following commands.
