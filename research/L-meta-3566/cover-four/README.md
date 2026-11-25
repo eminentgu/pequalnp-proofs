@@ -14,6 +14,19 @@ To prove exhaustiveness, encode the edges within a four-vertex cover in six bits
 
 The 17 classes include ten without leaves and eight bipartite classes. The complete list identifies two cases with an isolated-edge reduction and two further cases with a pendant two-edge path. The other 13 coincide with the triangle-free part of the previously published 44 core graphs. The 17 direct searches cover the four extra cases explicitly. The earlier 12-vertex bipartite core table concerns cover numbers five or six. [Graph classes](critical.tsv) · [Published finite checks](https://github.com/helloitswill/pequalnp-research-notes/blob/894ed421c9bccac0310ab9a270902798c2aec00c/L-meta-612/FiniteChecks.md)
 
+## Replaying the four public theorems
+
+From the repository root, use the pinned Lean toolchain and Python 3.9 or later. The verifier installs or builds the Lake dependencies as required, generates the finite certificates, compiles the local modules in import order, and checks the transitive axioms of all four conclusions in `CoverFour.lean`.
+
+```sh
+python3 research/L-meta-3566/cover-four/verify_all.py --jobs 2
+```
+
+The default build directory is `lean/.lake/build/cover-four-all`. It contains generated sources, compiler logs and reusable objects. A subsequent run verifies source, dependency and object hashes before reusing an object, then recompiles the final theorem module and inspects its four audit entries. A fresh build can use `--build-dir "$(mktemp -d)"`. Use `--project PATH` to select another checkout's matching Lean project and populated Lake cache.
+
+The optional `--certificate-cache PATH` accepts the output of a previous successful `partial15/verify.py` or `class186/verify.py` run with the same Lean project. Pass it once per directory to reuse those trusted proof fragments. The verifier regenerates both sets of sources and matches the local source dependencies of each fragment before importing its compiled object. The default command builds the fragments itself. In the replay of proof commit `585ded46`, the verifier compiled 58 modules and matched 155 row-15 and 24 canonical-class fragments from earlier Lean runs. All four audited theorems depended on exactly `propext`, `Classical.choice` and `Quot.sound`.
+
+
 ## Generation and isomorphism
 
 Choose a minimum cover of four vertices numbered 0–3. Every remaining vertex has a nonempty neighborhood among these four. Outside vertices with the same singleton neighborhood are duplicate leaves. Any pair of cover vertices occurs in at most one outside neighborhood, since two such vertices would supply a four-cycle. Thus each nonempty neighborhood type occurs at most once. Four singleton types and at most six larger types give at most fourteen nonisolated vertices overall. Covering vertices can themselves be leaves, so the implementation also checks for duplicate leaves across the completed graph. [Checked graph and reduction bounds](../CoverKernel.lean)
