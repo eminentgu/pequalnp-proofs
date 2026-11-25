@@ -29,7 +29,7 @@ theorem double_cover_le_active (G : SimpleGraph (Fin n)) [DecidableRel G.Adj]
   change 2*Loc.tau G ≤ A.card
   omega
 
-private theorem distinct_neighbors (G : SimpleGraph (Fin n)) [DecidableRel G.Adj] (sq : NoFourCycle G)
+theorem distinct_neighbors (G : SimpleGraph (Fin n)) [DecidableRel G.Adj] (sq : NoFourCycle G)
     (x y : Fin n) (ne : x≠y) (degree : 2 ≤ G.degree x) : ∃ t, G.Adj x t ∧ ¬G.Adj y t := by
   classical
   by_contra! none
@@ -69,7 +69,7 @@ theorem paid_vertex (G : SimpleGraph (Fin n)) [base : DecidableRel G.Adj] (C : C
   · exact hi
   · exact (Finset.mem_singleton.mp hh) ▸ hj
 
-private theorem square_mono {G H : SimpleGraph (Fin n)} [DecidableRel G.Adj] [DecidableRel H.Adj]
+theorem square_mono {G H : SimpleGraph (Fin n)} [DecidableRel G.Adj] [DecidableRel H.Adj]
     (sub : H ≤ G) (sq : NoFourCycle G) : NoFourCycle H := by
   intro a b ne
   apply le_trans (Finset.card_le_card ?_) (sq a b ne)
@@ -119,16 +119,18 @@ theorem pivot_eval (G : SimpleGraph (Fin n)) [DecidableRel G.Adj] (x : Fin n)
 private theorem card_irrel (G : SimpleGraph (Fin n)) (i j : Fintype G.edgeSet) :
     (@SimpleGraph.edgeFinset _ G i).card = (@SimpleGraph.edgeFinset _ G j).card := by rw [Subsingleton.elim i j]
 
-/-- The entire sparse class, with arbitrarily many disconnected cycle components and isolated inputs. -/
-theorem pseudoforest_and_lower (G : SimpleGraph (Fin n)) [base : DecidableRel G.Adj] (sp : Pseudoforest.Sparse G)
-    (bip : ∃ c : Fin n → Bool, ∀ u v, G.Adj u v → c u ≠ c v) (sq : NoFourCycle G)
+/-- A paid pivot in each deficient realization of each subgraph yields the global AND bound. -/
+theorem paid_induction (G : SimpleGraph (Fin n)) [base : DecidableRel G.Adj]
+    (pay : ∀ (H : SimpleGraph (Fin n)) [DecidableRel H.Adj], H ≤ G → ∀ (D : Circuit), IsAO2 n D →
+      circuitFun n D = graphFun H ∅ → (physical D).card < Loc.tau H → ∃ x, 0 < H.degree x ∧
+      ∃ L : Finset ℕ, H.degree x ≤ L.card ∧ ∀ j∈L, lit D x j)
     (C : Circuit) (ao : IsAO2 n C) (correct : circuitFun n C = graphFun G ∅) : Loc.tau G ≤ (physical C).card := by
   classical
   generalize size : G.edgeFinset.card = k
   induction k using Nat.strong_induction_on generalizing G C with
   | ind k ih =>
     by_contra! few
-    obtain ⟨x,pos,L,charge,on⟩ := paid_vertex G C ao correct sp bip sq few
+    obtain ⟨x,pos,L,charge,on⟩ := pay G le_rfl C ao correct few
     let S := G.neighborFinset x
     let H := cutSet G S
     have sub : H ≤ G := fun _ _ h => h.1
@@ -160,9 +162,7 @@ theorem pseudoforest_and_lower (G : SimpleGraph (Fin n)) [base : DecidableRel G.
         rw [←ev,eq] at yes no
         exact Bool.noConfusion (yes.symm.trans no)
       obtain ⟨D,dao,dc,save⟩ := compile_lit C ao r raw vari x (fun _ => by simp [r,setPivot]) L on
-      obtain ⟨c,col⟩ := bip
-      have lower := ih H.edgeFinset.card small H (GraphInduction599.sparse_subgraph sub sp)
-        ⟨c,fun u v h => col _ _ (sub h)⟩ (square_mono sub sq) D dao (dc.trans ev) (card_irrel _ _ _)
+      have lower := ih H.edgeFinset.card small H (fun K _ h => pay K (h.trans sub)) D dao (dc.trans ev) (card_irrel _ _ _)
       change Loc.tau G ≤ Loc.tau H + S.card at bound
       omega
     · have cov : IsVertexCover H ∅ := fun u v uv => (rem ⟨u,v,uv⟩).elim
@@ -172,6 +172,16 @@ theorem pseudoforest_and_lower (G : SimpleGraph (Fin n)) [base : DecidableRel G.
       change Loc.tau G ≤ Loc.tau H + S.card at bound
       simp only [Finset.card_empty] at zero
       omega
+
+/-- The entire sparse class, with arbitrarily many disconnected cycle components and isolated inputs. -/
+theorem pseudoforest_and_lower (G : SimpleGraph (Fin n)) [base : DecidableRel G.Adj] (sp : Pseudoforest.Sparse G)
+    (bip : ∃ c : Fin n → Bool, ∀ u v, G.Adj u v → c u ≠ c v) (sq : NoFourCycle G)
+    (C : Circuit) (ao : IsAO2 n C) (correct : circuitFun n C = graphFun G ∅) : Loc.tau G ≤ (physical C).card := by
+  apply paid_induction G _ C ao correct
+  intro H inst sub D dao dc few
+  obtain ⟨c,col⟩ := bip
+  exact paid_vertex H D dao dc (GraphInduction599.sparse_subgraph sub sp)
+    ⟨c,fun u v e => col _ _ (sub e)⟩ (square_mono sub sq) few
 
 /-- On every square-free bipartite pseudoforest, AND gates pay for a minimum cover and
 OR gates pay for all but one edge. -/
@@ -232,6 +242,7 @@ theorem pseudoforest_vertex (G : SimpleGraph (Fin n)) [DecidableRel G.Adj] (sp :
 #print axioms pseudoforest_numerical
 #print axioms pseudoforest_ownership
 #print axioms pseudoforest_vertex
+#print axioms paid_induction
 #print axioms paid_vertex
 #print axioms pivot_eval
 #print axioms pseudoforest_and_lower
