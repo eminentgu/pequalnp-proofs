@@ -24,6 +24,8 @@ An additional theorem, stable_neighborhood, gives the full vertex-deletion concl
 
 For any bipartite graph of maximum degree three and girth greater than six, [subcubic_girth](SubcubicAND.lean) proves that every correct binary monotone circuit needs at least τ(G) physical AND gates. When too few ANDs are available to pay for a vertex, its singleton input selects at most two labeled gate ports. Choosing another user at each port must produce an edge. A failure to assign distinct ports forces a six-cycle. Counting both ports per physical gate then pays for a vertex, and the bound follows by restriction. The total gate lower bound on all such graphs is open. [CubicPorts.lean](CubicPorts.lean) [PortHall.lean](PortHall.lean)
 
+For a square-free subcubic graph, take a vertex set Z whose deletion makes the graph bipartite and a set T meeting every six-cycle. Every monotone circuit of fan-in at most two computing the edge function has at least τ(G) − ⌊(|Z| + |T|)/2⌋ physical AND gates. In particular, the full AND bound holds if deleting a single vertex makes the graph bipartite and the graph has no six-cycle. [SubcubicTransversals.lean](SubcubicTransversals.lean)
+
 To replay after building the research dependencies SafeTail, ComponentStability, SubdivisionAssembly, PortHallGirth, PortTransversal and PseudoforestAND, use the repository root.
 
 ```sh

@@ -1,5 +1,6 @@
 import CubicPorts
 import PortHallGirth
+import NormalizeCount
 
 namespace VertexPeel.PivotAND
 open PEqualNP.CircuitLowerBounds PEqualNP.MetaComplexity PEqualNP.MetaComplexity.NestedCover
@@ -73,6 +74,19 @@ theorem subcubic_one_odd_transversal (G : SimpleGraph (Fin n)) [DecidableRel G.A
     (fun z w cy len => (six z w cy len).elim) C ao ok
   simpa using bound
 
+/-- The joint transversal estimate for general monotone fan-in-two circuits. -/
+theorem subcubic_two_transversals_mono (G : SimpleGraph (Fin n)) [DecidableRel G.Adj]
+    (Z T : Finset (Fin n)) (c : Fin n → Bool) (proper : ∀ u v, G.Adj u v → u∉Z → v∉Z → c u≠c v)
+    (deg : ∀ v, G.degree v≤3) (sq : NoFourCycle G)
+    (hit : ∀ z (w : G.Walk z z), w.IsCycle → w.length=6 → ∃ v∈T, v∈w.support)
+    (C : Circuit) (mono : Monotone2 C) (ok : circuitFun n C = graphFun G ∅) :
+    Loc.tau G ≤ (physical C).card + (Z.card+T.card)/2 := by
+  have zero : circuitFun n C (fun _ => false)=false := (congrFun ok _).trans (by simp [graphFun])
+  obtain ⟨D,ao,same,budget⟩ := NormalizeCount.normalize C mono zero
+  exact (subcubic_two_transversals G Z T c proper deg sq hit D ao (same.trans ok)).trans
+    (Nat.add_le_add_right budget _)
+
+#print axioms subcubic_two_transversals_mono
 #print axioms double_cover_after_set
 #print axioms subcubic_two_transversals
 #print axioms subcubic_one_odd_transversal
