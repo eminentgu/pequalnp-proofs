@@ -1,0 +1,3 @@
+'VertexPeel.CoverFourResidual.listedLower' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VertexPeel.CoverFourResidual.listedExact' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VertexPeel.CoverFourResidual.listedOptimum' depends on axioms: [propext, Classical.choice, Quot.sound]

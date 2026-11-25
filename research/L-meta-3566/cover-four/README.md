@@ -1,6 +1,6 @@
 # Triangle- and four-cycle-free graphs with cover number four
 
-After excluding forests, duplicate leaves, and any leaf whose deletion preserves the cover number, exactly **17** graphs remain up to isomorphism. A direct C++ synthesis search excluded circuits of size at most `|E|+2` for all 17. The star construction gives size `|E|+3` for a graph with cover number four. This is a computational check. Its classification and excluded circuit schedules still need Lean verification to derive the full cover-four corollary in the proof repository.
+After excluding forests, duplicate leaves, and any leaf whose deletion preserves the cover number, exactly **17** graphs remain up to isomorphism. A direct C++ synthesis search excluded circuits of size at most `|E|+2` for all 17. The star construction gives size `|E|+3` for a graph with cover number four. Lean independently proves the exact minimum circuit size and the full vertex-deletion conclusion for 16 of the 17 labelled graphs, including every bipartite row. Row 15 has a computational search result. The classification up to isomorphism remains a separate step for a cover-four corollary. [Lean statements and reproduction](checked.md)
 
 | Stage | 7 vertices | 8 | 9 | 10 | 11 | 12 | 13 | 14 | Total |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
