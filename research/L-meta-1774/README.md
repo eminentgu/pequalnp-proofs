@@ -21,6 +21,16 @@ The circuit is ready, computes the exact graph function, and resists replacing a
 
 Two explicit rewrites show how global savings arise here. First replace the OR input of the a-mask by b∨p while the d-mask continues to cover ad. Then replace the OR input of the d-mask by (a∨c)∨q. Each intermediate circuit computes the same function, and the shared bad wire then has no readers.
 
+## Shared readers and downstream cofactors
+
+[Guarded](shared-readers/Guarded.lean) treats a shared gate `J = L ∧ R` read through any number of branches `Hᵢ ∧ (J ∨ Bᵢ)`. Later branches and the final AND/OR circuit can reuse earlier guarded results and the original prefix wires. Choose independently whether each reader gets `L` or `R`. The compiler emits a physical monotone circuit with exactly one fewer gate. On graph-positive inputs this change can only increase the output. It therefore suffices to check independent inputs, where a reader can change only if its guard and chosen operand are true, its alternative is false, and the other operand is false.
+
+[Shannon](shared-readers/Shannon.lean) gives a necessary and sufficient test for a fixed choice. When a reader changes on an independent assignment, compare the downstream circuit with that reader's output clamped to false and true. The theorem uses the original outputs for earlier readers and the selected rewiring for later readers. The edge function is preserved exactly when these cofactors agree at every changed reader. A globally minimum circuit in this layout must have an independent assignment with unequal cofactors somewhere for every proposed choice.
+
+[GuardedTree](shared-readers/GuardedTree.lean) reconstructs the existing eight-gate tree circuit gate for gate. Its two readers can use opposite parents, reducing the count to seven while preserving the edge function. [GuardedCycle](shared-readers/GuardedCycle.lean) gives a five-cycle with three pendant vertices and a ready 14-gate circuit. Its gate 2 owns the disjoint edges `{0,1}` and `{2,3}` and has three guarded readers. For all eight choices of parents, reader three causes either `{2,4}` or `{1,4}` to be accepted. A separate 10-gate circuit computes the same graph function. This locates the remaining issue for this route to 1774: global minimality must supply additional structure, or an exchange must change more than the parent choice at each reader.
+
+Run `research/L-meta-1774/shared-readers/check.sh` from the checkout to replay the examples and the [axiom audit](shared-readers/AuditGuarded.lean). The audit prints only `propext`, `Classical.choice`, and `Quot.sound`; the rowwise cofactor equivalence uses only `propext`.
+
 Completing L-meta-1774 still requires constructing a circuit of at most the initial size with fewer gates owning disjoint edges.
 
 From the repository's `lean/` directory, run the following commands.
