@@ -8,6 +8,12 @@ For the reverse implication, take two distinct edges and choose an endpoint foun
 
 Reproduce from the pinned `lean` directory with `lake env lean ../research/L-meta-3566/Equivalence.lean`. The axiom audit of `VertexPeel.exactPeel_iff_globalLower` reports `propext`, `Classical.choice` and `Quot.sound`. Proving the universal size bound remains open in this branch.
 
+## Bipartite graphs with one side of degree at most two
+
+Both posted conclusions and the sharp total gate bound hold when one color class of a square-free bipartite graph has maximum degree two. This permits arbitrary degrees on the other side and any number of components and cycles, including once-subdivided complete graphs. [Proof and reproduction](subdivision-sharp.md)
+
+For square-free graphs of unrestricted degree, the same total lower bound holds for syntactically multilinear binary circuits. The proof gives a necessary condition for any smaller circuit involving an AND whose two input supports share an active endpoint of a real edge. [Guarded circuit proof](guard-normalization.md)
+
 ## Square-free pseudoforests
 
 [AllPseudoforests.lean](AllPseudoforests.lean) proves the sharp edge-plus-cover lower bound, ownership descent and uniform vertex deletion for every graph without a four-cycle whose induced subgraphs all have at most as many edges as vertices. Each component may be a tree or a single cycle with arbitrary trees attached. Odd cycles, including triangles, can occur in arbitrarily many components. The statements allow isolated circuit inputs.
