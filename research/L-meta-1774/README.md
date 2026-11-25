@@ -12,6 +12,10 @@ The file [Masking.lean](Masking.lean) proves necessary conditions for a circuit 
 
 The proof uses checked upstream L-meta-4846 to obtain the leaking nonedge. It proves that each gate of a minimum circuit is either the output or read by a later gate. The deletion argument permits references to unavailable wires under the project's default-false semantics. Following later readers on the leaking assignment eventually gives an AND where the signal becomes false.
 
+## Complete case for vertex covers of size at most three
+
+The independent theorem `ownership_descent` proves L-meta-1774 for every graph of girth at least five that has a vertex cover of size at most three. It allows arbitrarily many vertices and applies to every minimum monotone circuit satisfying the posted hypotheses. [Checked proof at commit 57345d4a](https://github.com/eminentgu/pequalnp-proofs/blob/57345d4a/research/L-meta-3566/CoverThree.lean)
+
 ## A shared bad gate with two good masks
 
 [SharedMask.lean](SharedMask.lean) gives a six-vertex tree with edges ab, ad, cd, ap, dq. An eight-gate circuit uses the shared signal `j = (a ∨ c) ∧ (b ∨ d)` and outputs
@@ -63,6 +67,19 @@ The conditional theorem `exact_of_remaining_critical_cases` reduces the posted s
 
 [CriticalTree](gate-pinning/CriticalTree.lean) checks a seven-vertex tree and a 14-gate circuit. Gate 5 owns the disjoint edges {0,1} and {2,3}. Its sole critical edge is {4,5}, originally owned by gate 1 and unowned by gate 5. Pinning gate 5 to inputs 4 and 5 makes it own that edge, preserves the graph function and productivity, and leaves every gate free of disjoint owners. A separate eight-gate circuit computes the same function, so the example does not satisfy global minimality.
 
+
+## What every earlier wire must miss in a minimum circuit
+
+[Sensitive](gate-pinning/Sensitive.lean) proves an exact test for replacing one arbitrary gate in a monotone circuit computing the graph function, allowing every downstream use of that gate. Clamp the gate low and record each true two-vertex edge that the circuit loses. Clamp it high and record each independent assignment that the circuit accepts. The physical replacement computes the graph function exactly when it turns on for every recorded edge and stays off on every recorded independent assignment. The replacement's behavior on other assignments follows from monotonicity of the complete circuit.
+
+In a globally minimum circuit, every wire available before the gate must fail one side of this test. Otherwise all readers can be redirected to that wire and the gate deleted. This gives separate witnesses for the two operands of any binary gate whose operands are earlier wires.
+
+- For an AND, each operand fires alone on some independent input where clamping the gate high makes the output true. Thus neither operand can imply the graph function.
+- For an OR, each operand fires alone on some true edge lost by clamping the gate low. The proof establishes that the two unordered graph edges are distinct. Thus neither operand can already accept every graph edge.
+
+[LocalRigidity](gate-pinning/LocalRigidity.lean) exhausts the one-gate edits of the defective AND in the six-vertex tree above. Its three critical unordered edges are {0,1}, {0,3} and {2,3}. The singleton inputs {0} and {3} are both sensitive to clamping it high. Every monotone gate of arity at most two that can replace it without changing the output has the original AND operation and the original pair of wires, in either order. This classification includes constants, unary gates, repeated operands, forward references and out-of-range wires. The verified smaller circuit for the same tree changes multiple sites.
+
+These necessary constraints apply to a defective gate's operands regardless of fanout. Producing a successful equal-size exchange in every remaining case of L-meta-1774 is open.
 
 From the repository's `lean/` directory, run the following commands.
 

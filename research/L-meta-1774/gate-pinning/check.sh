@@ -10,9 +10,10 @@ lake build PEqualNP.Outside.L_meta_2573 PEqualNP.Outside.L_meta_4846 PEqualNP.Ou
 LEAN_PATH="$build_dir:$(lake env printenv LEAN_PATH)"
 export LEAN_PATH
 lean_bin=$(elan which lean)
+"$lean_bin" -j1 -R "$src_dir/.." -o "$build_dir/SharedMask.olean" "$src_dir/../SharedMask.lean"
 for module in Guarded Shannon Opposite Omit; do
   "$lean_bin" -j1 -R "$readers_dir" -o "$build_dir/$module.olean" "$readers_dir/$module.lean"
 done
-for module in Pin StarPin PinDescent PinDesk PinTree CriticalCases CriticalTree AuditPin; do
+for module in Pin StarPin PinDescent PinDesk PinTree CriticalCases CriticalTree Sensitive LocalRigidity AuditPin; do
   "$lean_bin" -j1 -R "$src_dir" -o "$build_dir/$module.olean" "$src_dir/$module.lean"
 done

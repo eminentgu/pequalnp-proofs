@@ -1,6 +1,7 @@
 import PinDesk
 import PinTree
 import CriticalTree
+import LocalRigidity
 
 open PEqualNP.Research.GatePinning
 #print axioms other_owners_survive
@@ -21,3 +22,15 @@ open PEqualNP.Research.GatePinning
 #print axioms CriticalTree.changed_owners
 #print axioms CriticalTree.new_clean
 #print axioms CriticalTree.not_minimum
+
+#print axioms rewrite_correct_iff
+#print axioms every_wire_fails
+#print axioms and_parent_witness
+#print axioms or_parent_witness
+#print axioms or_multiple_critical
+#print axioms and_parent_not_sound
+#print axioms or_parent_not_complete
+
+#print axioms LocalRigidity.only_gate
+#print axioms LocalRigidity.critical_edges
+#print axioms LocalRigidity.forbidden_rows
