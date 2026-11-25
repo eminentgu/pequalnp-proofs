@@ -65,19 +65,21 @@ The axiom audit for `peel_pendant_path`, `cut_joint` and `MixedFold.compile` rep
 
 [PendantObstruction.lean](PendantObstruction.lean) uses a minimum circuit to obtain a graph-level conclusion. Suppose `b` has another neighbor and deleting `b` leaves an edge. If neither `a` nor `b` satisfies both vertex-deletion inequalities for every implementation of the original graph, **every** minimum circuit reads `a` at a single OR gate, that gate does not read `b`, and at most `degree(b) − 2` gates read `b`. A degree-three neighbor must therefore have exactly one reader in every such circuit.
 
+[CubicJoint.lean](CubicJoint.lean) determines how the two unique readers can connect when the neighbor has degree three. If its reader is an AND, its other operand must be the leaf's OR gate. An indirect connection would yield three constant gates after fixing the leaf to one and its neighbor to zero, and a change in the leaf detects a fourth gate to omit. If the neighbor's reader is `b OR u`, the wire `u` implies an edge of the graph surviving deletion of `b` on every input. These conditions restrict the minimum circuits that can obstruct deletion at the two endpoints.
+
 [pendant_share.py](pendant_share.py) checks what can happen in a fixed, nonminimum implementation. Start with an eight-cycle and add a vertex adjacent to vertices 0 and 4 and to one new leaf. The resulting bipartite graph has no four-cycle, has a cover of size five, and either vertex of the pendant edge lowers the minimum cover size to four. A 22-gate implementation reuses the signal `0 OR 4` in a conjunctive normal form for the disjunction of two disjoint cycle edges. Exhaustive truth tables give 21 live gates after setting the leaf to zero. Setting the degree-three neighbor to zero and the leaf to either value leaves 19 live gates. Merging identical signals and pruning dead gates therefore saves one and three respectively in this implementation. The optimal-budget statement for the vertex pair remains a separate question.
 
 After building the modules in the preceding section:
 
 ```sh
-for module in CountReaders PendantObstruction
+for module in CountReaders PendantObstruction CubicJoint
 do
   lake env sh -c 'export LEAN_PATH="$1:$LEAN_PATH"; exec lean -R "$1" -o "$1/$2.olean" "$1/$2.lean"' sh "$research_dir" "$module" || exit 1
 done
 python3 "$research_dir/pendant_share.py"
 ```
 
-The audit for both `CountReaders.cut_joint_readers` and `PendantObstruction.peel_or_few_readers` reports `propext`, `Classical.choice` and `Quot.sound`.
+The audits for `CountReaders.cut_joint_readers`, `PendantObstruction.peel_or_few_readers`, `CubicJoint.cubic_reader_shape` and `CubicJoint.single_or_core` report `propext`, `Classical.choice` and `Quot.sound`.
 
 ## Relation to L-meta-1774
 
