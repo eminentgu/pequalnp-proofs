@@ -8,6 +8,24 @@ For the reverse implication, take two distinct edges and choose an endpoint foun
 
 Reproduce from the pinned `lean` directory with `lake env lean ../research/L-meta-3566/Equivalence.lean`. The axiom audit of `VertexPeel.exactPeel_iff_globalLower` reports `propext`, `Classical.choice` and `Quot.sound`. Proving the universal size bound remains open in this branch.
 
+## Both desk conclusions for vertex cover number at most three
+
+[CoverThree.lean](CoverThree.lean) proves the full ownership descent of L-meta-1774 and both size inequalities of L-meta-3566 for any graph in the respective card with a vertex cover of size at most three. The number of vertices and the incoming circuit are unrestricted. The public theorems are `ownership_descent` and `bipartite_vertex_deletion`. The latter has one vertex that works for every correct circuit. `vertex_deletion` also covers triangle-free graphs without a four-cycle outside the bipartite case.
+
+For a cyclic graph with such a cover, `cyclic_lower` proves that every monotone circuit of fan-in at most two has at least the number of edges plus two gates. A cycle forces every cover to have size at least three. Deleting the incident edge of a leaf preserves a cycle and allows at least one gate to be removed. Restore that edge to lift the lower bound by one. At the end of this induction a leafless cyclic graph with a three-vertex cover has at most six non-isolated vertices. Every active degree equals two, and its entire edge set forms a five-cycle or a six-cycle. Relabeling the circuit inputs into this cycle preserves its gate count, including any sharing. The numerical base bounds are seven and eight gates. In the acyclic case the upstream forest bound applies.
+
+[CoverThreeCore.lean](CoverThreeCore.lean) proves the leafless classification. [CycleSize.lean](CycleSize.lean) and [IsolatedCore.lean](IsolatedCore.lean) supply the base bounds and relabeling. [StableExtension.lean](StableExtension.lean) proves the lower-bound transfer for one leaf and for arbitrary chains with a fixed minimum cover. [CycleCover.lean](CycleCover.lean) and [CycleLeaf.lean](CycleLeaf.lean) describe how deleting a leaf affects cyclicity and minimum covers. For general cover size `t`, [CoverKernel.lean](CoverKernel.lean) reduces the numerical bound to graphs without two leaves sharing a neighbor and at most `2t + t(t−1)/2` non-isolated vertices. This reduction does not in itself certify those finite cases.
+
+After building `Leaves`, `Normalization`, `Descent` and `ShortCycle` in this directory, reproduce these results from `lean` with `research_dir` set to the absolute path of this directory.
+
+```sh
+lake build PEqualNP.Outside.L_meta_579 PEqualNP.Outside.L_meta_1527 PEqualNP.Research.L_meta_1774.Forest PEqualNP.MetaComplexity.Helpers.PermInputs
+for module in CycleSize IsolatedCore CoverThreeCore StableExtension CycleCover CycleLeaf CoverKernel CoverThree
+do
+  lake env sh -c 'export LEAN_PATH="$1:$LEAN_PATH"; exec lean -R "$1" -o "$1/$2.olean" "$1/$2.lean"' sh "$research_dir" "$module" || exit 1
+done
+```
+
 ## Pair-sound circuits and peelable graphs
 
 [Normalization.lean](Normalization.lean) combines the cover circuit with the upstream proof of [L-meta-7241](https://github.com/open-goat/pequalnp-proofs/blob/b85b175cfdd07efa25e93e670367d51906eb2b22/lean/PEqualNP/Outside/L_meta_7241.lean). On a graph without four-cycles and for any gate budget, a cover meeting the numerical bound exists exactly when that budget can compute the edge function with a circuit whose AND gates stay off on every nonedge pair. For the whole graph class of L-meta-3566, the stated peel is therefore equivalent to the existence of such a replacement of at most the original circuit size. The existence of a replacement for every circuit is open.
