@@ -24,4 +24,17 @@ lake build +PEqualNP.Outside.L_meta_2440 +PEqualNP.Outside.L_meta_2442 +PEqualNP
 lake env lean ../research/L-meta-2114/Proof.lean
 ```
 
-The current desk row authorizes only `PEqualNP.Defs` and Mathlib for a direct submission. This branch provides the modular proof for review. The official project checker accepted the single-file reduction locally. A source rebuild of the individual certificates and a transitive axiom check of the complete composition are running.
+The current desk row authorizes only `PEqualNP.Defs` and Mathlib for a direct submission. This branch provides the modular proof for review.
+
+## Local verification on 25 November 2026
+
+The project verifier returned `ACCEPTED (reduce)` for the exact file in PR 12172. It rechecked 1,661 constants using the definitions from the submission base. The normalized four child statements match L-meta-2440, L-meta-2442, L-meta-2444 and L-meta-2446.
+
+All nine direct proof modules were recompiled from source with the pinned Lean toolchain. An independent Lean audit matched `PetersenFirstGate.orBound` against the published grouped OR statement and `PEqualNP.Outside.L_meta_2114` against the exact desk statement. Both reported exactly `[propext, Classical.choice, Quot.sound]` as their transitive axioms. A second composition using the earlier reduction R-meta-670-713 also checked the same final statement.
+
+| Audited source | SHA-256 |
+| --- | --- |
+| Single-file reduction in PR 12172 | `9f5650f83a06cb560ace9f70059ff57beab1577323de8afcee62b0c8b6462b0f` |
+| Complete modular proof in this directory | `4e60a9f1bfcf73e9f4caed15ca70e10da6527a08c0d3d187526e0410e2a986d8` |
+
+The project records its own acceptance and merge status on [PR 12172](https://github.com/open-goat/pequalnp-proofs/pull/12172) and the [L-meta-2114 desk page](https://pequalnp.com/lemma#L-meta-2114).
