@@ -14,13 +14,21 @@ An error for a child is an independent set on which the child accepts. An error 
 
 `peel_of_singleton_boundary` applies this to one least circuit. The full vertex-deletion conclusion at z, uniformly over all circuits for G, follows when z has positive degree at most r+1. If the minimum cover decreases at z, the sufficient threshold is degree at most r. These conditions can be tested on a least circuit. It remains open whether every graph in L-meta-3566 has a qualifying vertex or another equally strong deletion.
 
+## Circuits with arbitrary output gates and fanout
+
+[InternalSoundAnd.lean](InternalSoundAnd.lean) proves `compress_arbitrary_circuit` for every binary monotone circuit computing the edge function of a nonempty graph without a four-cycle. Starting at the output on a positive edge input, following active OR operands must reach an AND whose activation implies the presence of a graph edge on every input. For this internal AND, the witness-width argument identifies a set T with the same bounds as above and one operand whose activation implies a surviving edge after the restriction.
+
+Replacing this AND by that operand preserves the full output after zeroing T, even when the AND has multiple consumers. On negative inputs the operand and the removed gate are both false. On positive inputs the substitution can only increase the output. The resulting compiled circuit saves the selected AND and every other original gate, anywhere in the circuit, that directly reads an input in T. The proof reuses the physical gate bypass from the project's verified L-meta-2668.
+
+`internal_singleton_cut` applies the single-vertex neighborhood criterion at any such internal AND, with arbitrary AND depth and unrestricted fanout. For a least circuit, if r is the number of other gates reading z and the degree and cover thresholds above hold, its saving also applies uniformly to all larger circuits computing the graph.
+
 Run from the repository root. The last command prints the axiom audits.
 
 ```sh
 proof_dir="$(pwd)/research/L-meta-3566"
 cd lean
-lake build PEqualNP.Outside.L_meta_615 PEqualNP.Defs
-for module in ZeroFold WrongSupports WrongSupportCircuit
+lake build PEqualNP.Outside.L_meta_615 PEqualNP.Outside.L_meta_2668 PEqualNP.Defs
+for module in ZeroFold WrongSupports WrongSupportCircuit InternalSoundAnd
 do
   lake env sh -c 'export LEAN_PATH="$1:$LEAN_PATH"; exec lean -R "$1" -o "$1/$2.olean" "$1/$2.lean"' sh "$proof_dir" "$module" || exit 1
 done

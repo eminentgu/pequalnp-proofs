@@ -9,7 +9,7 @@ open PEqualNP.Outside.L615Aux.Wires (point point_mono acts_mono)
 variable {n : ℕ}
 abbrev Active (C : Circuit) (w : ℕ) (X : Finset (Fin n)) := wval C (point X) w = true
 
-private lemma active_mono (C : Circuit) (hC : IsAO2 n C) (w : ℕ) :
+lemma active_mono (C : Circuit) (hC : IsAO2 n C) (w : ℕ) :
     ∀ ⦃X Y : Finset (Fin n)⦄, X ⊆ Y → Active C w X → Active C w Y := by
   intro X Y sub
   have mono : Monotone2 C := fun g mem => ⟨by
@@ -78,7 +78,7 @@ theorem width_of_andDepth (C : Circuit) (hC : IsAO2 n C) {w d : ℕ} (depth : An
     have hc := Finset.card_union_le U V
     rw [pow_succ]; omega
 
-private lemma point_edge (G : SimpleGraph (Fin n)) [DecidableRel G.Adj] (X : Finset (Fin n)) :
+lemma point_edge (G : SimpleGraph (Fin n)) [DecidableRel G.Adj] (X : Finset (Fin n)) :
     graphFun G ∅ (point X) = true ↔ HasEdge G X := by
   simp [graphFun,point]
   unfold HasEdge
