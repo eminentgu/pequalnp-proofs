@@ -9,7 +9,7 @@ open PEqualNP.CircuitLowerBounds PEqualNP.MetaComplexity PEqualNP.MetaComplexity
   PEqualNP.MetaComplexity.CoverPromise PEqualNP.EdgeOwnership
 open PEqualNP.Outside.L_meta_2668 (bypass bypass_mono bypass_length bypass_val_lt bypass_eval_eq val_ge gateAt_mem)
 
-private theorem sorted_valid {s : Nat} {ks : List Nat} (order : ks.Pairwise (· > ·))
+theorem sorted_valid {s : Nat} {ks : List Nat} (order : ks.Pairwise (· > ·))
     (inside : ∀ i ∈ ks, i<s) : valid s ks := by
   induction ks generalizing s with
   | nil => trivial
@@ -48,7 +48,7 @@ theorem cut_off {n : Nat} (C : Circuit) (mono : Monotone2 C) (ks : List Nat)
 
 def row {n} (e : Sym2 (Fin n)) (v : Fin n) : Bool := decide (v ∈ e)
 
-private theorem row_mk {n : Nat} (a b : Fin n) : row s(a,b) = pairInput a b := by
+theorem row_mk {n : Nat} (a b : Fin n) : row s(a,b) = pairInput a b := by
   funext v
   simp [row,pairInput,Sym2.mem_iff]
 
