@@ -42,6 +42,23 @@ done
 python3 "$research_dir/heawood_cofactors.py"
 ```
 
+## A leaf adjacent to a degree-two vertex
+
+[PendantPathPeel.lean](PendantPathPeel.lean) proves the complete vertex-deletion conclusion for any finite simple graph with a leaf `a` adjoining a vertex `b` of degree two. Any edge surviving deletion of `b` makes `b` a valid choice for every circuit, including when deletion lowers the minimum vertex cover size. If every edge touches `b`, deleting `a` preserves the cover size.
+
+[ThreeGatePeel.lean](ThreeGatePeel.lean) proves the three-gate saving at `b` even when its degree exceeds two, provided another neighbor and a surviving edge exist. Fixing `b` to zero makes the output independent of `a`. The proof chooses `a`'s value to force a gate reading it to a constant. [PendantCross.lean](PendantCross.lean) finds a second reader even if the first gate reads both endpoints. A change of input that alters the original output must cross a cut containing the fixed inputs and constant gates. This gives a third gate omitted by the circuit construction. [MixedFold.lean](MixedFold.lean) constructs a two-input AND/OR circuit for the nonconstant cofactor, omitting gates whose restricted function is constant or equals an earlier wire.
+
+After compiling the dependencies in the preceding section, run the following from the same `lean` directory.
+
+```sh
+for module in MixedFold PendantCross ThreeGatePeel PendantPathPeel
+do
+  lake env sh -c 'export LEAN_PATH="$1:$LEAN_PATH"; exec lean -R "$1" -o "$1/$2.olean" "$1/$2.lean"' sh "$research_dir" "$module" || exit 1
+done
+```
+
+The axiom audit for `peel_pendant_path`, `cut_joint` and `MixedFold.compile` reports only `propext`, `Classical.choice` and `Quot.sound`.
+
 ## Relation to L-meta-1774
 
 [Descent.lean](Descent.lean) proves that the precise descent in L-meta-1774 is equivalent to the ability to replace any minimum circuit meeting the ownership hypothesis by an equal-size minimum with zero disjoint-edge-owning gates. The equivalence uses minimization over the number of such gates. The cover construction proves descent at every size budget reaching the canonical cover circuit.
