@@ -74,3 +74,21 @@ do
   lake env sh -c 'export LEAN_PATH="$1:$LEAN_PATH"; exec lean -R "$1" -o "$1/$2.olean" "$1/$2.lean"' sh "$research_dir" "$module" || exit 1
 done
 ```
+
+## Counting OR gates with a fixed row
+
+For a vertex `u` opposite an independent set `R`, turn on `u` and all its non-neighbors in `R`. This input contains no edge. Each pair `{u,v}` for a neighbor `v` gives a positive test. A splitting OR is false on the negative input and each operand accepts a positive test missed by the other. [RowCharge.lean](RowCharge.lean) counts distinct physical gates even with fanout. Its induction bounds the union of positive tests distinguished by an arbitrary set of wires. [RowGraph.lean](RowGraph.lean) gives at least `degree(u) − 1` such OR gates. On a graph without four-cycles, a gate accepting at least two right singleton inputs can split at most one row.
+
+[RowOverlap.lean](RowOverlap.lean) sums over any set of rows. If the sum of degrees exceeds the number of rows plus the total number of OR gates, there is a physical OR gate that splits multiple rows and accepts at most one right singleton. [ReusedRows.lean](ReusedRows.lean) and [ReusedCone.lean](ReusedCone.lean) charge those rows and the union of their hit columns to the distinct ancestor gates of that individual gate, including the gate itself. This bound applies to a single cone. Cones of different gates can overlap.
+
+[ReusedExample.lean](ReusedExample.lean) certifies an eleven-gate globally minimum monotone binary circuit on two disjoint five-vertex paths. Its final OR splits two different rows. Thus even restricting to minimum circuits leaves a real overlap to account for.
+
+After compiling `ZeroFold`, use the same `research_dir` and `lean` directory as above.
+
+```sh
+lake build PEqualNP.MetaComplexity.L104
+for module in RowCharge RowGraph RowOverlap ReusedCone ReusedRows ReusedExample
+do
+  lake env sh -c 'export LEAN_PATH="$1:$LEAN_PATH"; exec lean -R "$1" -o "$1/$2.olean" "$1/$2.lean"' sh "$research_dir" "$module" || exit 1
+done
+```
