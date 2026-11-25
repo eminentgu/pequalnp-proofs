@@ -10,6 +10,10 @@ For a graph edge function, an AND *owns* an edge when the gate is true on its tw
 
 [PairComparator.lean](PairComparator.lean) applies to arbitrary four-cycle-free graphs. If even one correct circuit of no greater size has exactly two backward operands at each gate and no AND accepts a nonedge pair, an equally small productive star circuit exists. In particular, a failure of 1774 would force **every** such alternative implementation within budget to have an AND accepting a nonedge pair. The witness can depend on the alternative. This uses the upstream [pair-sound lower bound L-meta-7241](../../Outside/L_meta_7241.lean).
 
+## A nonedge accepted inside a correct circuit
+
+[WitnessNine.lean](WitnessNine.lean) and [the truth-table check](verify_witness.py) verify a nine-vertex example with no triangle or four-cycle. Its 12-gate correct circuit has four AND gates. Each owns a nonempty star. AND gate 8 nevertheless accepts the nonedges {1, 6} and {1, 7}. The circuit already has zero ownership defects. Its global minimum-size certificate is under verification. This example distinguishes the pair-soundness premise used by the first 1774 desk reduction from the descent sought by the card.
+
 ## Proof
 
 1. `buildCoveredStar` groups each edge under one endpoint in a chosen vertex cover. It builds one OR chain per nonempty group, ANDs the result with its centre, and ORs the groups. Each AND owns a true edge, and every edge it owns contains its centre. The total size is at most the number of edges plus the size of the cover minus one.
@@ -29,5 +33,6 @@ From the repository root, use the pinned Lean toolchain and run
 
 ```sh
 cd lean
-lake build PEqualNP.Research.L_meta_1774.Forest PEqualNP.Research.L_meta_1774.CycleFive PEqualNP.Research.L_meta_1774.PairComparator
+lake build PEqualNP.Research.L_meta_1774.Forest PEqualNP.Research.L_meta_1774.CycleFive PEqualNP.Research.L_meta_1774.PairComparator PEqualNP.Research.L_meta_1774.WitnessNine
+python3 PEqualNP/Research/L_meta_1774/verify_witness.py
 ```
