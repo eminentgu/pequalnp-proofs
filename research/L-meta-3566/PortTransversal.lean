@@ -26,7 +26,7 @@ theorem separating_port (ao : IsAO2 n C) (ok : circuitFun n C = graphFun G ∅)
   exact ⟨j,Finset.mem_filter.mpr ⟨Finset.mem_range.mpr opp.1.1,opp.1,yes⟩,zero⟩
 
 /-- Fewer than degree(x) alternative vertices cannot block all neighbors of x. -/
-private theorem unblocked (sq : NoFourCycle G) (U : Finset (Fin n)) (x : Fin n)
+theorem unblocked (sq : NoFourCycle G) (U : Finset (Fin n)) (x : Fin n)
     (absent : x ∉ U) (small : U.card < G.degree x) :
     ∃ t, G.Adj x t ∧ ∀ y ∈ U, ¬G.Adj y t := by
   classical

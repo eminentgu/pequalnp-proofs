@@ -9,7 +9,7 @@ variable {n : ℕ}
 
 /-- Some gate reading a changed raw input must itself change, even when a
 different reader of that input is insensitive on the two chosen rows. -/
-private theorem changed_reader (C : Circuit) (ao : IsAO2 n C) (x y : Fin n → Bool)
+theorem changed_reader (C : Circuit) (ao : IsAO2 n C) (x y : Fin n → Bool)
     (S : Finset (Fin n)) (same : ∀ v ∉ S, x v=y v)
     (diff : wval C x C.output ≠ wval C y C.output) (out : ∀ v∈S, C.output ≠ v.val) :
     ∃ (k : ℕ) (hk : k<C.gates.length), (∃ a∈S, a.val ∈ C.gates[k].inputs) ∧
@@ -36,7 +36,7 @@ private theorem changed_reader (C : Circuit) (ao : IsAO2 n C) (x y : Fin n → B
         ih a ha (side a (by simp [ports])),ih b hb (side b (by simp [ports]))]
   exact diff (eqn _ out)
 
-private theorem prefix_agree (C : Circuit) (ao : IsAO2 n C) (B : Finset ℕ) (r : ℕ)
+theorem prefix_agree (C : Circuit) (ao : IsAO2 n C) (B : Finset ℕ) (r : ℕ)
     (skip : ∀ k (hk : k<C.gates.length), k<r → ∀ t∈C.gates[k].inputs,t∉B)
     (x y : Fin n → Bool) (same : ∀ i : Fin n, i.val∉B → x i=y i) (w : ℕ) :
     w<n+r → w∉B → wval C x w=wval C y w := by
