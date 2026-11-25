@@ -86,30 +86,47 @@ private theorem degree_coincides (G : SimpleGraph (Fin n)) (v : Fin n) (a b : Fi
 private theorem card_coincides (G : SimpleGraph (Fin n)) (a b : Fintype G.edgeSet) :
     (@SimpleGraph.edgeFinset _ G a).card = (@SimpleGraph.edgeFinset _ G b).card := by rw [Subsingleton.elim a b]
 
-/-- Every connected square-free bipartite unicyclic graph has one deletion vertex
-working for every correct monotone binary circuit, with both size guarantees. -/
-theorem connected_unicyclic_vertex (G : SimpleGraph (Fin n)) [base : DecidableRel G.Adj]
-    (conn : G.Connected) (m : G.edgeSet.ncard = n)
+/-- Every vertex on a cycle meets every cycle. This property survives taking subgraphs. -/
+def CycleCut (G : SimpleGraph (Fin n)) : Prop :=
+  ∀ v (c : G.Walk v v), c.IsCycle → (G.deleteIncidenceSet v).IsAcyclic
+
+private theorem cycleCut_mono {G H : SimpleGraph (Fin n)} (sub : H ≤ G) (old : CycleCut G) : CycleCut H := by
+  intro v c cy
+  refine (old v (c.mapLe sub) (cy.mapLe sub)).anti ?_
+  intro x y edge
+  obtain ⟨xy,xv,yv⟩ := SimpleGraph.deleteIncidenceSet_adj.mp edge
+  exact SimpleGraph.deleteIncidenceSet_adj.mpr ⟨sub xy,xv,yv⟩
+
+private structure Sharp (G : SimpleGraph (Fin n)) : Prop where
+  bound : StableExtension.Numerical G (Loc.tau G)
+
+private def Peel (G : SimpleGraph (Fin n)) [DecidableRel G.Adj] : Prop :=
+  ∃ z : Fin n, 0 < G.degree z ∧ ∀ C : Circuit, IsAO2 n C → circuitFun n C = graphFun G ∅ → SavesAt G z C
+
+private theorem unicyclic_cases (G : SimpleGraph (Fin n)) [base : DecidableRel G.Adj]
     (bip : ∃ c : Fin n → Bool, ∀ u v, G.Adj u v → c u ≠ c v) (sq : NoFourCycle G)
-    (many : 2 ≤ G.edgeFinset.card) :
-    ∃ z : Fin n, 0 < G.degree z ∧ ∀ C : Circuit, IsAO2 n C →
-      circuitFun n C = graphFun G ∅ → SavesAt G z C := by
+    (sparse : Pseudoforest.Sparse G) (cycleCut : CycleCut G) : Sharp G ∨ Peel G := by
   classical
-  have : Nonempty (Fin n) := conn.nonempty
-  obtain ⟨r,circ,cycle⟩ := G.exists_isCycle_of_card_le (by simp [m])
-  obtain ⟨s,rs,feedback⟩ := feedback_edge_of_cycle G conn m circ cycle
-  have sparse := feedback_sparse G _ feedback
+  by_cases acyc : G.IsAcyclic
+  · exact Or.inl ⟨@ForestExtension.forest_numerical n G acyc⟩
+  obtain ⟨u,w,cy⟩ := SimpleGraph.not_isAcyclic_iff_exists_isCycle.mp acyc
+  have many : 2 ≤ G.edgeFinset.card := by
+    have hi := cy.isTrail.length_le_card_edgeFinset
+    have lo := cy.three_le_length
+    omega
   by_cases anyLeaf : ∃ l, G.degree l=1
   · obtain ⟨l,one⟩ := anyLeaf
     obtain ⟨p,lp⟩ := (G.degree_pos_iff_exists_adj l).mp (by omega)
     by_cases cheap : ∃ a b, G.Adj a b ∧ G.degree a=1 ∧ G.degree b≤2
     · obtain ⟨a,b,ab,da,db⟩ := cheap
+      right
       by_cases two : G.degree b=2
       · exact PendantPathPeel.peel_pendant_path G ab da two
       · have pos := (G.degree_pos_iff_exists_adj b).mpr ⟨a,ab.symm⟩
         exact ⟨a,Leaves.isolatedEdgeAt G a b ab (only_neighbor G ab da) (only_neighbor G ab.symm (by omega)) many⟩
     by_cases share : ∃ a b p, G.Adj a p ∧ G.Adj b p ∧ G.degree a=1 ∧ G.degree b=1 ∧ a≠b
     · obtain ⟨a,b,p,ap,bp,da,db,ne⟩ := share
+      right
       exact Leaves.twoLeaves G a b p ne ap bp (only_neighbor G ap da) (only_neighbor G bp db)
     let H := peeled G
     have leH : H ≤ G := fun _ _ h => h.1
@@ -123,8 +140,8 @@ theorem connected_unicyclic_vertex (G : SimpleGraph (Fin n)) [base : DecidableRe
     have reaches : (H.neighborSet p).Nonempty := (H.degree_pos_iff_exists_adj p).mp ((by decide : 0 < 2).trans_le ((info.2 l p lp one).trans_eq (degree_coincides _ _ _ _)))
     obtain ⟨w,cy,_⟩ := unionCycles.exists_cycle_toSubgraph_verts_eq_connectedComponentSupp
       (c:=H.connectedComponentMk p) (by simp) reaches
-    obtain ⟨t,pt,fp⟩ := feedback_edge_of_cycle G conn m (w.mapLe leH) (cy.mapLe leH)
-    exact pendant_feedback_vertex G sq bip _ fp lp (only_neighbor G lp one) (fp.anti (cut_below G)) many
+    have cutForest := cycleCut p (w.mapLe leH) (cy.mapLe leH)
+    exact Or.inl ⟨@numerical n _ G base sq sparse (leaf_cycle G lp (only_neighbor G lp one) cutForest bip)⟩
   · have matchAct : G.support.toFinset = CoverThreeCore.active G := by
       ext v
       simp [CoverThreeCore.active,G.degree_pos_iff_mem_support]
@@ -133,7 +150,80 @@ theorem connected_unicyclic_vertex (G : SimpleGraph (Fin n)) [base : DecidableRe
       have aux (b c : Fintype G.support) : @Set.toFinset _ G.support b = @Set.toFinset _ G.support c := by rw [Subsingleton.elim b c]
       exact congrArg Finset.card ((aux _ _).trans matchAct)
     have total : G.edgeFinset.card ≤ (CoverThreeCore.active G).card := (card_coincides _ _ _).trans_le (count.trans_eq (act _))
-    exact Bicyclic.support_vertex_deletion G bip sq (fun _ one => anyLeaf ⟨_,one⟩) (by omega) many
+    exact Or.inl ⟨@Bicyclic.support_numerical n G base bip sq (fun _ one => anyLeaf ⟨_,one⟩) (by omega)⟩
 
+/-- The exact edge-plus-cover lower bound on a square-free bipartite pseudoforest
+in which deleting any vertex of any cycle destroys every cycle. -/
+theorem cycleCut_numerical (G : SimpleGraph (Fin n)) [base : DecidableRel G.Adj]
+    (bip : ∃ c : Fin n → Bool, ∀ u v, G.Adj u v → c u ≠ c v) (sq : NoFourCycle G)
+    (sparse : Pseudoforest.Sparse G) (cycles : CycleCut G) : StableExtension.Numerical G (Loc.tau G) := by
+  suffices bound : Sharp G from @bound.bound
+  classical
+  generalize size : G.edgeFinset.card = k
+  induction k using Nat.strong_induction_on generalizing G with
+  | ind k ih =>
+    rcases unicyclic_cases G bip sq sparse cycles with good|⟨z,pos,cut⟩
+    · exact good
+    let H := G.deleteIncidenceSet z
+    have dsmall : H.edgeFinset.card < k := by
+      change (G.deleteIncidenceSet z).edgeFinset.card < k
+      rw [G.card_edgeFinset_deleteIncidenceSet]
+      have hd := G.degree_le_card_edgeFinset z
+      omega
+    obtain ⟨c,col⟩ := bip
+    have residual : Sharp H := ih H.edgeFinset.card dsmall H ⟨c,fun a b e => col a b (G.deleteIncidenceSet_le z e)⟩
+      (square_cut G z sq) (GraphInduction599.sparse_subgraph (G.deleteIncidenceSet_le z) sparse)
+      (cycleCut_mono (G.deleteIncidenceSet_le z) cycles) (card_coincides _ _ _)
+    exact ⟨@ForestExtension.lift_cut n G base z cut (@Sharp.bound _ _ residual)⟩
+
+private theorem connected_sparse_cycleCut (G : SimpleGraph (Fin n)) (conn : G.Connected)
+    (m : G.edgeSet.ncard = n) : Pseudoforest.Sparse G ∧ CycleCut G := by
+  classical
+  have : Nonempty (Fin n) := conn.nonempty
+  obtain ⟨r,circ,cycle⟩ := G.exists_isCycle_of_card_le (by simp [m])
+  obtain ⟨s,_,feedback⟩ := feedback_edge_of_cycle G conn m circ cycle
+  refine ⟨feedback_sparse G _ feedback,?_⟩
+  intro p w cy
+  obtain ⟨t,_,fp⟩ := feedback_edge_of_cycle G conn m w cy
+  exact fp.anti (cut_below G)
+
+/-- Arbitrary attached trees, any finite even cycle length permitted by the square-free
+hypothesis, and no upper bound on the minimum vertex-cover number. -/
+theorem connected_unicyclic_numerical (G : SimpleGraph (Fin n)) [base : DecidableRel G.Adj]
+    (conn : G.Connected) (m : G.edgeSet.ncard = n)
+    (bip : ∃ c : Fin n → Bool, ∀ u v, G.Adj u v → c u ≠ c v) (sq : NoFourCycle G) :
+    StableExtension.Numerical G (Loc.tau G) := by
+  obtain ⟨sp,cut⟩ := connected_sparse_cycleCut G conn m
+  exact @cycleCut_numerical n G base bip sq sp cut
+
+theorem connected_unicyclic_ownership (G : SimpleGraph (Fin n)) [DecidableRel G.Adj]
+    (conn : G.Connected) (m : G.edgeSet.ncard = n)
+    (bip : ∃ c : Fin n → Bool, ∀ u v, G.Adj u v → c u ≠ c v) (sq : NoFourCycle G) : StepAt G := by
+  intro C minimum correct _ positive
+  obtain ⟨S,cover,card⟩ := Loc.tau_attained G
+  have bound := connected_unicyclic_numerical G conn m bip sq C minimum.1 correct
+  apply coveredDescent G C S cover _ positive
+  rw [Set.ncard_eq_toFinset_card']
+  change G.edgeFinset.card + S.card - 1 ≤ C.size
+  omega
+
+/-- One deletion vertex works for every correct circuit and for both size guarantees. -/
+theorem connected_unicyclic_vertex (G : SimpleGraph (Fin n)) [DecidableRel G.Adj]
+    (conn : G.Connected) (m : G.edgeSet.ncard = n)
+    (bip : ∃ c : Fin n → Bool, ∀ u v, G.Adj u v → c u ≠ c v) (sq : NoFourCycle G)
+    (many : 2 ≤ G.edgeFinset.card) :
+    ∃ z : Fin n, 0 < G.degree z ∧ ∀ C : Circuit, IsAO2 n C → circuitFun n C = graphFun G ∅ → SavesAt G z C := by
+  obtain ⟨z,hz,rem⟩ := nonemptyCut G many
+  obtain ⟨S,cover,card⟩ := Loc.tau_attained G
+  refine ⟨z,hz,?_⟩
+  intro C ao correct
+  have mono : Monotone2 C := fun g hg =>
+    ⟨by simpa only [Set.mem_insert_iff,Set.mem_singleton_iff] using ao.1 g hg,(ao.2.2 g hg).le⟩
+  have bound := connected_unicyclic_numerical G conn m bip sq C mono correct
+  exact atVertexOfCoverBound G z rem C ⟨S,cover,by omega⟩
+
+#print axioms cycleCut_numerical
+#print axioms connected_unicyclic_numerical
+#print axioms connected_unicyclic_ownership
 #print axioms connected_unicyclic_vertex
 end VertexPeel.OrderedMatching

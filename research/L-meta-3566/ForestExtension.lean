@@ -32,7 +32,7 @@ private theorem delete_union {H F : SimpleGraph (Fin n)} (sep : Apart H F) {z w}
     · exact ⟨Or.inr h,hu,hv⟩
 
 /-- Charge a peeled vertex against a sharp bound for its residual graph. -/
-private theorem lift_cut (G : SimpleGraph (Fin n)) [base : DecidableRel G.Adj] (z : Fin n)
+theorem lift_cut (G : SimpleGraph (Fin n)) [base : DecidableRel G.Adj] (z : Fin n)
     (cut : ∀ C, IsAO2 n C → circuitFun n C = graphFun G ∅ → SavesAt G z C)
     (old : Numerical (G.deleteIncidenceSet z) (Loc.tau (G.deleteIncidenceSet z))) :
     Numerical G (Loc.tau G) := by
