@@ -19,7 +19,7 @@ def AndWitness {n : ℕ} (G : SimpleGraph (Fin n)) (k : ℕ) : Prop :=
       (∀ i, G.Adj (v i false) (v i true)) ∧
       (∀ i j, i ≠ j → ∀ a b, ¬G.Adj (v i a) (v j b))
 
-private theorem no_four_walk {n : ℕ} (G : SimpleGraph (Fin n)) [DecidableRel G.Adj] (sq : NoFourCycle G)
+theorem no_four_walk {n : ℕ} (G : SimpleGraph (Fin n)) [DecidableRel G.Adj] (sq : NoFourCycle G)
     (v : Fin n) (w : G.Walk v v) (cy : w.IsCycle) : w.length ≠ 4 := by
   intro len
   obtain ⟨c⟩ := (SimpleGraph.cycleGraph_isContained_iff (by decide : 2 < 4)).2 ⟨v,w,cy,len⟩

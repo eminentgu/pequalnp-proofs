@@ -8,6 +8,14 @@ For the reverse implication, take two distinct edges and choose an endpoint foun
 
 Reproduce from the pinned `lean` directory with `lake env lean ../research/L-meta-3566/Equivalence.lean`. The axiom audit of `VertexPeel.exactPeel_iff_globalLower` reports `propext`, `Classical.choice` and `Quot.sound`. Proving the universal size bound remains open in this branch.
 
+## Square-free bipartite pseudoforests
+
+[PseudoforestAND.lean](PseudoforestAND.lean) proves the sharp edge-plus-cover lower bound, ownership descent and uniform vertex deletion for every bipartite graph without a four-cycle whose induced subgraphs all have at most as many edges as vertices. This includes arbitrary numbers of tree and unicyclic components, arbitrary attached trees and isolated circuit inputs. The separate AND lower bound is `pseudoforest_and_lower`.
+
+If a singleton activates an operand of an AND gate, fixing that input to one removes the gate. Fixing its neighbors to zero leaves the edge function of the graph cut at those neighbors. A leaf always pays for its unique neighbor. Once no leaves remain, every active vertex has degree two. Distinct vertices then have distinct neighborhoods, since two shared neighbors would form a four-cycle. If the circuit had fewer AND gates than the minimum cover size, there would be more active vertices than physical AND ports. [PivotDistinct.lean](PivotDistinct.lean) proves that some vertex would activate two different AND gates, paying for its two neighbors. Induction proves the AND bound, and L-meta-599 supplies the OR bound.
+
+The public conclusions are `pseudoforest_numerical`, `pseudoforest_ownership` and `pseudoforest_vertex`. For a replay using the previously built research dependencies, compile `Pseudoforest`, `OrderedMatching`, `OrderedForest`, `PendantFeedbackSet`, `PivotAND`, `PivotDistinct`, `MixedFold`, `MixedFoldAnd`, then `PseudoforestAND`. The source prints the axiom audit for each conclusion.
+
 ## Both desk conclusions for vertex cover number at most four
 
 [CoverFour.lean](cover-four/CoverFour.lean) proves L-meta-1774 and L-meta-3566 for all graphs satisfying the respective desk hypotheses and having minimum vertex cover size at most four. There is no bound on the number of circuit inputs, circuit size or isolated vertices. For cover number exactly four, the numerical lower bound is the edge count plus three gates. The formal classification and reconstruction of arbitrary graphs are described in the [proof directory](cover-four/README.md).
