@@ -1,6 +1,6 @@
 import PEqualNP.Outside.L_meta_4846
 
-namespace PetersenResearch.OwnershipMasking
+namespace PEqualNP.Research.OwnershipMasking
 
 open PEqualNP.CircuitLowerBounds PEqualNP.EdgeOwnership PEqualNP.MetaComplexity
 open PEqualNP.MetaComplexity.NestedCover
@@ -318,4 +318,68 @@ theorem no_bad_of_le_two {n : ℕ} (G : SimpleGraph (Fin n)) [DecidableRel G.Adj
   have hle := Finset.card_le_card sub
   omega
 
-end PetersenResearch.OwnershipMasking
+def Bad {n : ℕ} (G : SimpleGraph (Fin n)) (C : Circuit) (j : ℕ) : Prop :=
+  ∃ a b c d : Fin n, G.Adj a b ∧ G.Adj c d ∧ Owns n C j a b ∧ Owns n C j c d ∧
+    a ≠ c ∧ a ≠ d ∧ b ≠ c ∧ b ≠ d
+
+private lemma intersecting_star {n : ℕ} (G : SimpleGraph (Fin n))
+    (tri : ∀ a b c, G.Adj a b → G.Adj b c → ¬G.Adj c a)
+    (E : Fin n → Fin n → Prop) (valid : ∀ u v, E u v → G.Adj u v)
+    (ne : ∃ a b, E a b)
+    (meet : ∀ a b c d, E a b → E c d → a=c ∨ a=d ∨ b=c ∨ b=d) :
+    ∃ z, ∀ a b, E a b → a=z ∨ b=z := by
+  obtain ⟨a,b,ab⟩ := ne
+  by_cases ha : ∀ c d, E c d → c=a ∨ d=a
+  · exact ⟨a,ha⟩
+  push Not at ha
+  obtain ⟨c,d,cd,hca,hda⟩ := ha
+  refine ⟨b,?_⟩
+  intro u v uv
+  have m1 := meet a b c d ab cd
+  have m2 := meet a b u v ab uv
+  have m3 := meet c d u v cd uv
+  have e1 := valid a b ab
+  have e2 := valid c d cd
+  have e3 := valid u v uv
+  have e1' := e1.symm
+  have e2' := e2.symm
+  have e3' := e3.symm
+  grind
+
+/-- The last bad gate has a strictly later masking AND. The owned graph edges of that AND
+form a nonempty star. -/
+theorem last_bad_star_mask {n : ℕ} (G : SimpleGraph (Fin n)) [DecidableRel G.Adj]
+    (C : Circuit) (hmin : IsMinimalMonoCircuit n C) (four : PEqualNP.TopForm.NoFourCycle G)
+    (tri : ∀ a b c, G.Adj a b → G.Adj b c → ¬G.Adj c a)
+    (hf : circuitFun n C = graphFun G ∅) (ready : Ready G C) (bad : ∃ j, Bad G C j) :
+    ∃ (j k : ℕ) (u v p q z : Fin n), Bad G C j ∧ (∀ t, Bad G C t → t ≤ j) ∧
+      j < k ∧ InCone n C j k ∧ ¬G.Adj u v ∧ gateVal n C j (pairInput u v) = true ∧
+      gateVal n C k (pairInput u v) = false ∧ G.Adj p q ∧ Owns n C k p q ∧
+      gateVal n C j (pairInput p q) = false ∧
+      ∀ a b, G.Adj a b → Owns n C k a b → a=z ∨ b=z := by
+  classical
+  let badGates := (Finset.range C.gates.length).filter (Bad G C)
+  have member (t : ℕ) (bt : Bad G C t) : t ∈ badGates := by
+    have witness := bt
+    obtain ⟨_,_,_,_,_,_,ot,_⟩ := witness
+    exact Finset.mem_filter.mpr ⟨Finset.mem_range.mpr ot.1,bt⟩
+  obtain ⟨m,bm⟩ := bad
+  have ne : badGates.Nonempty := ⟨m,member m bm⟩
+  let j := badGates.max' ne
+  have bj : Bad G C j := (Finset.mem_filter.mp (badGates.max'_mem ne)).2
+  have last (t : ℕ) (bt : Bad G C t) : t ≤ j := badGates.le_max' t (member t bt)
+  have witness := bj
+  obtain ⟨a,b,c,d,hab,hcd,one,two,hac,had,hbc,hbd⟩ := witness
+  obtain ⟨u,v,k,p,q,nonedge,on,jk,path,off,hpq,own,joff,_⟩ :=
+    third_edge_mask G C hmin four hf ready hab hcd one two hac had hbc hbd
+  let E := fun a b => G.Adj a b ∧ Owns n C k a b
+  have meet (e f g h : Fin n) (hef : E e f) (hgh : E g h) :
+      e=g ∨ e=h ∨ f=g ∨ f=h := by
+    by_contra! hd
+    have bk : Bad G C k := ⟨e,f,g,h,hef.1,hgh.1,hef.2,hgh.2,hd⟩
+    exact Nat.not_le_of_lt jk (last k bk)
+  obtain ⟨z,center⟩ := intersecting_star G tri E (fun _ _ h => h.1) ⟨p,q,hpq,own⟩ meet
+  exact ⟨j,k,u,v,p,q,z,bj,last,jk,path,nonedge,on,off,hpq,own,joff,
+    fun a b ea oa => center a b ⟨ea,oa⟩⟩
+
+end PEqualNP.Research.OwnershipMasking

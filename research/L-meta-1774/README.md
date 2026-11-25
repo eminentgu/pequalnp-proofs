@@ -8,6 +8,8 @@ The file [Masking.lean](Masking.lean) proves necessary conditions for a circuit 
 3. On a path to the mask, the last true gate is an OR strictly between the initial AND and the mask. This OR is true both on the leaking input and on the mask’s owned edge. A distinct second input to the mask is false on the leak and true on the owned edge. The theorem identifies both input wires.
 4. If the graph has at most two edges, each pair of edges owned by the same AND in the original minimum ready circuit shares an endpoint.
 
+5. In a triangle-free graph, choose the last bad gate in topological order. A later AND masks it, owns at least one edge, and all edges owned by that later AND have a common endpoint. The proof chooses the last gate from a finite set and supplies the star centre.
+
 The proof uses checked upstream L-meta-4846 to obtain the leaking nonedge. It proves that each gate of a minimum circuit is either the output or read by a later gate. The deletion argument permits references to unavailable wires under the project's default-false semantics. Following later readers on the leaking assignment eventually gives an AND where the signal becomes false.
 
 Completing L-meta-1774 still requires constructing a circuit of at most the initial size with fewer gates owning disjoint edges.
