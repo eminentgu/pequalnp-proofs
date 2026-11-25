@@ -20,3 +20,8 @@ build "$research" Equivalence
 for module in ResidualGraphs ResidualRuns ResidualThetas ResidualExplicit ResidualBounds; do
   build "$here" "$module"
 done
+for module in SideReaders ZeroFold SidePeel PendantCross; do
+  build "$research" "$module"
+done
+build "$here" ResidualPartner
+build "$here" ResidualPrivateReaders

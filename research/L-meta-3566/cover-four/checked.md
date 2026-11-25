@@ -20,3 +20,7 @@ research/L-meta-3566/cover-four/check_bounds.sh
 ```
 
 The script uses Lake to build the upstream lemmas, compiles the research modules into a temporary directory and prints the axioms for all three conclusions. The expected axiom list is `propext`, `Classical.choice` and `Quot.sound`.
+
+## The remaining nine-vertex graph
+
+For row 15, `forcedPair15` shows how a circuit of at most 13 gates would lose two gates simultaneously. It assumes the 12-gate lower bound for each of the five zero cofactors. Under that assumption each subdivision input occurs in a single OR gate. At the earliest such gate, the other input can be true only when both endpoints of the unsubdivided edge are true. On any collection of assignments excluding that edge, the other input is constantly zero and the OR returns the subdivision bit. The theorem `lower15_of_rows` converts a 12-gate lower bound on those assignments, the cofactor bounds and a two-gate deletion lemma into the 14-gate lower bound for legal AO₂ circuits. The reproduction script also checks both steps.
