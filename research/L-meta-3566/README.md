@@ -114,3 +114,11 @@ do
   lake env sh -c 'export LEAN_PATH="$1:$LEAN_PATH"; exec lean -R "$1" -o "$1/$2.olean" "$1/$2.lean"' sh "$research_dir" "$module" || exit 1
 done
 ```
+
+## Separating negative tests with physical AND gates
+
+[AndSeparation.lean](AndSeparation.lean) proves that a wire false on two inputs but true on a probe contained in their union must have an AND ancestor whose operands take opposite values on the two inputs. The proof follows a single path backward in the physical circuit. Recording the first operand at each AND therefore distinguishes all negative inputs whose pairwise unions contain positive probes. If one OR gate splits `k` rows in a graph without four-cycles, the AND gates in its own ancestor cone yield at least `k` distinct bit patterns. Distinct gates may still share ancestors.
+
+[CoverPatterns.lean](CoverPatterns.lean) applies this principle to the whole circuit. A correct circuit has at least as many bit patterns on the AND gates in its output cone as the graph has maximal independent sets. An induced matching of `k` edges requires at least `k` physical AND gates in the output cone, irrespective of vertices elsewhere in the graph.
+
+Compile `AndSeparation` and then `CoverPatterns` with the command in the preceding section after building `ReusedRows`.
