@@ -2,6 +2,8 @@
 
 [Conclusion.lean](Conclusion.lean) proves the literal negation of L-meta-4848 and proves the entire descent asserted by L-meta-1774 on this nine-vertex graph. The general L-meta-1774 remains open.
 
+The desk lists the negated statement as L-meta-4849. An earlier, independently submitted eight-vertex counterexample by miz0139m1023-hue received the upstream checker's acceptance on 25 November 2026 at 04:34 UTC. The nine-vertex proof here gives a second witness and also certifies a top-form minimum on it. [Earlier upstream PR 11915](https://github.com/open-goat/pequalnp-proofs/pull/11915) · [Upstream checker verdict](https://github.com/open-goat/pequalnp-proofs/actions/runs/45539058631)
+
 The graph has edges 01, 12, 13, 24, 28, 35, 58, 68 and 78. It is triangle-free and four-cycle-free. Its smallest vertex cover has size four. The explicit 12-gate monotone circuit computes the graph's edge function on all 512 Boolean inputs. Gate 8 accepts the nonedge pair {1,6}. Its genuine owned edges are 68 and 78, which share vertex 8. Every AND gate owns a nonempty star of edges. A second minimum circuit meets the project's additional top-form condition and retains the same nonedge behavior. [Circuit and graph](../../../lean/PEqualNP/Research/L_meta_1774/WitnessNine.lean) · [Top-form circuit](TopWitness.lean)
 
 Every correct monotone circuit of fan-in at most two needs at least 12 gates on this graph. The lower bound holds even with empty, one-input or invalid reads allowed by the project model. [Extraction from the project's circuit model](Extract.lean) · [Bridge to the posted statement](WitnessBridge.lean)
