@@ -11,6 +11,11 @@ def SixCrown {n} (G : SimpleGraph (Fin n)) : Prop :=
   ∃ X Y : Fin 3 → Fin n, Function.Injective X ∧ Function.Injective Y ∧
     (∀ i j, X i ≠ Y j) ∧ ∀ i j, i≠j → G.Adj (X i) (Y j)
 
+def SixCrownIn {n} (G : SimpleGraph (Fin n)) (U : Finset (Fin n)) : Prop :=
+  ∃ X Y : Fin 3 → Fin n, Function.Injective X ∧ Function.Injective Y ∧
+    (∀ i j, X i ≠ Y j) ∧ (∀ i j, i≠j → G.Adj (X i) (Y j)) ∧
+    ∀ i, X i ∈ U ∧ Y i ∈ U
+
 variable {n : Nat} (G : SimpleGraph (Fin n)) [DecidableRel G.Adj] {κ : Type*} [DecidableEq κ]
 
 /-- Every choice of a different user of each label contains a graph edge. -/
@@ -67,9 +72,9 @@ private theorem constant_or_injective (sq : NoFourCycle G) {X Y : Fin 3 → Fin 
   · exact Finset.mem_filter.mpr ⟨Finset.mem_univ _,(edges j k jk).symm,(edges j i ij.symm).symm⟩
 
 /-- A failure of the finite Hall inequality forces an embedded six-cycle. -/
-theorem crown_of_deficit (sq : NoFourCycle G) (U : Finset (Fin n)) (K : Fin n → Finset κ)
+theorem crown_inside_of_deficit (sq : NoFourCycle G) (U : Finset (Fin n)) (K : Fin n → Finset κ)
     (capacity : ∀ x ∈ U, (K x).card≤2) (blocked : Blocked G U K)
-    (deficit : (U.biUnion K).card<U.card) : SixCrown G := by
+    (deficit : (U.biUnion K).card<U.card) : SixCrownIn G U := by
   classical
   let F := U.powerset.filter fun W => (W.biUnion K).card<W.card
   obtain ⟨V,inF,minimal⟩ := F.exists_min_image Finset.card ⟨U,by simp [F,deficit]⟩
@@ -157,13 +162,41 @@ theorem crown_of_deficit (sq : NoFourCycle G) (U : Finset (Fin n)) (K : Fin n �
     have cap := capacity y (allY 0 ▸ subset (ymem 0))
     simp at count
     omega
-  · exact ⟨X,Y,Xin,Yin,disjoint,edges⟩
+  · exact ⟨X,Y,Xin,Yin,disjoint,edges,fun i => ⟨subset (use i).1,subset (ymem i)⟩⟩
+
+theorem crown_of_deficit (sq : NoFourCycle G) (U : Finset (Fin n)) (K : Fin n → Finset κ)
+    (capacity : ∀ x ∈ U, (K x).card≤2) (blocked : Blocked G U K)
+    (deficit : (U.biUnion K).card<U.card) : SixCrown G := by
+  obtain ⟨X,Y,hx,hy,dis,edges,_⟩ := crown_inside_of_deficit G sq U K capacity blocked deficit
+  exact ⟨X,Y,hx,hy,dis,edges⟩
 
 theorem card_le (sq : NoFourCycle G) (noSix : ¬SixCrown G)
     (U : Finset (Fin n)) (K : Fin n → Finset κ) (capacity : ∀ x ∈ U, (K x).card≤2)
     (blocked : Blocked G U K) : U.card ≤ (U.biUnion K).card := by
   by_contra! deficit
   exact noSix (crown_of_deficit G sq U K capacity blocked deficit)
+
+/-- The Hall deficit is bounded by any set of selected vertices hitting all
+six-cycles inside U. Cycles elsewhere in the graph impose no restriction. -/
+theorem hit_bound (sq : NoFourCycle G) (U Z : Finset (Fin n)) (K : Fin n → Finset κ)
+    (capacity : ∀ x ∈ U, (K x).card≤2) (blocked : Blocked G U K)
+    (hit : ¬SixCrownIn G (U \ Z)) :
+    U.card ≤ (U.biUnion K).card + (U ∩ Z).card := by
+  classical
+  let V := U \ Z
+  have subset : V ⊆ U := Finset.sdiff_subset
+  have kept : V.card ≤ (V.biUnion K).card := by
+    by_contra! gap
+    apply hit (crown_inside_of_deficit G sq V K (fun x hx => capacity x (subset hx)) _ gap)
+    intro x hx Y hy
+    exact blocked x (subset hx) Y (fun p hp => ⟨subset (hy p hp).1,(hy p hp).2⟩)
+  have incl : V.biUnion K ⊆ U.biUnion K := by
+    intro p hp
+    obtain ⟨x,hx,mem⟩ := Finset.mem_biUnion.mp hp
+    exact Finset.mem_biUnion.mpr ⟨x,subset hx,mem⟩
+  have total : V.card + (U ∩ Z).card=U.card := Finset.card_sdiff_add_card_inter _ _
+  have := Finset.card_le_card incl
+  omega
 
 /-- Every selected vertex can simultaneously receive one of its own labels. -/
 theorem assignment (sq : NoFourCycle G) (noSix : ¬SixCrown G)
@@ -188,6 +221,7 @@ theorem assignment (sq : NoFourCycle G) (noSix : ¬SixCrown G)
     simp [S,options]
   rwa [count,same] at bound
 
+#print axioms hit_bound
 #print axioms assignment
 #print axioms crown_of_deficit
 #print axioms card_le
