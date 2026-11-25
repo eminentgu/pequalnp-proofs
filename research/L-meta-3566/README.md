@@ -122,3 +122,15 @@ done
 [CoverPatterns.lean](CoverPatterns.lean) applies this principle to the whole circuit. A correct circuit has at least as many bit patterns on the AND gates in its output cone as the graph has maximal independent sets. An induced matching of `k` edges requires at least `k` physical AND gates in the output cone, irrespective of vertices elsewhere in the graph.
 
 Compile `AndSeparation` and then `CoverPatterns` with the command in the preceding section after building `ReusedRows`.
+
+[FreeChoices.lean](FreeChoices.lean) strengthens the AND count at a shared OR. For each negative row test, an AND with equal operand values leaves its orientation free. With `a` AND ancestors and `f(u)` such free choices on row `u`, the sum of `2^f(u)` over the splitting rows is at most `2^a`. The row tests occupy disjoint sets of orientation patterns. This still counts a single ancestor cone.
+
+## Cycles force three AND gates
+
+[ShortCycle.lean](ShortCycle.lean) extracts an induced five-cycle, six-cycle or six-vertex path from any graph containing a cycle but no triangle or four-cycle. [FiveTests.lean](FiveTests.lean) supplies five independent sets on each induced graph. The union of any two contains an edge. The input assignments extend by zero to the original graph, so the separation theorem forces at least three AND gates in the output cone of every exact binary circuit for its edge function.
+
+[TwoAndForest.lean](TwoAndForest.lean) applies this to both desk statements. If the graph admits even one exact circuit with at most two AND gates in its output cone, the graph is a forest. The vertex-deletion conclusion then holds for all circuits, and the ownership descent holds for every eligible minimum circuit. Larger circuits on that graph are included. The general cyclic case is open.
+
+After the preceding builds, compile `FreeChoices`, `FiveTests` and `ShortCycle`, then build `PEqualNP.Research.L_meta_1774.Forest` and compile `TwoAndForest` after `Descent` and `Normalization`.
+
+[WeakPatterns.lean](WeakPatterns.lean) also counts the physical AND gates in the original `Monotone2` model with fan-in at most two. Its proof evaluates each wire against the prefix available when it was read, including missing wire references. Compile it before `TwoAndForest`. The theorems `peel_of_two_ands` and `descent_of_two_ands` apply when any circuit in this more general model has at most two AND gates.

@@ -89,14 +89,14 @@ theorem pattern_bound {ι : Type*} (hc : IsAO2 n C) (w : ℕ) (U : Finset ι) (t
 
 variable (G : SimpleGraph (Fin n)) [DecidableRel G.Adj] (R : Finset (Fin n))
 
-/-- If a gate splits k different rows, the AND gates in its cone encode k distinct bit patterns. -/
-theorem splitting_rows_bound (hc : IsAO2 n C) (four : NoFourCycle G) (U : Finset (Fin n))
-    (right : ∀ u ∈ U, G.neighborFinset u ⊆ R) (j : ℕ) (split : ∀ u ∈ U, j ∈ rowGates G R C u) :
-    U.card ≤ 2 ^ (andCone (n := n) C (n+j)).card := by
+/-- Two rows with different centers can be separated inside a splitter's cone using
+one genuine edge incident to its first center. -/
+theorem row_probe (hc : IsAO2 n C) (four : NoFourCycle G) {u v : Fin n} (ne : u ≠ v)
+    (right : G.neighborFinset u ⊆ R) (j : ℕ) (split : j ∈ rowGates G R C u) :
+    ∃ z : Fin n → Bool, wval C z (n+j) = true ∧
+      ∀ i, z i = true → rowBase G R u i = true ∨ rowBase G R v i = true := by
   classical
-  apply pattern_bound C hc (n+j) U (rowBase G R) (fun u hu => (Finset.mem_filter.mp (split u hu)).2.2.1)
-  intro u hu v hv ne
-  obtain ⟨a,b,ha,hb,distinct⟩ := split_pair G R C hc u j (split u hu)
+  obtain ⟨a,b,ha,hb,distinct⟩ := split_pair G R C hc u j split
   have outside : ∃ t ∈ seen G C u (n+j), ¬ G.Adj v t := by
     by_contra! inc
     let T := Finset.univ.filter (fun i => G.Adj u i ∧ G.Adj v i)
@@ -108,6 +108,14 @@ theorem splitting_rows_bound (hc : IsAO2 n C) (four : NoFourCycle G) (U : Finset
   intro i on
   rcases (show i = u ∨ i = t by simpa [pairInput] using on) with rfl|rfl
   · exact Or.inl (by simp [rowBase])
-  · exact Or.inr (by simp [rowBase,right u hu (Finset.mem_filter.mp st).1,nonedge])
+  · exact Or.inr (by simp [rowBase,right (Finset.mem_filter.mp st).1,nonedge])
+
+/-- If a gate splits k different rows, the AND gates in its cone encode k distinct bit patterns. -/
+theorem splitting_rows_bound (hc : IsAO2 n C) (four : NoFourCycle G) (U : Finset (Fin n))
+    (right : ∀ u ∈ U, G.neighborFinset u ⊆ R) (j : ℕ) (split : ∀ u ∈ U, j ∈ rowGates G R C u) :
+    U.card ≤ 2 ^ (andCone (n := n) C (n+j)).card := by
+  classical
+  apply pattern_bound C hc (n+j) U (rowBase G R) (fun u hu => (Finset.mem_filter.mp (split u hu)).2.2.1)
+  exact fun u hu v _ ne => row_probe C G R hc four ne (right u hu) j (split u hu)
 
 end VertexPeel.AndSeparation
