@@ -97,11 +97,11 @@ theorem twoInputs {n : ℕ} (G : SimpleGraph (Fin n)) [DecidableRel G.Adj]
     · exact (Finset.mem_singleton.mp e) ▸ off
   exact twoSavings C ao Z j l hj hl lj mj (kill C ao Z l hl w read wz)
 
-theorem isolatedEdge {n : ℕ} (G : SimpleGraph (Fin n)) [DecidableRel G.Adj]
+theorem isolatedEdgeAt {n : ℕ} (G : SimpleGraph (Fin n)) [DecidableRel G.Adj]
     (a b : Fin n) (adj : G.Adj a b) (onlyA : ∀ v, G.Adj a v → v = b)
     (onlyB : ∀ v, G.Adj b v → v = a) (edges : 2 ≤ G.edgeFinset.card) :
-    ∃ z : Fin n, 0 < G.degree z ∧ ∀ C : Circuit, IsAO2 n C →
-      circuitFun n C = graphFun G ∅ → SavesAt G z C := by
+    0 < G.degree a ∧ ∀ C : Circuit, IsAO2 n C →
+      circuitFun n C = graphFun G ∅ → SavesAt G a C := by
   classical
   have single : G.neighborFinset a = {b} := by
     ext v
@@ -120,7 +120,7 @@ theorem isolatedEdge {n : ℕ} (G : SimpleGraph (Fin n)) [DecidableRel G.Adj]
     have h : (G.deleteIncidenceSet a).Adj u v := by simpa using he
     obtain ⟨huv,ua,va⟩ := SimpleGraph.deleteIncidenceSet_adj.mp h
     exact ⟨u,v,huv,ua,fun e => va (onlyB v (e ▸ huv)),va,fun e => ua (onlyB u (e ▸ huv.symm))⟩
-  refine ⟨a,by omega,?_⟩
+  refine ⟨by omega,?_⟩
   intro C ao cor
   obtain ⟨D,d,ev,bound⟩ := twoInputs G a b adj other C ao cor
   have same : fv C {a,b} C.output = fv C {a} C.output := by
@@ -142,6 +142,13 @@ theorem isolatedEdge {n : ℕ} (G : SimpleGraph (Fin n)) [DecidableRel G.Adj]
       have vb : v ≠ b := fun eq => ua (onlyB u (eq ▸ h.symm))
       exact ⟨u,v,h,by simpa [ua,ub] using hu,by simpa [va,vb] using hv⟩
   exact ⟨D,d,ev.trans (same.trans (restrict_correct G C cor a)),by omega,fun _ => by omega⟩
+
+theorem isolatedEdge {n : ℕ} (G : SimpleGraph (Fin n)) [DecidableRel G.Adj]
+    (a b : Fin n) (adj : G.Adj a b) (onlyA : ∀ v, G.Adj a v → v = b)
+    (onlyB : ∀ v, G.Adj b v → v = a) (edges : 2 ≤ G.edgeFinset.card) :
+    ∃ z : Fin n, 0 < G.degree z ∧ ∀ C : Circuit, IsAO2 n C →
+      circuitFun n C = graphFun G ∅ → SavesAt G z C :=
+  ⟨a, isolatedEdgeAt G a b adj onlyA onlyB edges⟩
 
 end VertexPeel.Leaves
 
