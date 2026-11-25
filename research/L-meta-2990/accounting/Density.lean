@@ -55,6 +55,21 @@ theorem hardDensity {q N size hard : ℕ} (large : 300 ≤ q)
   rw [Nat.mul_add,Nat.mul_one] at count ⊢
   omega
 
+theorem checkedFirstPremise (q N : ℕ) (I : Fin N → Fin N → Prop) [DecidableRel I] (C : Circuit)
+    (hq : 2 ≤ q)
+    (lines : ∀ l : Fin N, Fintype.card {p : Fin N // I p l} = q+1)
+    (unique : ∀ p r : Fin N, p ≠ r → ∃! l : Fin N, I p l ∧ I r l)
+    (mono : Monotone2 C)
+    (ordered : ∀ j g, C.gates[j]? = some g →
+      ∃ a b, g.inputs=[a,b] ∧ a<b ∧ b<N+N+j)
+    (sound : ∀ z : Fin (N+N) → Bool,
+      Fintype.card {l : Fin N // z (Fin.natAdd N l)=true} ≤ q →
+      (¬∃ p l : Fin N, I p l ∧ z (Fin.castAdd N p)=true ∧ z (Fin.natAdd N l)=true) →
+      circuitFun (N+N) C z=false) :
+    N*(q+1) ≤ 50*C.size + 2*N + Fintype.card {e : Fin N × Fin N // I e.1 e.2 ∧ readsAtMost C (N+N) [e.1.val,N+e.2.val] 2 = false} := by
+  simpa only [Fintype.card_subtype,heavy] using lossBound q N I C hq lines unique mono ordered sound
+
+#print axioms checkedFirstPremise
 end Incidence2990
 
 #print axioms Incidence2990.lossBound
