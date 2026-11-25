@@ -25,3 +25,9 @@ The script uses Lake to build the upstream lemmas, compiles the research modules
 ## Row 15
 
 For row 15, `forcedPair15` shows how a circuit of at most 13 gates would lose two gates simultaneously. It assumes the 12-gate lower bound for each of the five zero cofactors. Under that assumption each subdivision input occurs in a single OR gate. At the earliest such gate, the other input can be true only when both endpoints of the unsubdivided edge are true. On any collection of assignments excluding that edge, the other input is constantly zero and the OR returns the subdivision bit. The theorem `lower15_of_rows` converts a 12-gate lower bound on those assignments, the cofactor bounds and a two-gate deletion lemma into the 14-gate lower bound for legal AO₂ circuits. The module `ResidualFifteen.lean` discharges all three hypotheses and uses L-meta-4342 to extend the result to every monotone circuit. The reproduction script generates the sample certificate and checks it with Lean.
+
+## Relabelling the finite graphs
+
+`RawTaggedIso.lean` checks an explicit permutation from each of the 4,704 labelled cover presentations in `raw4704` to a member of `tagged292`. `TaggedIso.lean` checks a second permutation to one of the 186 unlabelled representatives. Both checks preserve the order of the graph, verify that the forward and inverse maps undo one another, and check every pair of vertices for adjacency. The second permutation can change which vertices form the distinguished cover.
+
+`ResidualTransport.lean` transports the cover number, critical-leaf condition, triangle and four-cycle exclusions, and numerical circuit bound across these isomorphisms. `ListedNumerical.lean` supplies the bound in the form used by the leaf-removal induction.

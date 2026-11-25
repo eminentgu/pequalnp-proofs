@@ -1,0 +1,7 @@
+'VertexPeel.Mask4.raw_to_tagged' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VertexPeel.CoverFourResidual.listedNumerical' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VertexPeel.CoverFourTransport.tau_of_iso' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VertexPeel.CoverFourTransport.critical_of_iso' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VertexPeel.CoverFourTransport.numerical_of_iso' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VertexPeel.CoverFourTransport.triangle_of_iso' depends on axioms: [propext, Quot.sound]
+'VertexPeel.CoverFourTransport.square_of_iso' depends on axioms: [propext, Classical.choice, Quot.sound]
