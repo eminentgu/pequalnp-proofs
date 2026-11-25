@@ -1,5 +1,6 @@
 import CubicPorts
 import PortHallGirth
+import NormalizeCount
 
 namespace VertexPeel.NeighborPorts
 
@@ -45,6 +46,26 @@ theorem subcubic_and_one_hit (bip : ∃ c : Fin n → Bool, ∀ u v, G.Adj u v �
     (fun z w cy sz => ⟨t,Finset.mem_singleton_self _,hit z w cy sz⟩) C ao ok
   simpa using bound
 
+/-- The same quantitative lower bound holds for the public Monotone2 model,
+including constants and forward or out-of-range references. -/
+theorem subcubic_and_hitting_mono (bip : ∃ c : Fin n → Bool, ∀ u v, G.Adj u v → c u≠c v)
+    (deg : ∀ v, G.degree v≤3) (sq : NoFourCycle G) (T : Finset (Fin n))
+    (hit : ∀ z (w : G.Walk z z), w.IsCycle → w.length=6 → ∃ v∈T, v∈w.support)
+    (C : Circuit) (mono : Monotone2 C) (ok : circuitFun n C=graphFun G ∅) :
+    Loc.tau G ≤ (PivotAND.physical C).card + T.card/2 := by
+  obtain ⟨D,ao,eval,count⟩ := NormalizeCount.normalize (n:=n) C mono (by rw [ok]; simp [graphFun])
+  exact (subcubic_and_hitting G bip deg sq T hit D ao (eval.trans ok)).trans (Nat.add_le_add_right count _)
+
+theorem subcubic_and_one_hit_mono (bip : ∃ c : Fin n → Bool, ∀ u v, G.Adj u v → c u≠c v)
+    (deg : ∀ v, G.degree v≤3) (sq : NoFourCycle G) (t : Fin n)
+    (hit : ∀ z (w : G.Walk z z), w.IsCycle → w.length=6 → t∈w.support)
+    (C : Circuit) (mono : Monotone2 C) (ok : circuitFun n C=graphFun G ∅) :
+    Loc.tau G ≤ (PivotAND.physical C).card := by
+  simpa using subcubic_and_hitting_mono G bip deg sq {t}
+    (fun z w cy sz => ⟨t,Finset.mem_singleton_self _,hit z w cy sz⟩) C mono ok
+
+#print axioms subcubic_and_one_hit_mono
+#print axioms subcubic_and_hitting_mono
 #print axioms subcubic_and_hitting
 #print axioms subcubic_and_one_hit
 end VertexPeel.NeighborPorts
