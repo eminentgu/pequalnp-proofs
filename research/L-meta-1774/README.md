@@ -12,6 +12,15 @@ The file [Masking.lean](Masking.lean) proves necessary conditions for a circuit 
 
 The proof uses checked upstream L-meta-4846 to obtain the leaking nonedge. It proves that each gate of a minimum circuit is either the output or read by a later gate. The deletion argument permits references to unavailable wires under the project's default-false semantics. Following later readers on the leaking assignment eventually gives an AND where the signal becomes false.
 
+## A shared bad gate with two good masks
+
+[SharedMask.lean](SharedMask.lean) gives a six-vertex tree with edges ab, ad, cd, ap, dq. An eight-gate circuit uses the shared signal `j = (a ∨ c) ∧ (b ∨ d)` and outputs
+`(a ∧ (j ∨ p)) ∨ (d ∧ (j ∨ q))`. The gate j owns the disjoint edges ab and cd. Both downstream ANDs reject the leak on bc. They own only ap and dq respectively.
+
+The circuit is ready, computes the exact graph function, and resists replacing any one of its eight gates by any earlier wire or either constant. The proof supplies a distinguishing input for every such replacement. A six-gate equivalent circuit establishes that the eight-gate example fails global minimality. The example therefore constrains arguments based on single-gate bypass or clamping. It does not refute L-meta-1774.
+
+Two explicit rewrites show how global savings arise here. First replace the OR input of the a-mask by b∨p while the d-mask continues to cover ad. Then replace the OR input of the d-mask by (a∨c)∨q. Each intermediate circuit computes the same function, and the shared bad wire then has no readers.
+
 Completing L-meta-1774 still requires constructing a circuit of at most the initial size with fewer gates owning disjoint edges.
 
 From the repository's `lean/` directory, run the following commands.
@@ -19,4 +28,5 @@ From the repository's `lean/` directory, run the following commands.
 ```sh
 lake build PEqualNP.Outside.L_meta_4846
 lake env lean ../research/L-meta-1774/Masking.lean
+lake env lean ../research/L-meta-1774/SharedMask.lean
 ```
