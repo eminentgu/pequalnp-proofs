@@ -149,13 +149,17 @@ theorem no_direct_and {n : ℕ} {G : SimpleGraph (Fin n)} {C : Circuit} (ready :
   have hf := own.2.2.2 i hik (cone_extend C hk hik hr (Or.inl rfl)) opI
   simp [hf] at hi
 
-private lemma masking_gate {n : ℕ} (C : Circuit) (hmin : IsMinimalMonoCircuit n C)
+private lemma masking_step {n : ℕ} (C : Circuit) (hmin : IsMinimalMonoCircuit n C)
     (x : Fin n → Bool) (out : circuitFun n C x = false) {j : ℕ}
     (hj : j < C.gates.length) (on : gateVal n C j x = true) :
-    ∃ k, InCone n C j k ∧ (gateAt C k).op = .and ∧ gateVal n C k x = false := by
+    ∃ (k i : ℕ) (hk : k < C.gates.length), i < k ∧ (j = i ∨ InCone n C j i) ∧
+      n+i ∈ C.gates[k].inputs ∧ gateVal n C i x = true ∧
+      InCone n C j k ∧ (gateAt C k).op = .and ∧ gateVal n C k x = false := by
   suffices H : ∀ d i, C.gates.length-i = d → i < C.gates.length →
       (j = i ∨ InCone n C j i) → gateVal n C i x = true →
-      ∃ k, InCone n C j k ∧ (gateAt C k).op = .and ∧ gateVal n C k x = false by
+      ∃ (k i : ℕ) (hk : k < C.gates.length), i < k ∧ (j = i ∨ InCone n C j i) ∧
+      n+i ∈ C.gates[k].inputs ∧ gateVal n C i x = true ∧
+      InCone n C j k ∧ (gateAt C k).op = .and ∧ gateVal n C k x = false by
     exact H _ j rfl hj (Or.inl rfl) on
   intro d
   induction d using Nat.strong_induction_on with
@@ -174,7 +178,7 @@ private lemma masking_gate {n : ℕ} (C : Circuit) (hmin : IsMinimalMonoCircuit 
         change C.gates[k].op = .and ∨ C.gates[k].op = .or at ops
         rw [← op_at hk] at ops
         rcases ops with ha | ho
-        · exact ⟨k,pred,ha,val⟩
+        · exact ⟨k,i,hk,hik,path,hr,hv,pred,ha,val⟩
         · have good := or_input C hk ho hik hr x hv
           simp [val] at good
 
@@ -213,7 +217,7 @@ theorem third_edge_mask {n : ℕ} (G : SimpleGraph (Fin n)) [DecidableRel G.Adj]
   obtain ⟨u,v,hn,on⟩ :=
     PEqualNP.Outside.L_meta_4846 n G C four hmin.1 j a b c d hab hcd hac had hbc hbd one two
   have off : circuitFun n C (pairInput u v) = false := by rw [hf,nonedge_output G hn]
-  obtain ⟨k,path,op,ko⟩ := masking_gate C hmin _ off one.1 on
+  obtain ⟨k,_,_,_,_,_,_,path,op,ko⟩ := masking_step C hmin _ off one.1 on
   have hk := cone_lt n C.gates j k path
   have hjk := cone_idx n C.gates k j path
   obtain ⟨p,q,hpq,own⟩ := ready k hk op
@@ -227,5 +231,91 @@ theorem third_edge_mask {n : ℕ} (G : SimpleGraph (Fin n)) [DecidableRel G.Adj]
     simp [two.2.2.1] at jo
   · rw [gateAt,List.getD_eq_getElem _ _ hk]
     exact no_direct_and ready hjk hk one.2.1 op
+
+/-- The last true gate before a mask is an OR. The mask has a different, earlier wire
+which distinguishes the leaking assignment from its owned edge. -/
+theorem masking_inputs {n : ℕ} {G : SimpleGraph (Fin n)} {C : Circuit}
+    (hmin : IsMinimalMonoCircuit n C) (ready : Ready G C) {j : ℕ}
+    (hj : j < C.gates.length) (oj : (gateAt C j).op = .and) (x : Fin n → Bool)
+    (on : gateVal n C j x = true) (off : circuitFun n C x = false) :
+    ∃ (k i w : ℕ) (p q : Fin n), j < i ∧ i < k ∧ InCone n C j i ∧ InCone n C j k ∧
+      (gateAt C i).op = .or ∧ (gateAt C k).op = .and ∧
+      n+i ∈ (gateAt C k).inputs ∧ w ∈ (gateAt C k).inputs ∧ w ≠ n+i ∧ w < n+k ∧
+      G.Adj p q ∧ Owns n C k p q ∧ gateVal n C j (pairInput p q) = false ∧
+      gateVal n C i x = true ∧ gateVal n C i (pairInput p q) = true ∧
+      gateVal n C k x = false ∧
+      (wf (C.gates.take k) (List.ofFn x)).getD w false = false ∧
+      (wf (C.gates.take k) (List.ofFn (pairInput p q))).getD w false = true := by
+  obtain ⟨k,i,hk,hik,path,hr,flux,jk,ok,mask⟩ := masking_step C hmin x off hj on
+  have hi := hik.trans hk
+  have oi : (gateAt C i).op = .or := by
+    have ops := (hmin.1 _ (List.getElem_mem hi)).1
+    change C.gates[i].op = .and ∨ C.gates[i].op = .or at ops
+    rw [← op_at hi] at ops
+    exact ops.resolve_left (fun ha => no_direct_and ready hik hk ha ok hr)
+  have ji : InCone n C j i := by
+    rcases path with heq|hji
+    · subst i; rw [oj] at oi; cases oi
+    · exact hji
+  obtain ⟨p,q,hpq,owned⟩ := ready k hk ok
+  have itrue := and_input C hk ok hik hr _ owned.2.2.1
+  have jfalse := owned.2.2.2 j (cone_idx n C.gates k j jk) jk oj
+  have raw : ∃ w ∈ C.gates[k].inputs,
+      (wf (C.gates.take k) (List.ofFn x)).getD w false = false := by
+    by_contra! h
+    rw [valf n C x k hk, ← op_at hk,ok] at mask
+    change List.all _ id = false at mask
+    have allT : (C.gates[k].inputs.map fun w =>
+        (wf (C.gates.take k) (List.ofFn x)).getD w false).all id = true := by
+      apply List.all_eq_true.mpr
+      intro t mem
+      obtain ⟨w,hw,rfl⟩ := List.mem_map.mp mem
+      simpa only [id_eq,Bool.not_eq_false] using h _ hw
+    exact Bool.noConfusion (mask.symm.trans allT)
+  obtain ⟨w,hw,wx⟩ := raw
+  have wy : (wf (C.gates.take k) (List.ofFn (pairInput p q))).getD w false = true := by
+    have ownT := owned.2.2.1
+    rw [valf n C _ k hk, ← op_at hk,ok] at ownT
+    exact List.all_eq_true.mp ownT _ (List.mem_map_of_mem hw)
+  have nw : w ≠ n+i := by
+    rintro rfl
+    rw [src_val C x hik hk] at wx
+    exact Bool.noConfusion (wx.symm.trans flux)
+  have early : w < n+k := by
+    by_contra! h
+    have len : (wf (C.gates.take k) (List.ofFn (pairInput p q))).length = n+k := by
+      simp [wf_len,Nat.min_eq_left hk.le]
+    rw [List.getD_eq_default _ _ (len ▸ h)] at wy
+    cases wy
+  have geq : gateAt C k = C.gates[k] := by rw [gateAt,List.getD_eq_getElem _ _ hk]
+  exact ⟨k,i,w,p,q,cone_idx n C.gates i j ji,hik,ji,jk,oi,ok,geq ▸ hr,geq ▸ hw,nw,early,
+    hpq,owned,jfalse,flux,itrue,mask,wx,wy⟩
+
+/-- A ready minimum circuit for a graph with at most two edges has no bad gate. -/
+theorem no_bad_of_le_two {n : ℕ} (G : SimpleGraph (Fin n)) [DecidableRel G.Adj]
+    (C : Circuit) (hmin : IsMinimalMonoCircuit n C) (four : PEqualNP.TopForm.NoFourCycle G)
+    (hf : circuitFun n C = graphFun G ∅) (ready : Ready G C) (few : G.edgeFinset.card ≤ 2)
+    {j : ℕ} {a b c d : Fin n} (hab : G.Adj a b) (hcd : G.Adj c d)
+    (one : Owns n C j a b) (two : Owns n C j c d) :
+    a = c ∨ a = d ∨ b = c ∨ b = d := by
+  by_contra! disjoint
+  obtain ⟨_,_,_,p,q,_,_,_,_,_,hpq,_,_,hp,hc,_⟩ :=
+    third_edge_mask G C hmin four hf ready hab hcd one two
+      disjoint.1 disjoint.2.1 disjoint.2.2.1 disjoint.2.2.2
+  have hdiff : s(a,b) ≠ s(c,d) := by
+    intro eq
+    have hm : a ∈ s(c,d) := eq ▸ Sym2.mem_mk_left a b
+    exact (Sym2.mem_iff.mp hm).elim disjoint.1 disjoint.2.1
+  let S : Finset (Sym2 (Fin n)) := {s(p,q),s(a,b),s(c,d)}
+  have sub : S ⊆ G.edgeFinset := by
+    intro t ht
+    simp only [S,Finset.mem_insert,Finset.mem_singleton] at ht
+    rcases ht with rfl|rfl|rfl
+    · simpa using hpq
+    · simpa using hab
+    · simpa using hcd
+  have count : S.card = 3 := by simp [S,hp,hc,hdiff]
+  have hle := Finset.card_le_card sub
+  omega
 
 end PetersenResearch.OwnershipMasking
