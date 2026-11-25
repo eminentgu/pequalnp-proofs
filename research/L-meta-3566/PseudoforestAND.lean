@@ -183,11 +183,10 @@ theorem pseudoforest_and_lower (G : SimpleGraph (Fin n)) [base : DecidableRel G.
   exact paid_vertex H D dao dc (GraphInduction599.sparse_subgraph sub sp)
     ⟨c,fun u v e => col _ _ (sub e)⟩ (square_mono sub sq) few
 
-/-- On every square-free bipartite pseudoforest, AND gates pay for a minimum cover and
-OR gates pay for all but one edge. -/
-theorem pseudoforest_numerical (G : SimpleGraph (Fin n)) [base : DecidableRel G.Adj] (sp : Pseudoforest.Sparse G)
-    (bip : ∃ c : Fin n → Bool, ∀ u v, G.Adj u v → c u ≠ c v) (sq : NoFourCycle G) :
-    StableExtension.Numerical G (Loc.tau G) := by
+/-- Combine a bound on physical ANDs with the OR bound of L-meta-599. -/
+theorem numerical_from_ands (G : SimpleGraph (Fin n)) [base : DecidableRel G.Adj] (sp : Pseudoforest.Sparse G)
+    (sq : NoFourCycle G) (andLower : ∀ E : Circuit, IsAO2 n E → circuitFun n E = graphFun G ∅ →
+      Loc.tau G ≤ (physical E).card) : StableExtension.Numerical G (Loc.tau G) := by
   intro inst C mono ok
   have eq : inst=base := Subsingleton.elim _ _
   subst inst
@@ -195,7 +194,7 @@ theorem pseudoforest_numerical (G : SimpleGraph (Fin n)) [base : DecidableRel G.
   have zero : circuitFun n C (fun _ => false) = false := (congrFun ok _).trans (by simp [graphFun])
   obtain ⟨E,ao,smaller,same⟩ := PEqualNP.Outside.L_meta_4342 n C mono zero
   have ec := same.trans ok
-  have andBound := pseudoforest_and_lower G sp bip sq E ao ec
+  have andBound := andLower E ao ec
   let rest := Finset.range E.size \ physical E
   have reads (j : ℕ) (g : Gate) (atj : E.gates[j]? = some g) (hor : g.op = .or) : j ∈ rest := by
     obtain ⟨hj,rfl⟩ := List.getElem?_eq_some_iff.mp atj
@@ -214,6 +213,13 @@ theorem pseudoforest_numerical (G : SimpleGraph (Fin n)) [base : DecidableRel G.
   have budget : rest.card + (physical E).card = E.size :=
     (Finset.card_sdiff_add_card_eq_card (Finset.filter_subset _ _)).trans (Finset.card_range _)
   omega
+
+/-- On every square-free bipartite pseudoforest, AND gates pay for a minimum cover and
+OR gates pay for all but one edge. -/
+theorem pseudoforest_numerical (G : SimpleGraph (Fin n)) [base : DecidableRel G.Adj] (sp : Pseudoforest.Sparse G)
+    (bip : ∃ c : Fin n → Bool, ∀ u v, G.Adj u v → c u ≠ c v) (sq : NoFourCycle G) :
+    StableExtension.Numerical G (Loc.tau G) := by
+  exact @numerical_from_ands n G base sp sq (pseudoforest_and_lower G sp bip sq)
 
 /-- Ownership descent with no component count or cover-number bound. -/
 theorem pseudoforest_ownership (G : SimpleGraph (Fin n)) [DecidableRel G.Adj] (sp : Pseudoforest.Sparse G)
