@@ -1,5 +1,7 @@
 import GuardedTree
 import GuardedCycle
+import GuardWires
+import CycleRepair
 
 open PEqualNP.Research.GuardedReaders
 #print axioms shared_gate_exchange
@@ -14,3 +16,9 @@ open PEqualNP.Research.GuardedReaders
 #print axioms Cycle.disjoint
 #print axioms Cycle.every_choice_fails
 #print axioms Cycle.notMinimal
+#print axioms optimum_has_two_sided_reader
+#print axioms patch_criterion
+#print axioms Cycle.repaired_spec
+#print axioms optimum_three_rows
+#print axioms vertexGuard_of_wire
+#print axioms vertex_guard_exchange

@@ -29,6 +29,20 @@ Two explicit rewrites show how global savings arise here. First replace the OR i
 
 [GuardedTree](shared-readers/GuardedTree.lean) reconstructs the existing eight-gate tree circuit gate for gate. Its two readers can use opposite parents, reducing the count to seven while preserving the edge function. [GuardedCycle](shared-readers/GuardedCycle.lean) gives a five-cycle with three pendant vertices and a ready 14-gate circuit. Its gate 2 owns the disjoint edges `{0,1}` and `{2,3}` and has three guarded readers. For all eight choices of parents, reader three causes either `{2,4}` or `{1,4}` to be accepted. A separate 10-gate circuit computes the same graph function. This locates the remaining issue for this route to 1774: global minimality must supply additional structure, or an exchange must change more than the parent choice at each reader.
 
+## Omitting individual reads and using global minimality
+
+[Omit](shared-readers/Omit.lean) also allows a reader to omit `J`, replacing `Hᵢ ∧ (J ∨ Bᵢ)` by `Hᵢ ∧ Bᵢ`. The compiler saves one gate for the common AND and one OR for each omission. Testing the emitted circuit on the graph's edge assignments and its independent assignments suffices. [CycleRepair](shared-readers/CycleRepair.lean) applies this to the five-cycle example described above: the first two readers use opposite parents, and the third reader omits `J`. The exact circuit drops from 14 to 12 gates.
+
+[ThreeRows](shared-readers/ThreeRows.lean) gives a necessary condition for a globally minimum circuit in this layout. A reader is *influential* on an input when varying the signal supplied to that reader can flip the final output with every other reader signal held fixed. One fixed reader must be influential on all three of the following kinds of input, possibly using different settings of the other reader signals.
+
+- An independent input on which `L = 1` and `R = 0`.
+- An independent input on which `L = 0` and `R = 1`.
+- A genuine two-vertex edge input on which both `L` and `R` are true.
+
+If each reader misses one of these kinds, it can receive the left operand, the right operand or no signal according to the missing kind. For each relevant input, the resulting assignments agree with the original circuit on every coordinate that influences the output. All choices can be made simultaneously, giving a strictly smaller exact circuit. [Opposite](shared-readers/Opposite.lean) proves the corresponding two-input condition for routing to parents alone.
+
+[LiteralGuards](shared-readers/LiteralGuards.lean) constructs the smaller circuit explicitly when the operands are disjunctions of disjoint sets of primary inputs and each reader has a vertex that must be true whenever the reader is influential. A reader guarded by a vertex in one operand takes the other operand; a reader guarded by a vertex outside both operands omits the signal. On a true edge row on which both operands are true, the two endpoints already lie in opposite operand sets. A third guard vertex is therefore false. [GuardWires](shared-readers/GuardWires.lean) proves that a literal primary-input guard wire supplies the required vertex, even when its guarded result has multiple downstream uses. These statements allow any graph and any monotone suffix. For application to the full 1774 statement, general circuits can have overlapping operands, gates other than primary disjunctions as operands, or readers lacking such a vertex.
+
 Run `research/L-meta-1774/shared-readers/check.sh` from the checkout to replay the examples and the [axiom audit](shared-readers/AuditGuarded.lean). The audit prints only `propext`, `Classical.choice`, and `Quot.sound`; the rowwise cofactor equivalence uses only `propext`.
 
 Completing L-meta-1774 still requires constructing a circuit of at most the initial size with fewer gates owning disjoint edges.
