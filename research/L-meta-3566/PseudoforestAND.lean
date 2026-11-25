@@ -119,12 +119,13 @@ theorem pivot_eval (G : SimpleGraph (Fin n)) [DecidableRel G.Adj] (x : Fin n)
 private theorem card_irrel (G : SimpleGraph (Fin n)) (i j : Fintype G.edgeSet) :
     (@SimpleGraph.edgeFinset _ G i).card = (@SimpleGraph.edgeFinset _ G j).card := by rw [Subsingleton.elim i j]
 
-/-- A paid pivot in each deficient realization of each subgraph yields the global AND bound. -/
-theorem paid_induction (G : SimpleGraph (Fin n)) [base : DecidableRel G.Adj]
+/-- A fixed error budget is carried through every restriction. A pivot need
+only be supplied when the deficit exceeds this one global budget. -/
+theorem paid_induction_offset (G : SimpleGraph (Fin n)) [base : DecidableRel G.Adj] (offset : Nat)
     (pay : ∀ (H : SimpleGraph (Fin n)) [DecidableRel H.Adj], H ≤ G → ∀ (D : Circuit), IsAO2 n D →
-      circuitFun n D = graphFun H ∅ → (physical D).card < Loc.tau H → ∃ x, 0 < H.degree x ∧
+      circuitFun n D = graphFun H ∅ → (physical D).card + offset < Loc.tau H → ∃ x, 0 < H.degree x ∧
       ∃ L : Finset ℕ, H.degree x ≤ L.card ∧ ∀ j∈L, lit D x j)
-    (C : Circuit) (ao : IsAO2 n C) (correct : circuitFun n C = graphFun G ∅) : Loc.tau G ≤ (physical C).card := by
+    (C : Circuit) (ao : IsAO2 n C) (correct : circuitFun n C = graphFun G ∅) : Loc.tau G ≤ (physical C).card + offset := by
   classical
   generalize size : G.edgeFinset.card = k
   induction k using Nat.strong_induction_on generalizing G C with
@@ -172,6 +173,16 @@ theorem paid_induction (G : SimpleGraph (Fin n)) [base : DecidableRel G.Adj]
       change Loc.tau G ≤ Loc.tau H + S.card at bound
       simp only [Finset.card_empty] at zero
       omega
+
+/-- A paid pivot in each deficient realization of each subgraph yields the global AND bound. -/
+theorem paid_induction (G : SimpleGraph (Fin n)) [base : DecidableRel G.Adj]
+    (pay : ∀ (H : SimpleGraph (Fin n)) [DecidableRel H.Adj], H ≤ G → ∀ (D : Circuit), IsAO2 n D →
+      circuitFun n D = graphFun H ∅ → (physical D).card < Loc.tau H → ∃ x, 0 < H.degree x ∧
+      ∃ L : Finset ℕ, H.degree x ≤ L.card ∧ ∀ j∈L, lit D x j)
+    (C : Circuit) (ao : IsAO2 n C) (correct : circuitFun n C = graphFun G ∅) : Loc.tau G ≤ (physical C).card := by
+  apply (Nat.add_zero (physical C).card) ▸ paid_induction_offset G 0 _ C ao correct
+  intro H inst sub D dao eval short
+  exact pay H sub D dao eval (by simpa using short)
 
 /-- The entire sparse class, with arbitrarily many disconnected cycle components and isolated inputs. -/
 theorem pseudoforest_and_lower (G : SimpleGraph (Fin n)) [base : DecidableRel G.Adj] (sp : Pseudoforest.Sparse G)

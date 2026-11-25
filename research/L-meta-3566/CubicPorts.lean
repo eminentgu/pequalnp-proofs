@@ -64,6 +64,31 @@ theorem labeled_transversal (ao : IsAO2 n C) (ok : circuitFun n C = graphFun G �
     (fun i hi => read_at C (other _ (mem i hi)).2)
   exact ⟨_,mem i hi,_,mem j hj,adj⟩
 
+/-- A port bound with additive loss forces a paid pivot whenever twice the
+physical AND count plus that loss is smaller than the active vertex set. -/
+theorem paid_of_label_deficit (ao : IsAO2 n C) (ok : circuitFun n C = graphFun G ∅) (sq : NoFourCycle G)
+    (deg : ∀ x,G.degree x ≤ 3) (loss : Nat)
+    (hull : let A := CoverThreeCore.active G
+      (∀ x∈A, (ports C x).card ≤ 2) →
+      (∀ x∈A, ∀ f : ℕ × Bool → Fin n,
+        (∀ p∈ports C x, f p∈A ∧ f p≠x ∧ p∈ports C (f p)) →
+        ∃ p∈ports C x, ∃ q∈ports C x, G.Adj (f p) (f q)) →
+      A.card ≤ (A.biUnion (ports C)).card + loss)
+    (few : 2*(PivotAND.physical C).card + loss < (CoverThreeCore.active G).card) :
+    ∃ x, 0 < G.degree x ∧ ∃ L : Finset ℕ, G.degree x ≤ L.card ∧ ∀ j∈L, PivotAND.lit C x j := by
+  classical
+  let A := CoverThreeCore.active G
+  by_contra! no
+  have small (x) (hx : x∈A) : (lit C x).card < G.degree x := by
+    by_contra! enough
+    obtain ⟨j,hj,off⟩ := no x (Finset.mem_filter.mp hx).2 (lit C x) enough
+    exact off (lit_pivot C hj)
+  have number := hull (fun x hx => by rw [size_ports]; have := small x hx; have := deg x; omega)
+    (fun x hx f h => labeled_transversal C G ao ok sq x (small x hx) f (fun p hp => (h p hp).2))
+  have cap := used_ports C A
+  change (CoverThreeCore.active G).card ≤ (A.biUnion (ports C)).card + loss at number
+  omega
+
 /-- A purely combinatorial bound on these label families yields a paid pivot in the original circuit. -/
 theorem paid_of_label_bound (ao : IsAO2 n C) (ok : circuitFun n C = graphFun G ∅) (sq : NoFourCycle G)
     (bip : ∃ c : Fin n → Bool, ∀ u v, G.Adj u v → c u≠c v) (deg : ∀ x,G.degree x ≤ 3)
@@ -75,20 +100,12 @@ theorem paid_of_label_bound (ao : IsAO2 n C) (ok : circuitFun n C = graphFun G �
       A.card ≤ (A.biUnion (ports C)).card)
     (few : (PivotAND.physical C).card < Loc.tau G) :
     ∃ x, 0 < G.degree x ∧ ∃ L : Finset ℕ, G.degree x ≤ L.card ∧ ∀ j∈L, PivotAND.lit C x j := by
-  classical
-  let A := CoverThreeCore.active G
-  by_contra! no
-  have small (x) (hx : x∈A) : (lit C x).card < G.degree x := by
-    by_contra! enough
-    obtain ⟨j,hj,off⟩ := no x (Finset.mem_filter.mp hx).2 (lit C x) enough
-    exact off (lit_pivot C hj)
-  have number := hull (fun x hx => by rw [size_ports]; have := small x hx; have := deg x; omega)
-    (fun x hx f h => labeled_transversal C G ao ok sq x (small x hx) f (fun p hp => (h p hp).2))
-  have cover := PivotAND.double_cover_le_active G bip
-  have cap := used_ports C A
-  change (CoverThreeCore.active G).card ≤ (A.biUnion (ports C)).card at number
-  omega
+  apply paid_of_label_deficit C G ao ok sq deg 0 _ _
+  · simpa using hull
+  · have cover := PivotAND.double_cover_le_active G bip
+    omega
 
+#print axioms paid_of_label_deficit
 #print axioms labeled_transversal
 #print axioms paid_of_label_bound
 end VertexPeel.NeighborPorts
