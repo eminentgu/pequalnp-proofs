@@ -5,13 +5,14 @@ namespace VertexPeel.ConnectedSubdivision
 open PEqualNP.CircuitLowerBounds PEqualNP.MetaComplexity PEqualNP.MetaComplexity.NestedCover
     PEqualNP.MetaComplexity.CoverPromise PEqualNP.TopForm VertexPeel.SidePeel
 
-/-- Strict neighbor expansion follows from connectedness and one vertex of
-    degree greater than d when the degrees on the two sides straddle d. -/
-theorem expand {n : ℕ} (G : SimpleGraph (Fin n)) [DecidableRel G.Adj]
+/-- Strict expansion suffices when one member of X can reach a branching
+vertex. The graph may have unrelated regular components. -/
+theorem expandFrom {n : ℕ} (G : SimpleGraph (Fin n)) [DecidableRel G.Adj]
     (A : Finset (Fin n)) (cross : ∀ u v : Fin n, G.Adj u v → (u ∈ A ↔ v ∉ A))
-    (connected : G.Preconnected) (d : ℕ) (lower : ∀ a ∈ A, d ≤ G.degree a)
-    (upper : ∀ b ∉ A, G.degree b ≤ d) (branch : ∃ a ∈ A, d < G.degree a)
-    (X : Finset (Fin n)) (sub : X ⊆ A) (someX : X.Nonempty) :
+    (d : ℕ) (lower : ∀ a ∈ A, d ≤ G.degree a)
+    (upper : ∀ b ∉ A, G.degree b ≤ d)
+    (X : Finset (Fin n)) (sub : X ⊆ A)
+    (branch : ∃ x ∈ X, ∃ w ∈ A, d < G.degree w ∧ G.Reachable x w) :
     X.card < (X.biUnion (fun u => G.neighborFinset u)).card := by
   classical
   let Y := X.biUnion (fun u => G.neighborFinset u)
@@ -51,16 +52,27 @@ theorem expand {n : ℕ} (G : SimpleGraph (Fin n)) [DecidableRel G.Adj]
         rw [yop _ hy]
         exact (G.mem_neighborFinset u v).mpr uv
       exact Finset.mem_union_left _ ((Finset.mem_bipartiteBelow G.Adj).mp vhit).1
-  obtain ⟨w,wa,high⟩ := branch
-  obtain ⟨x,hx⟩ := someX
-  have reached := (G.reachable_iff_reflTransGen x w).mp (connected x w)
+  obtain ⟨x,hx,w,wa,high,reach⟩ := branch
+  have reached := (G.reachable_iff_reflTransGen x w).mp reach
   have wmem : w ∈ X ∪ Y := by
-    clear wa high
+    clear wa high reach
     induction reached with
     | refl => exact Finset.mem_union_left _ hx
     | tail _ edge ih => exact closed _ _ edge ih
   have wx := (Finset.mem_union.mp wmem).resolve_right (fun h => ya w h wa)
   exact high.ne ((feq w wx).trans (fu w wx))
+
+/-- Strict neighbor expansion follows from connectedness and one vertex of
+    degree greater than d when the degrees on the two sides straddle d. -/
+theorem expand {n : ℕ} (G : SimpleGraph (Fin n)) [DecidableRel G.Adj]
+    (A : Finset (Fin n)) (cross : ∀ u v : Fin n, G.Adj u v → (u ∈ A ↔ v ∉ A))
+    (connected : G.Preconnected) (d : ℕ) (lower : ∀ a ∈ A, d ≤ G.degree a)
+    (upper : ∀ b ∉ A, G.degree b ≤ d) (branch : ∃ a ∈ A, d < G.degree a)
+    (X : Finset (Fin n)) (sub : X ⊆ A) (someX : X.Nonempty) :
+    X.card < (X.biUnion (fun u => G.neighborFinset u)).card := by
+  obtain ⟨x,hx⟩ := someX
+  obtain ⟨w,wa,high⟩ := branch
+  exact expandFrom G A cross d lower upper X sub ⟨x,hx,w,wa,high,connected x w⟩
 
 /-- The Hall inequalities survive deletion of any one vertex of the right
     side if all nonempty left sets have strictly more neighbors than members. -/
