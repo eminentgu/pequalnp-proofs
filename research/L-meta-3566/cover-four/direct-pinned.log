@@ -1,0 +1,17 @@
+kernel 0 n 7 edges 6 budget 8 NONE states 238
+kernel 1 n 7 edges 7 budget 9 NONE states 1437
+kernel 2 n 7 edges 8 budget 10 NONE states 10501
+kernel 3 n 7 edges 7 budget 9 NONE states 780
+kernel 4 n 8 edges 8 budget 10 NONE states 3468
+kernel 5 n 8 edges 8 budget 10 NONE states 3288
+kernel 6 n 8 edges 7 budget 9 NONE states 317
+kernel 7 n 8 edges 8 budget 10 NONE states 1915
+kernel 8 n 8 edges 9 budget 11 NONE states 17281
+kernel 9 n 8 edges 8 budget 10 NONE states 1114
+kernel 10 n 8 edges 8 budget 10 NONE states 5380
+kernel 11 n 8 edges 9 budget 11 NONE states 17953
+kernel 12 n 8 edges 9 budget 11 NONE states 17399
+kernel 13 n 8 edges 10 budget 12 NONE states 426898
+kernel 14 n 9 edges 10 budget 12 NONE states 26873
+kernel 15 n 9 edges 11 budget 13 NONE states 843273
+kernel 16 n 10 edges 12 budget 14 NONE states 1497948

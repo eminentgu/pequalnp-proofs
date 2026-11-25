@@ -1,0 +1,13 @@
+normalized distinguished-cover presentations: 292
+stage                               6     7     8     9    10    11    12    13    14 total
+duplicate-free                      0     4    29    56    52    30    11     3     1 186
+forest                              0     0    10    15     8     2     0     0     0 35
+cyclic/some-stable-leaf             0     0     9    39    43    28    11     3     1 134
+cyclic/all-leaves-critical          0     4    10     2     1     0     0     0     0 17
+isolated-edge                       0     1     1     0     0     0     0     0     0 2
+pendant-path                        0     1     1     0     0     0     0     0     0 2
+no-leaf-rule                        0     2     8     2     1     0     0     0     0 13
+bipartite stable-critical graphs: 8
+bipartite no-leaf-rule graphs: 6
+published residual IDs: 2 6 15 16 17 18 21 22 23 30 34 37 41
+unlabeled graphs with four vertices in a minimum cover: 186

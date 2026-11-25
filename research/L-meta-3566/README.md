@@ -152,3 +152,9 @@ Compile `AndSeparation` and then `CoverPatterns` with the command in the precedi
 After the preceding builds, compile `FreeChoices`, `FiveTests` and `ShortCycle`, then build `PEqualNP.Research.L_meta_1774.Forest` and compile `TwoAndForest` after `Descent` and `Normalization`.
 
 [WeakPatterns.lean](WeakPatterns.lean) also counts the physical AND gates in the original `Monotone2` model with fan-in at most two. Its proof evaluates each wire against the prefix available when it was read, including missing wire references. Compile it before `TwoAndForest`. The theorems `peel_of_two_ands` and `descent_of_two_ands` apply when any circuit in this more general model has at most two AND gates.
+
+## Computations beyond cover size three
+
+[Cover-four enumeration and replay](cover-four/README.md) gives the graph generator and the records of two live-wire searches for 17 residual graphs with minimum vertex cover size four. The searches agreed on all 17 cases. The reductions above have Lean proofs. The graph enumeration and C++ search transcripts are computational evidence, and the cover-three theorems do not depend on them.
+
+[Two-supergraph factorization](factor-notes.md) studies an attempted counterexample using an AND of two graph functions. It includes three checked structural obstructions and a reproducible search with explicitly shared physical gates.

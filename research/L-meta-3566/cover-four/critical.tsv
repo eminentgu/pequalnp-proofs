@@ -1,0 +1,18 @@
+id	n	edges	components	bipartite	stage	published_id	inside_mask	outside_masks
+0	7	6	2	0	isolated-edge		1	4,9,10
+1	7	7	1	0	pendant-path		1	4,9,14
+2	7	8	1	0	no-leaf-rule	6	1	5,9,14
+3	7	7	1	0	no-leaf-rule	2	1	5,10,12
+4	8	8	1	1	no-leaf-rule	16	0	1,3,5,14
+5	8	8	1	1	no-leaf-rule	15	0	1,3,6,13
+6	8	7	2	1	isolated-edge		0	1,6,10,12
+7	8	8	1	1	pendant-path		0	1,6,10,13
+8	8	9	1	1	no-leaf-rule	23	0	3,5,9,14
+9	8	8	1	1	no-leaf-rule	18	0	3,5,10,12
+10	8	8	1	0	no-leaf-rule	17	1	1,2,5,14
+11	8	9	1	0	no-leaf-rule	21	1	5,6,9,10
+12	8	9	1	0	no-leaf-rule	22	1	5,6,9,12
+13	8	10	1	0	no-leaf-rule	30	12	3,5,10,12
+14	9	10	1	1	no-leaf-rule	34	0	3,5,6,9,10
+15	9	11	1	0	no-leaf-rule	37	1	5,6,9,10,12
+16	10	12	1	1	no-leaf-rule	41	0	3,5,6,9,10,12
