@@ -22,6 +22,30 @@ private theorem at_edge (G : SimpleGraph (Fin n)) [DecidableRel G.Adj] (C : Circ
   rw [op]
   cases a : wval C (unit y) (in0 C j) <;> cases b : wval C (unit s) (in0 C j) <;> simp_all
 
+/-- Along two consecutive edges with distinguishable endpoints, at least one of
+those three singleton inputs lights more than one AND. No global deficit is needed. -/
+theorem path_two_lit (G : SimpleGraph (Fin n)) [DecidableRel G.Adj] (C : Circuit) (ao : IsAO2 n C)
+    (ok : circuitFun n C = graphFun G ∅) {a b c t : Fin n} (ab : G.Adj a b) (cb : G.Adj c b)
+    (at' : G.Adj a t) (ct : ¬G.Adj c t) :
+    ∃ x∈({a,b,c}:Finset _), ∃ i j, i≠j ∧ lit C x i ∧ lit C x j := by
+  classical
+  by_contra! unique
+  have once {x : Fin n} (mem : x∈({a,b,c}:Finset _)) {i j : ℕ} (hi : lit C x i) (hj : lit C x j) : i=j := by
+    by_contra ne; exact unique _ mem _ _ ne hi hj
+  have bLit {x : Fin n} {j : ℕ} (h : lit C x j) (sw : wval C (unit x) (in0 C j) = wval C (unit b) (in1 C j))
+      (os : wval C (unit x) (in1 C j) = wval C (unit b) (in0 C j)) : lit C b j :=
+    ⟨h.1,h.2.elim (fun x0 => Or.inr (sw.symm.trans x0)) (fun x1 => Or.inl (os.symm.trans x1))⟩
+  obtain ⟨i,ai,s0,s1⟩ := at_edge G C ao ok ab
+  obtain ⟨j,cj,t0,t1⟩ := at_edge G C ao ok cb
+  have eq := once (by simp : b∈({a,b,c}:Finset _)) (bLit ai s0 s1) (bLit cj t0 t1)
+  subst j
+  obtain ⟨k,ak,_,off0,off1⟩ := private_port G C ao ok at' ct
+  have eq := once (by simp : a∈({a,b,c}:Finset _)) ai ak
+  subst k
+  rcases ai.2 with h|h
+  · exact Bool.noConfusion ((t0.trans (s0.symm.trans h)).symm.trans (off0 h))
+  · exact Bool.noConfusion ((t1.trans (s1.symm.trans h)).symm.trans (off1 h))
+
 /-- On one color class the pigeonhole count uses whole AND gates: the opposite
 ports of a gate cannot serve two different vertices having only one lit gate. -/
 theorem two_lit_on_side (G : SimpleGraph (Fin n)) [DecidableRel G.Adj] (C : Circuit) (ao : IsAO2 n C)
@@ -110,6 +134,7 @@ theorem side_degree_two_and_lower (G : SimpleGraph (Fin n)) [base : DecidableRel
   · exact hi
   · exact (Finset.mem_singleton.mp hh) ▸ hj
 
+#print axioms path_two_lit
 #print axioms side_degree_two_and_lower
 #print axioms two_lit_on_side
 end VertexPeel.PivotAND
