@@ -435,19 +435,23 @@ lemma nonemptyCut {n : ℕ} (G : SimpleGraph (Fin n)) [DecidableRel G.Adj]
   rw [G.edgeFinset_deleteIncidenceSet_eq_filter]
   exact Finset.mem_filter.mpr ⟨hf,hnot⟩
 
-theorem fromGlobalLower
-    (lower : ∀ (n : ℕ) (G : SimpleGraph (Fin n)) [DecidableRel G.Adj],
-      (∃ c : Fin n → Bool, ∀ u v, G.Adj u v → c u ≠ c v) →
-      PEqualNP.TopForm.NoFourCycle G → 2 ≤ G.edgeFinset.card →
-      ∀ C : Circuit, PEqualNP.TopForm.IsAO2 n C →
-      circuitFun n C = NestedCover.graphFun G ∅ →
-      ∃ T : Finset (Fin n), IsVertexCover G T ∧ G.edgeFinset.card + T.card ≤ C.size + 1) :
-    ∀ (n : ℕ) (G : SimpleGraph (Fin n)) [DecidableRel G.Adj], (∃ c : Fin n → Bool, ∀ u v : Fin n, G.Adj u v → c u ≠ c v) → PEqualNP.TopForm.NoFourCycle G → 2 ≤ G.edgeFinset.card → ∃ z : Fin n, 0 < G.degree z ∧ ∀ C : PEqualNP.CircuitLowerBounds.Circuit, PEqualNP.TopForm.IsAO2 n C → PEqualNP.MetaComplexity.circuitFun n C = PEqualNP.MetaComplexity.NestedCover.graphFun G ∅ → ∃ D : PEqualNP.CircuitLowerBounds.Circuit, PEqualNP.TopForm.IsAO2 n D ∧ PEqualNP.MetaComplexity.circuitFun n D = (fun y : Fin n → Bool => @decide (∃ a b : Fin n, (G.deleteEdges (G.incidenceSet z)).Adj a b ∧ y a = true ∧ y b = true) (Classical.propDecidable _)) ∧ D.size + G.degree z ≤ C.size ∧ ((∃ S : Finset (Fin n), PEqualNP.MetaComplexity.CoverPromise.IsVertexCover (G.deleteEdges (G.incidenceSet z)) S ∧ ∀ T : Finset (Fin n), PEqualNP.MetaComplexity.CoverPromise.IsVertexCover G T → S.card < T.card) → D.size + G.degree z + 1 ≤ C.size) := by
-  intro n G inst bip four edges
-  obtain ⟨z,hz,remaining⟩ := nonemptyCut G edges
-  refine ⟨z,hz,?_⟩
-  intro C hao hfun
-  obtain ⟨T, hT, hsize⟩ := lower n G bip four edges C hao hfun
+abbrev SavesAt {n : ℕ} (G : SimpleGraph (Fin n)) [DecidableRel G.Adj]
+    (z : Fin n) (C : Circuit) : Prop :=
+  ∃ D : Circuit, PEqualNP.TopForm.IsAO2 n D ∧
+    circuitFun n D = (fun y => @decide (∃ a b : Fin n,
+      (G.deleteEdges (G.incidenceSet z)).Adj a b ∧ y a = true ∧ y b = true)
+      (Classical.propDecidable _)) ∧
+    D.size + G.degree z ≤ C.size ∧
+    ((∃ S : Finset (Fin n), IsVertexCover (G.deleteEdges (G.incidenceSet z)) S ∧
+      ∀ T : Finset (Fin n), IsVertexCover G T → S.card < T.card) →
+      D.size + G.degree z + 1 ≤ C.size)
+
+-- Every vertex leaving an edge after deletion works at this circuit budget.
+theorem atVertexOfCoverBound {n : ℕ} (G : SimpleGraph (Fin n)) [DecidableRel G.Adj]
+    (z : Fin n) (remaining : 0 < (G.deleteIncidenceSet z).edgeFinset.card)
+    (C : Circuit) (coverBound : ∃ T : Finset (Fin n), IsVertexCover G T ∧
+      G.edgeFinset.card + T.card ≤ C.size + 1) : SavesAt G z C := by
+  obtain ⟨T, hT, hsize⟩ := coverBound
   let H := G.deleteIncidenceSet z
   obtain ⟨K,hK,minK⟩ := minCover H
   have hTK : IsVertexCover H T := fun a b hab => hT a b (G.deleteEdges_le _ hab)
@@ -466,6 +470,19 @@ theorem fromGlobalLower
     have := minK S hs
     have := hstrict T hT
     omega
+
+theorem fromGlobalLower
+    (lower : ∀ (n : ℕ) (G : SimpleGraph (Fin n)) [DecidableRel G.Adj],
+      (∃ c : Fin n → Bool, ∀ u v, G.Adj u v → c u ≠ c v) →
+      PEqualNP.TopForm.NoFourCycle G → 2 ≤ G.edgeFinset.card →
+      ∀ C : Circuit, PEqualNP.TopForm.IsAO2 n C →
+      circuitFun n C = NestedCover.graphFun G ∅ →
+      ∃ T : Finset (Fin n), IsVertexCover G T ∧ G.edgeFinset.card + T.card ≤ C.size + 1) :
+    ∀ (n : ℕ) (G : SimpleGraph (Fin n)) [DecidableRel G.Adj], (∃ c : Fin n → Bool, ∀ u v : Fin n, G.Adj u v → c u ≠ c v) → PEqualNP.TopForm.NoFourCycle G → 2 ≤ G.edgeFinset.card → ∃ z : Fin n, 0 < G.degree z ∧ ∀ C : PEqualNP.CircuitLowerBounds.Circuit, PEqualNP.TopForm.IsAO2 n C → PEqualNP.MetaComplexity.circuitFun n C = PEqualNP.MetaComplexity.NestedCover.graphFun G ∅ → ∃ D : PEqualNP.CircuitLowerBounds.Circuit, PEqualNP.TopForm.IsAO2 n D ∧ PEqualNP.MetaComplexity.circuitFun n D = (fun y : Fin n → Bool => @decide (∃ a b : Fin n, (G.deleteEdges (G.incidenceSet z)).Adj a b ∧ y a = true ∧ y b = true) (Classical.propDecidable _)) ∧ D.size + G.degree z ≤ C.size ∧ ((∃ S : Finset (Fin n), PEqualNP.MetaComplexity.CoverPromise.IsVertexCover (G.deleteEdges (G.incidenceSet z)) S ∧ ∀ T : Finset (Fin n), PEqualNP.MetaComplexity.CoverPromise.IsVertexCover G T → S.card < T.card) → D.size + G.degree z + 1 ≤ C.size) := by
+  intro n G inst bip four edges
+  obtain ⟨z,hz,remaining⟩ := nonemptyCut G edges
+  exact ⟨z,hz,fun C hao hfun =>
+    atVertexOfCoverBound G z remaining C (lower n G bip four edges C hao hfun)⟩
 
 end VertexPeel.CoverCircuit
 
