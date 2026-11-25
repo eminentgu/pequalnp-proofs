@@ -8,6 +8,10 @@ For the reverse implication, take two distinct edges and choose an endpoint foun
 
 Reproduce from the pinned `lean` directory with `lake env lean ../research/L-meta-3566/Equivalence.lean`. The axiom audit of `VertexPeel.exactPeel_iff_globalLower` reports `propext`, `Classical.choice` and `Quot.sound`. Proving the universal size bound remains open in this branch.
 
+## Both desk conclusions for vertex cover number at most four
+
+[CoverFour.lean](cover-four/CoverFour.lean) proves L-meta-1774 and L-meta-3566 for all graphs satisfying the respective desk hypotheses and having minimum vertex cover size at most four. There is no bound on the number of circuit inputs, circuit size or isolated vertices. For cover number exactly four, the numerical lower bound is the edge count plus three gates. The formal classification and reconstruction of arbitrary graphs are described in the [proof directory](cover-four/README.md).
+
 ## Both desk conclusions for vertex cover number at most three
 
 [CoverThree.lean](CoverThree.lean) proves the full ownership descent of L-meta-1774 and both size inequalities of L-meta-3566 for any graph in the respective card with a vertex cover of size at most three. The number of vertices and the incoming circuit are unrestricted. The public theorems are `ownership_descent` and `bipartite_vertex_deletion`. The latter has one vertex that works for every correct circuit. `vertex_deletion` also covers triangle-free graphs without a four-cycle outside the bipartite case.
@@ -163,6 +167,6 @@ After the preceding builds, compile `FreeChoices`, `FiveTests` and `ShortCycle`,
 
 ## Computations beyond cover size three
 
-[Cover-four enumeration and replay](cover-four/README.md) gives the graph generator and the records of two live-wire searches for 17 residual graphs with minimum vertex cover size four. The searches agreed on all 17 cases. The reductions above have Lean proofs. The graph enumeration and C++ search transcripts are computational evidence, and the cover-three theorems do not depend on them.
+[Cover-four enumeration and replay](cover-four/README.md) gives the graph generator and the records of two live-wire searches for 17 residual graphs with minimum vertex cover size four. The searches agreed on all 17 cases. Independent Lean certificates now establish the full classification and size bounds. The numerical search transcripts document the earlier computational cross-check.
 
 [Two-supergraph factorization](factor-notes.md) studies an attempted counterexample using an AND of two graph functions. It includes three checked structural obstructions and a reproducible search with explicitly shared physical gates.

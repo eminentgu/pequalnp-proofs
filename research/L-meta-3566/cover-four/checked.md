@@ -10,7 +10,7 @@ For each of the seventeen rows of `critical.txt`, `listedLower` proves that ever
 | 15 | Five zero cofactors, a kernel-checked circuit lower bound on sixteen assignments, and a two-gate restriction at an exclusive OR reader. |
 | 16 | L-meta-723. The graph is the once-subdivided complete graph on four vertices. |
 
-The graph labels are part of the Lean statements. An application to arbitrary graphs of cover number four additionally requires a proof that the reductions reach one of the listed labels up to isomorphism.
+The certified classification and leaf induction extend these bounds to all graphs under the girth and cover hypotheses. [Universal cover-four result](CoverFour.lean)
 
 ## Reproduction
 
