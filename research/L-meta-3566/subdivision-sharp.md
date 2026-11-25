@@ -20,6 +20,15 @@ The construction gives a deletion at one least circuit's gate budget. That budge
 
 An additional theorem, stable_neighborhood, gives the full vertex-deletion conclusion on any square-free graph with a nonisolated vertex whose neighbors all have degree two and whose individual deletions preserve the cover number. [SideDegreeTwoSharp.lean](SideDegreeTwoSharp.lean)
 
+## The cost of reading a variable only once
+
+Suppose exactly one gate reads a raw vertex input a and its other operand d is distinct from a. Two bounds apply even if earlier gates feed multiple parts of the circuit. They concern the physical gates that compute d, including the producer of d itself.
+
+* If the reader is an AND, d must accept each singleton neighbor of a. Compare the input containing just that neighbor with the input that also contains a. Only the sole reader can transmit the change, and earlier wires that compute d see identical values. Accepting these singletons requires at least degree(a) − 1 different OR gates feeding d. If several vertices share d this way, the same argument charges the **union** of their neighborhoods. In a square-free graph each pair of vertices has at most one common neighbor.
+* If the reader is an OR in a minimum circuit cleaned by the sound-operand exchange, d accepts an independent set omitting a. Every such set must contain a neighbor of each neighbor of a. Otherwise adjoining an unblocked neighbor and then a would change the answer while the sole reader stays true. In a square-free graph at least degree(a) vertices are needed to block those neighbors. Any wire with m distinct AND gates feeding it has a positive certificate of size at most m + 1 on any input on which it is true. Applying this fact to d charges at least degree(a) − 1 different AND gates feeding d.
+
+The proof leaves open how to charge shared gates across **different** operands and how to account for variables with several readers. [Local bounds](ExclusiveGateCost.lean) · [Independent inputs](PrivateReaderWidth.lean) · [Positive certificates](PhysicalWitnessWidth.lean) · [Singleton OR counts](SingletonOrCone.lean)
+
 ## An AND count under a different graph assumption
 
 For any bipartite graph of maximum degree three and girth greater than six, [subcubic_girth](SubcubicAND.lean) proves that every correct binary monotone circuit needs at least τ(G) physical AND gates. When too few ANDs are available to pay for a vertex, its singleton input selects at most two labeled gate ports. Choosing another user at each port must produce an edge. A failure to assign distinct ports forces a six-cycle. Counting both ports per physical gate then pays for a vertex, and the bound follows by restriction. The total gate lower bound on all such graphs is open. [CubicPorts.lean](CubicPorts.lean) [PortHall.lean](PortHall.lean)
