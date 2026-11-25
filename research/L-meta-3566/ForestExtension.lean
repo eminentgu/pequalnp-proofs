@@ -73,8 +73,62 @@ private theorem edge_card_inst (G : SimpleGraph (Fin n)) (i j : Fintype G.edgeSe
     (@SimpleGraph.edgeFinset _ G i).card = (@SimpleGraph.edgeFinset _ G j).card := by
   rw [Subsingleton.elim i j]
 
+private theorem degree_inst (G : SimpleGraph (Fin n)) (v : Fin n) (i j : Fintype (G.neighborSet v)) :
+    @SimpleGraph.degree _ G v i = @SimpleGraph.degree _ G v j := by
+  rw [Subsingleton.elim i j]
+
 private structure Sharp (G : SimpleGraph (Fin n)) : Prop where
   bound : Numerical G (Loc.tau G)
+
+/-- A nonempty forest component supplies a valid vertex for all circuits,
+even when the disjoint core is an arbitrary graph with an edge. -/
+theorem peel_in_forest (H F : SimpleGraph (Fin n)) [DecidableRel (H ⊔ F).Adj]
+    (core : ∃ a b, H.Adj a b) (sep : Apart H F) (acyc : F.IsAcyclic)
+    (present : ∃ a b, F.Adj a b) :
+    ∃ z w, F.Adj z w ∧ ∀ C : Circuit, IsAO2 n C →
+      circuitFun n C = graphFun (H ⊔ F) ∅ → SavesAt (H ⊔ F) z C := by
+  classical
+  let G := H ⊔ F
+  obtain ⟨l,p,lp,onlyL,shape⟩ := Helpers.Forest.forest_good_leaf F acyc present
+  have leafEdge : G.Adj l p := Or.inr lp
+  have only (w : Fin n) (e : G.Adj l w) := onlyL w ((at_forest sep lp w).mp e)
+  obtain ⟨a,b,ab⟩ := core
+  have survives {z w : Fin n} (zw : F.Adj z w) : ∃ u v, G.Adj u v ∧ u ≠ z ∧ v ≠ z :=
+    ⟨a,b,Or.inl ab,fun eq => sep z b w (eq ▸ ab) zw,fun eq => sep z a w (eq ▸ ab.symm) zw⟩
+  rcases shape with ⟨q,neighbors⟩ | ⟨s,sl,ps,onlyS⟩
+  · by_cases other : ∃ q, F.Adj p q ∧ q ≠ l
+    · obtain ⟨v,pv,vl⟩ := other
+      have degree : G.degree p ≤ 2 := by
+        have sub : G.neighborFinset p ⊆ {l,q} := by
+          intro w hw
+          have h := neighbors w ((at_forest sep lp.symm w).mp ((G.mem_neighborFinset _ _).mp hw))
+          simpa using h
+        have count := Finset.card_le_card sub
+        have sizePair := Finset.card_insert_le l ({q} : Finset _)
+        simp only [Finset.card_singleton] at sizePair
+        simpa only [G.card_neighborFinset_eq_degree] using count.trans sizePair
+      refine ⟨p,l,lp.symm,?_⟩
+      intro C ao correct
+      obtain ⟨D,dao,dc,save⟩ := ThreeGatePeel.cut_joint G C ao correct leafEdge (Or.inr pv) vl only (survives lp.symm)
+      refine ⟨D,dao,dc.trans ?_,?_,?_⟩
+      · funext x
+        simp [G,graphFun,SimpleGraph.deleteIncidenceSet]
+      · exact (Nat.add_le_add_left ((degree_inst G p _ _).trans_le degree) _).trans (by omega)
+      · intro _
+        exact (Nat.add_le_add_right (Nat.add_le_add_left ((degree_inst G p _ _).trans_le degree) _) 1).trans (by omega)
+    · have onlyP (w : Fin n) (e : G.Adj p w) : w = l :=
+        by_contra fun ne => other ⟨w,(at_forest sep lp.symm w).mp e,ne⟩
+      have different : s(a,b) ≠ s(l,p) := by
+        intro eq
+        rcases Sym2.eq_iff.mp eq with ⟨ha,_⟩ | ⟨_,hb⟩
+        · exact sep l b p (ha ▸ ab) lp
+        · exact sep l a p (hb ▸ ab.symm) lp
+      have many : 2 ≤ G.edgeFinset.card := Finset.one_lt_card.mpr
+        ⟨s(a,b),by simpa using (show G.Adj a b from Or.inl ab),s(l,p),by simpa using leafEdge,different⟩
+      exact ⟨l,p,lp,(Leaves.isolatedEdgeAt G l p leafEdge only onlyP (many.trans_eq (edge_card_inst _ _ _))).2⟩
+  · have only' (w : Fin n) (e : G.Adj s w) := onlyS w ((at_forest sep ps.symm w).mp e)
+    exact ⟨l,p,lp, Leaves.stableLeaf G l (degree_one G leafEdge only)
+      (Leaves.sharedNeighborStable G l s p sl.symm leafEdge (Or.inr ps.symm) only only')⟩
 
 private theorem with_core (H F : SimpleGraph (Fin n)) (core : ∃ a b, H.Adj a b)
     (bound : Numerical H (Loc.tau H)) (sep : Apart H F) (acyc : F.IsAcyclic) :
@@ -85,9 +139,7 @@ private theorem with_core (H F : SimpleGraph (Fin n)) (core : ∃ a b, H.Adj a b
   | ind k ih =>
     by_cases present : ∃ a b, F.Adj a b
     · let G := H ⊔ F
-      obtain ⟨l,p,lp,onlyL,shape⟩ := Helpers.Forest.forest_good_leaf F acyc present
-      have leafEdge : G.Adj l p := Or.inr lp
-      have only (w : Fin n) (e : G.Adj l w) := onlyL w ((at_forest sep lp w).mp e)
+      obtain ⟨z,w,zw,cut⟩ := peel_in_forest H F core sep acyc present
       have residual {z w : Fin n} (zw : F.Adj z w) :
           Sharp (G.deleteIncidenceSet z) := by
         change Sharp ((H ⊔ F).deleteIncidenceSet z)
@@ -99,42 +151,7 @@ private theorem with_core (H F : SimpleGraph (Fin n)) (core : ∃ a b, H.Adj a b
           omega
         exact ih _ few _ (fun a b c h e => sep a b c h (F.deleteIncidenceSet_le z e))
           (SimpleGraph.IsAcyclic.anti (F.deleteIncidenceSet_le z) acyc) (edge_card_inst _ _ _)
-      obtain ⟨a,b,ab⟩ := core
-      have survives {z w : Fin n} (zw : F.Adj z w) : ∃ u v, G.Adj u v ∧ u ≠ z ∧ v ≠ z :=
-        ⟨a,b,Or.inl ab,fun eq => sep z b w (eq ▸ ab) zw,fun eq => sep z a w (eq ▸ ab.symm) zw⟩
-      constructor
-      rcases shape with ⟨q,neighbors⟩ | ⟨s,sl,ps,onlyS⟩
-      · by_cases other : ∃ q, F.Adj p q ∧ q ≠ l
-        · obtain ⟨v,pv,vl⟩ := other
-          have degree : G.degree p ≤ 2 := by
-            have sub : G.neighborFinset p ⊆ {l,q} := by
-              intro w hw
-              have h := neighbors w ((at_forest sep lp.symm w).mp ((G.mem_neighborFinset _ _).mp hw))
-              simpa using h
-            have count := Finset.card_le_card sub
-            have sizePair := Finset.card_insert_le l ({q} : Finset _)
-            simp only [Finset.card_singleton] at sizePair
-            simpa only [G.card_neighborFinset_eq_degree] using count.trans sizePair
-          apply lift_cut G p _ (residual lp.symm).bound
-          intro C ao correct
-          obtain ⟨D,dao,dc,save⟩ := ThreeGatePeel.cut_joint G C ao correct leafEdge (Or.inr pv) vl only (survives lp.symm)
-          refine ⟨D,dao,dc.trans ?_,by omega,fun _ => by omega⟩
-          funext x
-          simp [graphFun,SimpleGraph.deleteIncidenceSet]
-        · have onlyP (w : Fin n) (e : G.Adj p w) : w = l :=
-            by_contra fun ne => other ⟨w,(at_forest sep lp.symm w).mp e,ne⟩
-          have different : s(a,b) ≠ s(l,p) := by
-            intro eq
-            rcases Sym2.eq_iff.mp eq with ⟨ha,_⟩ | ⟨_,hb⟩
-            · exact sep l b p (ha ▸ ab) lp
-            · exact sep l a p (hb ▸ ab.symm) lp
-          have many : 2 ≤ G.edgeFinset.card := Finset.one_lt_card.mpr
-            ⟨s(a,b),by simpa using (show G.Adj a b from Or.inl ab),s(l,p),by simpa using leafEdge,different⟩
-          exact lift_cut G l (Leaves.isolatedEdgeAt G l p leafEdge only onlyP (many.trans_eq (edge_card_inst _ _ _))).2 (residual lp).bound
-      · intro inst
-        have only' (w : Fin n) (e : G.Adj s w) := onlyS w ((at_forest sep ps.symm w).mp e)
-        exact lift_cut G l (Leaves.stableLeaf G l (degree_one G leafEdge only)
-          (Leaves.sharedNeighborStable G l s p sl.symm leafEdge (Or.inr ps.symm) only only')) (residual lp).bound
+      exact ⟨@lift_cut n G _ z cut (@Sharp.bound _ _ (residual zw))⟩
     · have empty : F = ⊥ := by ext x y; exact ⟨fun e => (present ⟨x,y,e⟩).elim,False.elim⟩
       subst F
       rw [sup_bot_eq]
@@ -184,6 +201,27 @@ theorem add_forest (H F : SimpleGraph (Fin n)) (sep : Apart H F) (acyc : F.IsAcy
       exact ⟨@forest_numerical n F acyc⟩
     exact sharp.bound
 
+/-- Card 3566 whenever some nontrivial component is a tree. The remainder of the
+graph can have arbitrary cycles and arbitrary cover number. -/
+theorem vertex_of_forest_component (H F : SimpleGraph (Fin n)) [DecidableRel (H ⊔ F).Adj]
+    (sep : Apart H F) (acyc : F.IsAcyclic) (present : ∃ a b, F.Adj a b)
+    (edges : 2 ≤ (H ⊔ F).edgeFinset.card) :
+    ∃ z : Fin n, 0 < (H ⊔ F).degree z ∧ ∀ C : Circuit, IsAO2 n C →
+      circuitFun n C = graphFun (H ⊔ F) ∅ → SavesAt (H ⊔ F) z C := by
+  by_cases core : ∃ a b, H.Adj a b
+  · obtain ⟨z,w,zw,cut⟩ := peel_in_forest H F core sep acyc present
+    exact ⟨z,((H ⊔ F).degree_pos_iff_exists_adj z).mpr ⟨w,Or.inr zw⟩,cut⟩
+  · have empty : H = ⊥ := by ext x y; exact ⟨fun e => (core ⟨x,y,e⟩).elim,False.elim⟩
+    have allForest : (H ⊔ F).IsAcyclic := by rw [empty,bot_sup_eq]; exact acyc
+    obtain ⟨z,zpos,rem⟩ := nonemptyCut (H ⊔ F) edges
+    refine ⟨z,zpos,?_⟩
+    intro C ao correct
+    have mono : Monotone2 C := fun g hg =>
+      ⟨by simpa only [Set.mem_insert_iff,Set.mem_singleton_iff] using ao.1 g hg,(ao.2.2 g hg).le⟩
+    obtain ⟨T,c,count⟩ := Loc.tau_attained (H ⊔ F)
+    have low := forest_numerical (H ⊔ F) allForest C mono correct
+    exact atVertexOfCoverBound (H ⊔ F) z rem C ⟨T,c,by omega⟩
+
 /-- Minimum cover size adds over the two vertex-disjoint pieces. -/
 theorem tau_union (H F : SimpleGraph (Fin n)) (sep : Apart H F) :
     Loc.tau (H ⊔ F) = Loc.tau H + Loc.tau F := by
@@ -220,5 +258,8 @@ theorem tau_union (H F : SimpleGraph (Fin n)) (sep : Apart H F) :
 
 end VertexPeel.ForestExtension
 
+#print axioms VertexPeel.ForestExtension.peel_in_forest
 #print axioms VertexPeel.ForestExtension.add_forest
 #print axioms VertexPeel.ForestExtension.tau_union
+
+#print axioms VertexPeel.ForestExtension.vertex_of_forest_component
