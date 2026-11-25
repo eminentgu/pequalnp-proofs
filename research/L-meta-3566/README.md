@@ -23,3 +23,21 @@ lake build PEqualNP.Outside.L_meta_7241 PEqualNP.Library.Helpers.PeelableSanity
 lake env lean -R "$research_dir" -o "$research_dir/Equivalence.olean" "$research_dir/Equivalence.lean"
 lake env sh -c 'export LEAN_PATH="$1:$LEAN_PATH"; exec lean "$1/Normalization.lean"' sh "$research_dir"
 ```
+
+## Subdivisions and leaves
+
+[SubdivisionPeel.lean](SubdivisionPeel.lean) proves the exact two savings bounds for a bipartition with degree two on one side and minimum degree three on the opposite side. [ConnectedSubdivision.lean](ConnectedSubdivision.lean) also permits degree two on the opposite side when the graph is connected and that side contains a vertex of degree at least three. These results apply to the incidence graphs obtained by subdividing every edge of the corresponding simple graph once.
+
+[Leaves.lean](Leaves.lean) proves that a leaf whose deletion preserves the minimum vertex cover size satisfies the exact conclusion, independently of the rest of the graph. Two leaves with the same neighbor ensure this condition. [Pendant.lean](Pendant.lean) gives the exact conclusion when the graph has an isolated edge and at least one further edge. Its circuit argument proves that setting the endpoints of an edge to zero saves two gates whenever a disjoint edge survives.
+
+[ZeroFold.lean](ZeroFold.lean) constructs an actual replacement circuit with two-input AND/OR gates after a restriction. [SideReaders.lean](SideReaders.lean) and [SidePeel.lean](SidePeel.lean) prove the two-gate bound for the degree-two side and produce one vertex that works for every original circuit. [The Heawood calculation](heawood-cofactors.md) gives the exact gate counts that prevent the same merging argument alone from establishing the bound on cubic incidence graphs.
+
+To check these files after building `Equivalence.olean` above, work from the same `lean` directory and run:
+
+```sh
+for module in ZeroFold SideReaders SidePeel Leaves Pendant SubdivisionPeel ConnectedSubdivision
+do
+  lake env sh -c 'export LEAN_PATH="$1:$LEAN_PATH"; exec lean -R "$1" -o "$1/$2.olean" "$1/$2.lean"' sh "$research_dir" "$module" || exit 1
+done
+python3 "$research_dir/heawood_cofactors.py"
+```
