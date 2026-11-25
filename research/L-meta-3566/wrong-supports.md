@@ -22,13 +22,17 @@ Replacing this AND by that operand preserves the full output after zeroing T, ev
 
 `internal_singleton_cut` applies the single-vertex neighborhood criterion at any such internal AND, with arbitrary AND depth and unrestricted fanout. For a least circuit, if r is the number of other gates reading z and the degree and cover thresholds above hold, its saving also applies uniformly to all larger circuits computing the graph.
 
+## An obstruction to reducing the transversal to one vertex
+
+[MatchingBoundary.lean](MatchingBoundary.lean) gives a family where a designated output AND requires at least m deleted vertices before either child computes the restricted graph. Use m² disjoint edges, indexed by cells (i,j). The left child accepts an edge or an entire row of left endpoints. The right child accepts an edge or an entire column of right endpoints. When a row and column are both selected, their common cell supplies an edge. Their conjunction therefore computes the matching function. If fewer than m vertices on either shore have been deleted, a surviving whole row and a surviving whole column give the respective children independent false positives. Deleting the m left diagonal endpoints suffices for the left child. For m ≥ 2 this excludes a single-vertex inference even on matchings. These deliberately constructed factors need not occur in a least circuit.
+
 Run from the repository root. The last command prints the axiom audits.
 
 ```sh
 proof_dir="$(pwd)/research/L-meta-3566"
 cd lean
 lake build PEqualNP.Outside.L_meta_615 PEqualNP.Outside.L_meta_2668 PEqualNP.Defs
-for module in ZeroFold WrongSupports WrongSupportCircuit InternalSoundAnd
+for module in ZeroFold WrongSupports WrongSupportCircuit InternalSoundAnd MatchingBoundary
 do
   lake env sh -c 'export LEAN_PATH="$1:$LEAN_PATH"; exec lean -R "$1" -o "$1/$2.olean" "$1/$2.lean"' sh "$proof_dir" "$module" || exit 1
 done
